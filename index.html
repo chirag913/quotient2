@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Quotient by Shahima — Find your Skin Quotient (Playful)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4FBF6;
+    --paper-deep:#E4F5E9;
+    --card:#FFFFFF;
+    --ink:#0E2019;
+    --ink-soft:#4B6158;
+    --ink-faint:#8AA298;
+
+    --teal:#0FA968;
+    --teal-mid:#17C77D;
+    --teal-text:#0A7A4C;
+    --teal-mist:#D2F5E2;
+    --teal-mist-2:#E9FBF0;
+
+    --rose:#FF6FA5;
+    --rose-deep:#F0347D;
+    --amber:#FFB020;
+
+    --line:rgba(14,32,25,0.12);
+    --line-strong:#0E2019;
+    --shadow-sm:0 2px 0 rgba(14,32,25,0.9);
+    --shadow-md:4px 5px 0 rgba(14,32,25,0.94);
+    --shadow-lg:6px 8px 0 rgba(14,32,25,0.94);
+    --radius:22px;
+    --radius-sm:16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--teal-mist);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+  }
+  ::selection{background:var(--rose); color:#fff;}
+  :focus-visible{outline:3px solid var(--rose-deep); outline-offset:2px; border-radius:6px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+  .icon{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.1; stroke-linecap:round; stroke-linejoin:round; display:block;}
+
+  .stage{
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    background:var(--paper);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:var(--shadow-lg);
+  }
+
+  /* ---------- Ambient background texture ---------- */
+  .ambient{
+    position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .ambient .blob{
+    position:absolute; border-radius:50%; filter:blur(60px); opacity:0.35;
+  }
+  .ambient .b1{width:280px; height:280px; background:var(--teal-mist); top:-90px; right:-90px;}
+  .ambient .b2{width:220px; height:220px; background:var(--rose); opacity:0.18; bottom:10%; left:-80px;}
+
+  /* ---------- Persistent top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:30;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px 10px;
+    background:linear-gradient(var(--paper) 78%, transparent);
+  }
+  .brand{
+    display:flex; align-items:center; gap:8px;
+  }
+  .brand-badge{
+    width:26px; height:26px; border-radius:50%;
+    background:var(--teal); color:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;
+  }
+  .brand-name{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--ink-soft);
+  }
+  .brand-name b{color:var(--ink); font-weight:600;}
+  .privacy-pill{
+    display:flex; align-items:center; gap:5px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--teal-mid);
+    background:var(--teal-mist-2); border:2px solid var(--line-strong); border-radius:20px;
+    padding:5px 10px 5px 8px;
+  }
+  .privacy-pill .icon{width:12px; height:12px;}
+
+  /* ---------- Live quotient meter ---------- */
+  .quotient-meter{
+    padding:2px 20px 14px;
+    background:var(--paper);
+    position:sticky; top:44px; z-index:29;
+    border-bottom:2.5px solid var(--line-strong);
+  }
+  .qm-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .qm-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft);}
+  .qm-step{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft);}
+  .qm-bar{height:8px; width:100%; border-radius:6px; overflow:hidden; display:flex; gap:2px; background:var(--paper-deep);}
+  .qm-seg{height:100%; width:0%; border-radius:4px; transition:width 0.6s cubic-bezier(.4,0,.2,1);}
+  .qm-seg.oil{background:var(--amber);}
+  .qm-seg.dehydration{background:var(--rose-deep);}
+  .qm-seg.sensitivity{background:var(--teal);}
+  .qm-seg.sun{background:var(--teal-mid);}
+  .qm-equation{margin-top:9px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink); min-height:15px;}
+  .qm-equation .tag{color:var(--ink-faint);}
+
+  /* ---------- Screens ---------- */
+  .screen{
+    position:relative; z-index:1;
+    flex:1; display:none; flex-direction:column;
+    padding:22px 22px 34px;
+    animation:rise 0.42s cubic-bezier(.22,1,.36,1);
+  }
+  .screen.active{display:flex;}
+  @keyframes rise{ from{opacity:0; transform:translateY(16px) scale(0.99);} to{opacity:1; transform:translateY(0) scale(1);} }
+
+  /* ---------- Hero ---------- */
+  #screen-hero{padding-top:6px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--teal-text); background:var(--teal-mist-2); border:2px solid var(--line-strong);
+    padding:6px 10px; border-radius:20px; margin-bottom:20px; width:fit-content;
+  }
+  .hero-title{
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size:38px; line-height:1.04; letter-spacing:-0.02em; margin:0 0 16px;
+  }
+  .hero-title em{font-style:italic; font-weight:700; color:var(--teal-text);}
+  .hero-sub{font-size:15.5px; line-height:1.6; color:var(--ink-soft); margin-bottom:20px;}
+  .hero-sub strong{color:var(--ink); font-weight:600;}
+
+  .hero-formula{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:500;
+    background:var(--rose-deep); color:#FFE1ED;
+    padding:15px 16px; border-radius:16px; line-height:1.65; margin-bottom:22px;
+    border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
+  }
+  .hero-formula .eq-line{opacity:0.65;}
+  .hero-formula .eq-result{color:#fff; font-weight:600;}
+
+  .trust-row{display:flex; flex-direction:column; gap:10px; margin-bottom:22px;}
+  .trust-item{
+    display:flex; align-items:center; gap:11px;
+    font-size:13px; color:var(--ink-soft);
+  }
+  .trust-item .ic-wrap{
+    width:30px; height:30px; border-radius:9px; flex-shrink:0;
+    background:var(--teal-mist-2); color:var(--teal-text);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .trust-item .ic-wrap .icon{width:16px; height:16px;}
+  .trust-item b{color:var(--ink); font-weight:600;}
+
+  .founder-card{
+    display:flex; align-items:center; gap:13px;
+    background:var(--teal-mid); border:2.5px solid var(--line-strong); border-radius:var(--radius);
+    padding:16px 17px; margin-bottom:16px; box-shadow:var(--shadow-md);
+  }
+  .founder-avatar{
+    width:52px; height:52px; border-radius:50%; flex-shrink:0;
+    background:var(--teal-mist); color:var(--teal-text);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:19px;
+    border:2px solid rgba(255,255,255,0.35);
+  }
+  .founder-text{flex:1;}
+  .founder-name-row{display:flex; align-items:center; gap:6px; margin-bottom:2px;}
+  .founder-name{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:15.5px; color:#fff;}
+  .founder-name-row .icon{width:14px; height:14px; color:var(--amber);}
+  .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--teal-mist); margin-bottom:6px;}
+  .founder-quote{font-size:12.5px; line-height:1.5; color:rgba(255,255,255,0.92);}
+
+  .testimonial{
+    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius);
+    padding:16px 17px; margin-bottom:24px; box-shadow:var(--shadow-sm);
+  }
+  .testimonial .stars{color:var(--amber); font-size:12px; letter-spacing:2px; margin-bottom:8px;}
+  .testimonial p{font-size:13.5px; line-height:1.55; margin:0 0 8px; color:var(--ink);}
+  .testimonial .who{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-faint);}
+
+  .spacer{flex:1;}
+
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; padding:16px 20px; border-radius:16px; border:2.5px solid var(--line-strong);
+    font-family:'Inter',sans-serif; font-size:15.5px; font-weight:700; cursor:pointer;
+    transition:transform 0.15s cubic-bezier(.34,1.56,.64,1), box-shadow 0.1s ease;
+  }
+  .btn .icon{width:18px; height:18px;}
+  .btn:active{transform:translate(3px,4px); box-shadow:none !important;}
+  .btn-primary{background:var(--teal-mid); color:#fff; box-shadow:var(--shadow-md);}
+  .btn-secondary{background:var(--card); color:var(--ink); border:2.5px solid var(--line-strong); box-shadow:var(--shadow-sm);}
+  .btn-ghost{
+    background:none; border:none; color:var(--ink-soft);
+    font-size:13.5px; text-decoration:underline; text-underline-offset:3px;
+    padding:12px; cursor:pointer; font-family:'Inter',sans-serif; width:100%;
+  }
+
+  /* ---------- Question screens ---------- */
+  .q-kicker{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--rose-deep); margin-bottom:12px;
+  }
+  .q-title{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:25px; line-height:1.2; margin-bottom:6px;}
+  .q-hint{font-size:13.5px; color:var(--ink-soft); margin-bottom:20px; line-height:1.5;}
+
+  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:16px;}
+  .option{
+    display:flex; align-items:center; gap:13px;
+    padding:13px 14px; border:2.5px solid var(--line-strong); border-radius:var(--radius-sm);
+    background:var(--card); cursor:pointer; text-align:left;
+    transition:border-color 0.15s ease, background 0.15s ease, transform 0.18s cubic-bezier(.34,1.56,.64,1), box-shadow 0.15s ease;
+  }
+  .option:active{transform:scale(0.94) rotate(-0.5deg);}
+  .option.selected{animation:pop 0.35s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{ 0%{transform:scale(1);} 45%{transform:scale(1.045) rotate(0.6deg);} 100%{transform:scale(1);} }
+  .option:hover{border-color:var(--line-strong);}
+  .opt-ic-wrap{
+    width:38px; height:38px; border-radius:10px; flex-shrink:0;
+    background:var(--paper-deep); color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .opt-ic-wrap .icon{width:19px; height:19px;}
+  .opt-text-chip{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;}
+  .option .tx{flex:1;}
+  .option .tx .t1{font-size:14.5px; font-weight:600; line-height:1.3;}
+  .option .tx .t2{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .option .ck{width:20px; height:20px; border-radius:50%; border:1.5px solid var(--line-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .option.multi .ck{border-radius:6px;}
+  .option.selected{border-color:var(--teal); background:var(--teal-mist-2); box-shadow:var(--shadow-sm);}
+  .option.selected .opt-ic-wrap{background:var(--teal); color:#fff;}
+  .option.selected .ck{background:var(--teal); border-color:var(--teal);}
+  .option.selected .ck::after{content:''; width:8px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(1px,-1px);}
+
+  .q-nav{display:flex; gap:10px; margin-top:auto; padding-top:8px;}
+  .q-nav .btn-secondary{flex:0 0 52px; padding:14px;}
+  .q-nav .btn-primary{flex:1;}
+  .btn-primary:disabled{opacity:0.38; pointer-events:none; box-shadow:none;}
+
+  /* ---------- Lead capture ---------- */
+  .lead-card{background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius); padding:20px; margin-bottom:16px; box-shadow:var(--shadow-sm);}
+  .lead-field{
+    width:100%; padding:14px 14px; border-radius:10px; border:2.5px solid var(--line-strong);
+    font-family:'Inter',sans-serif; font-size:15px; margin-bottom:10px; background:var(--paper); color:var(--ink);
+    transition:border-color 0.15s ease;
+  }
+  .lead-field::placeholder{color:var(--ink-faint);}
+  .lead-field:focus{outline:none; border-color:var(--teal); background:#fff;}
+  .lead-note{display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--ink-soft); line-height:1.55;}
+  .lead-note .icon{width:14px; height:14px; margin-top:1px; flex-shrink:0; color:var(--teal-mid);}
+
+  /* ---------- Analyzing screen ---------- */
+  #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:0;}
+  .analyzing-ring{width:88px; height:88px; margin-bottom:26px; position:relative;}
+  .analyzing-ring svg{animation:spin 1.6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; margin-bottom:8px;}
+  .analyzing-sub{font-size:13.5px; color:var(--ink-soft); line-height:1.5; max-width:260px;}
+  .analyzing-list{margin-top:22px; display:flex; flex-direction:column; gap:9px; align-items:flex-start;}
+  .analyzing-step{display:flex; align-items:center; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint); opacity:0.4;}
+  .analyzing-step.done{opacity:1; color:var(--teal-text);}
+  .analyzing-step .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
+
+  /* ---------- Result screen ---------- */
+  .result-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--teal-text); background:var(--teal-mist-2); border:2px solid var(--line-strong);
+    padding:6px 10px; border-radius:20px; margin-bottom:16px; width:fit-content;
+  }
+  .donut-block{
+    display:flex; align-items:center; gap:18px;
+    background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
+    padding:18px; margin-bottom:16px; box-shadow:var(--shadow-sm);
+  }
+  #donutWrap{flex-shrink:0; width:110px; height:110px;}
+  .legend{display:flex; flex-direction:column; gap:8px; flex:1;}
+  .legend-row{display:flex; align-items:center; gap:8px; font-size:12.5px;}
+  .legend-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+  .legend-label{flex:1; color:var(--ink);}
+  .legend-pct{font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--ink-soft);}
+
+  .result-desc{font-size:14.5px; line-height:1.6; color:var(--ink-soft); margin-bottom:18px;}
+  .result-desc strong{color:var(--ink);}
+
+  .routine-card{background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius); padding:18px 18px 8px; margin-bottom:14px; box-shadow:var(--shadow-sm);}
+  .routine-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .routine-head .lbl{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft);}
+  .derm-badge{display:flex; align-items:center; gap:5px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--teal-text); background:var(--teal-mist-2); padding:4px 8px; border-radius:20px;}
+  .derm-badge .icon{width:11px; height:11px;}
+  .routine-step{display:flex; gap:12px; padding-bottom:14px; margin-bottom:14px; border-bottom:2px dashed var(--line-strong);}
+  .routine-step:last-child{border-bottom:none;}
+  .routine-num{font-family:'IBM Plex Mono',monospace; font-size:12px; color:#fff; background:var(--teal); width:23px; height:23px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .routine-step .t1{font-size:14.5px; font-weight:600;}
+  .routine-step .t2{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .routine-step.blurred .t1, .routine-step.blurred .t2{filter:blur(4px); user-select:none;}
+
+  .path-choice{display:flex; flex-direction:column; gap:12px; margin-top:4px;}
+  .path-card{background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius); padding:18px; cursor:pointer; transition:border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;}
+  .path-card:active{transform:scale(0.99);}
+  .path-card:hover{box-shadow:var(--shadow-sm);}
+  .path-card.reco{border-color:var(--teal); background:var(--teal-mist-2);}
+  .path-tag{font-family:'IBM Plex Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--teal-text); margin-bottom:8px;}
+  .path-title-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
+  .path-title{font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600;}
+  .path-title-row .icon{width:20px; height:20px; color:var(--teal);}
+  .path-desc{font-size:13px; color:var(--ink-soft); line-height:1.5; margin-bottom:10px;}
+  .path-price{font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600;}
+
+  /* ---------- Confetti ---------- */
+  #confettiLayer{position:fixed; inset:0; pointer-events:none; z-index:99; overflow:hidden;}
+  .confetti-piece{position:absolute; top:-20px; border-radius:3px; animation:confetti-fall linear forwards;}
+  @keyframes confetti-fall{
+    0%{transform:translateY(0) rotate(0deg); opacity:1;}
+    100%{transform:translateY(110vh) rotate(540deg); opacity:0.9;}
+  }
+
+  /* ---------- Fun interstitial ---------- */
+  #screen-fun{align-items:center; text-align:center; justify-content:center;}
+  .fun-badge{
+    width:74px; height:74px; border-radius:50%;
+    background:var(--rose); border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 20px;
+  }
+  .fun-badge .icon{width:34px; height:34px; color:#fff; stroke-width:2.4;}
+  .fun-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:23px; line-height:1.25; margin-bottom:10px;}
+  .fun-sub{font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:22px; max-width:280px; margin-left:auto; margin-right:auto;}
+  .fun-stat{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--amber); border:2.5px solid var(--line-strong); border-radius:20px;
+    padding:8px 14px; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:12.5px;
+    box-shadow:var(--shadow-sm); margin-bottom:26px;
+  }
+  .confirm-icon{width:60px; height:60px; border-radius:50%; background:var(--teal); display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:22px; box-shadow:var(--shadow-md);}
+  .confirm-icon .icon{width:26px; height:26px; stroke-width:2;}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2.5 19 6v5.2c0 5-3.4 8.7-7 9.8-3.6-1.1-7-4.8-7-9.8V6l7-3.5Z"/></symbol>
+  <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 2.5 19 6v5.2c0 5-3.4 8.7-7 9.8-3.6-1.1-7-4.8-7-9.8V6l7-3.5Z"/><path d="M9 12.2l2 2 4-4.4"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 3.5 21 19H3L12 3.5Z"/><path d="M12 9.5v4.2"/><circle cx="12" cy="16.6" r="0.6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 2.8s6.5 7.6 6.5 12A6.5 6.5 0 0 1 5.5 14.8C5.5 10.4 12 2.8 12 2.8Z"/></symbol>
+  <symbol id="i-droplet-off" viewBox="0 0 24 24"><path d="M12 2.8s6.5 7.6 6.5 12A6.5 6.5 0 0 1 5.5 14.8C5.5 10.4 12 2.8 12 2.8Z"/><path d="M8.3 13.6h7.4"/></symbol>
+  <symbol id="i-half-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.4 2.4 5-5.4"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 4.5 4 5.5 5 6.5 1-1 5-2 5-6.5M7 21c0-4.5 4-5.5 5-6.5 1 1 5 2 5 6.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 3.8 3.8 0 0 1 16.5 17H7Z"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h3.5l1.8-5 3 10 1.8-5H21"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="17" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5.5L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3"/><path d="M8 14h8"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></symbol>
+  <symbol id="i-sun-low" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 4v1.6M12 18.4V20M4 12h1.6M18.4 12H20"/></symbol>
+  <symbol id="i-sun-high" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></symbol>
+  <symbol id="i-minus-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></symbol>
+  <symbol id="i-help-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.3 9.5a2.7 2.7 0 1 1 4 2.3c-.8.5-1.3.9-1.3 2"/><circle cx="12" cy="16.7" r="0.6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.5" y="10.5" width="13" height="9" rx="2"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6L12 3Z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8 3.5v3M16 3.5v3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3.5h3.2l1.3 4-2 1.6a12 12 0 0 0 5.4 5.4l1.6-2 4 1.3V17a2 2 0 0 1-2.2 2A16 16 0 0 1 4 5.7 2 2 0 0 1 6 3.5Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.3l3.5 2"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C11 4 5 10 5 17c0 1 .1 1.7.2 2 4-1 9-3.5 12-7.3M6 20c1-3 3-6.5 6-9"/></symbol>
+</svg>
+
+<div id="confettiLayer"></div>
+
+<div class="stage">
+  <div class="ambient"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-badge">Q</div>
+      <div class="brand-name"><b>QUOTIENT</b> · by Shahima</div>
+    </div>
+    <div class="privacy-pill"><svg class="icon"><use href="#i-lock"/></svg>Private</div>
+  </div>
+
+  <div class="quotient-meter" id="meterWrap" style="display:none;">
+    <div class="qm-top">
+      <span class="qm-label">Your Skin Quotient</span>
+      <span class="qm-step" id="stepLabel">Q1 / 7</span>
+    </div>
+    <div class="qm-bar">
+      <div class="qm-seg oil" id="seg-oil"></div>
+      <div class="qm-seg dehydration" id="seg-dehydration"></div>
+      <div class="qm-seg sensitivity" id="seg-sensitivity"></div>
+      <div class="qm-seg sun" id="seg-sun"></div>
+    </div>
+    <div class="qm-equation" id="equationLine"><span class="tag">building your ratio…</span></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="screen active" id="screen-hero">
+    <div class="eyebrow"><svg class="icon" style="width:13px;height:13px;"><use href="#i-sparkle"/></svg>A 90-second skin equation</div>
+    <h1 class="hero-title">Every skin has a <em>quotient.</em><br>Yours hasn't been calculated yet.</h1>
+    <p class="hero-sub">Stop asking friends what serum to use. Answer a few honest questions, watch your ratio build in real time, and get a routine built around <strong>your</strong> numbers — not a generic skin type.</p>
+
+    <div class="hero-formula">
+      <div class="eq-line">Oil × Dehydration × Sensitivity × Sun</div>
+      <div class="eq-result">= your exact routine, not a guess</div>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-shield-check"/></svg></span><span>Personally reviewed by <b>Dr. Shahima's team</b> before it reaches you</span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-lock"/></svg></span><span>Your answers stay <b>private</b> — used only to build your routine</span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-leaf"/></svg></span><span>Recommendations grounded in <b>ingredients, not trends</b></span></div>
+    </div>
+
+    <div class="founder-card">
+      <div class="founder-avatar">S</div>
+      <div class="founder-text">
+        <div class="founder-name-row"><span class="founder-name">Dr. Shahima</span><svg class="icon"><use href="#i-check-circle"/></svg></div>
+        <div class="founder-cred">MBBS · Skincare specialist · @quotientofficial</div>
+        <div class="founder-quote">"Most 'oily skin' I see is actually dehydrated skin panicking. I built Quotient so you stop guessing and start treating the real thing."</div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p>"I'd bought four different serums before this. Turns out my skin wasn't oily, it was dehydrated pretending to be oily. Wild."</p>
+      <div class="who">Ananya R. — early user, Bengaluru</div>
+    </div>
+
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="startQuiz()">Calculate my Quotient <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="goTo('screen-result-direct')">I'd rather just book a consultation</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="screen-question">
+    <div class="q-kicker" id="qKicker">Skin type</div>
+    <h2 class="q-title" id="qTitle">How does your skin usually feel by midday?</h2>
+    <p class="q-hint" id="qHint">Pick the closest match — there's no wrong answer.</p>
+    <div class="options" id="qOptions"></div>
+    <div class="q-nav">
+      <button class="btn btn-secondary" onclick="prevQuestion()" aria-label="Back"><svg class="icon"><use href="#i-arrow-left"/></svg></button>
+      <button class="btn btn-primary" id="qNextBtn" onclick="nextQuestion()" disabled>Continue <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    </div>
+  </div>
+
+  <!-- LEAD -->
+  <div class="screen" id="screen-lead">
+    <div class="q-kicker">Almost at your ratio</div>
+    <h2 class="q-title">Where should we save your Quotient?</h2>
+    <p class="q-hint">Takes 5 seconds, no password needed.</p>
+    <div class="lead-card">
+      <input class="lead-field" type="text" placeholder="First name">
+      <input class="lead-field" type="tel" placeholder="Phone number">
+      <div class="lead-note"><svg class="icon"><use href="#i-lock"/></svg><span>We'll only text you your result and routine — no spam, unsubscribe anytime.</span></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="afterLead()">Save & continue <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="afterLead()">Skip for now</button>
+  </div>
+
+  <!-- FUN INTERSTITIAL -->
+  <div class="screen" id="screen-fun">
+    <div class="fun-badge"><svg class="icon"><use href="#i-sparkle"/></svg></div>
+    <div class="fun-title">POV: you own 6 serums and still don't know your skin type 💀</div>
+    <p class="fun-sub">Relatable. That's exactly the guessing game Quotient exists to end — 2 more questions and we've actually got you.</p>
+    <div class="fun-stat"><svg class="icon" style="width:15px;height:15px;"><use href="#i-target"/></svg>68% of quiz-takers had the wrong idea about their skin type</div>
+    <button class="btn btn-primary" style="max-width:260px;" onclick="afterFun()">Okay bet, continue <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <!-- ANALYZING -->
+  <div class="screen" id="screen-analyzing">
+    <div class="analyzing-ring">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="38" fill="none" stroke="var(--paper-deep)" stroke-width="6"/>
+        <circle cx="44" cy="44" r="38" fill="none" stroke="var(--teal-mid)" stroke-width="6" stroke-linecap="round" stroke-dasharray="90 150"/>
+      </svg>
+    </div>
+    <div class="analyzing-title">Calculating your Quotient</div>
+    <p class="analyzing-sub">Weighing your answers against Dr. Shahima's thresholds for oil, hydration, sensitivity and sun exposure.</p>
+    <div class="analyzing-list" id="analyzingList">
+      <div class="analyzing-step" data-i="0"><span class="dot"></span>Reading your answers</div>
+      <div class="analyzing-step" data-i="1"><span class="dot"></span>Weighting your ratio</div>
+      <div class="analyzing-step" data-i="2"><span class="dot"></span>Matching a routine template</div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="result-badge"><svg class="icon" style="width:12px;height:12px;"><use href="#i-check-circle"/></svg>Your result</div>
+
+    <div class="donut-block">
+      <div id="donutWrap"></div>
+      <div class="legend" id="legendWrap"></div>
+    </div>
+
+    <p class="result-desc" id="resultDesc">Your Quotient skews <strong>oily-dehydrated</strong> with mild sensitivity.</p>
+
+    <div class="routine-card">
+      <div class="routine-head">
+        <span class="lbl">Preview — AM routine</span>
+        <span class="derm-badge"><svg class="icon"><use href="#i-shield-check"/></svg>By Dr. Shahima</span>
+      </div>
+      <div class="routine-step">
+        <div class="routine-num">1</div>
+        <div><div class="t1">Gentle gel cleanser</div><div class="t2">Removes excess oil without stripping the barrier</div></div>
+      </div>
+      <div class="routine-step blurred">
+        <div class="routine-num">2</div>
+        <div><div class="t1">████████ serum, 2%</div><div class="t2">████████████████████████</div></div>
+      </div>
+      <div class="routine-step blurred">
+        <div class="routine-num">3</div>
+        <div><div class="t1">████████████ SPF 50</div><div class="t2">████████████████████████</div></div>
+      </div>
+    </div>
+
+    <p class="q-hint" style="margin-bottom:14px;">Two ways to unlock the full routine:</p>
+    <div class="path-choice">
+      <div class="path-card reco" onclick="goTo('screen-confirm-plan')">
+        <div class="path-tag">Recommended for your Quotient</div>
+        <div class="path-title-row"><div class="path-title">Get my routine now</div><svg class="icon"><use href="#i-sparkle"/></svg></div>
+        <div class="path-desc">Full AM/PM routine + product picks, reviewed by Dr. Shahima's team within 24 hrs. Adjust anytime as your skin changes.</div>
+        <div class="path-price">₹1,499 / month · async</div>
+      </div>
+      <div class="path-card" onclick="goTo('screen-confirm-call')">
+        <div class="path-tag">For complex or undecided cases</div>
+        <div class="path-title-row"><div class="path-title">Book a 1:1 video consult</div><svg class="icon"><use href="#i-phone"/></svg></div>
+        <div class="path-desc">30 min live with Dr. Shahima's team — no wrong answers, they'll ask the questions. Good for medical concerns, prior reactions, or wanting it explained face to face.</div>
+        <div class="path-price">₹999 · one-time, applied to your plan if you subscribe</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIRECT TO CALL -->
+  <div class="screen" id="screen-result-direct">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-phone"/></svg></div>
+    <h2 class="q-title">Let's find you a time</h2>
+    <p class="q-hint" style="margin-bottom:22px;">Since you're skipping the Quotient quiz, your consult will run a little longer (~40 min) so the team can build your profile live on the call.</p>
+    <div class="lead-card">
+      <input class="lead-field" type="text" placeholder="First name">
+      <input class="lead-field" type="tel" placeholder="Phone number">
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="goTo('screen-confirm-call')">See available times <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="goTo('screen-hero')">← Actually, let me take the quiz</button>
+  </div>
+
+  <!-- CONFIRM PLAN -->
+  <div class="screen" id="screen-confirm-plan">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
+    <h2 class="q-title">Your routine is being built</h2>
+    <p class="q-hint">Dr. Shahima's team reviews every Quotient before it's finalized — expect it on WhatsApp within 24 hours. You can still add a video consult later from your dashboard.</p>
+    <div class="spacer"></div>
+    <button class="btn btn-secondary" onclick="resetProto()">Restart prototype</button>
+  </div>
+
+  <!-- CONFIRM CALL -->
+  <div class="screen" id="screen-confirm-call">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-calendar"/></svg></div>
+    <h2 class="q-title">Pick a slot</h2>
+    <p class="q-hint" style="margin-bottom:16px;">Your Quotient answers are already attached — the team will have your profile before the call starts.</p>
+    <div class="options">
+      <div class="option"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Today, 6:30 PM</div><div class="t2">Priya M. · Skin consultant</div></div></div>
+      <div class="option"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Tomorrow, 11:00 AM</div><div class="t2">Dr. Shahima · Founder consult</div></div></div>
+      <div class="option"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Tomorrow, 7:00 PM</div><div class="t2">Priya M. · Skin consultant</div></div></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="resetProto()">Confirm booking <svg class="icon"><use href="#i-check"/></svg></button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { id:'skinFeel', kicker:'Skin type', title:'How does your skin usually feel by midday?',
+    hint:"Pick the closest match — there's no wrong answer.", multi:false,
+    options:[
+      {t1:'Shiny, especially T-zone', t2:'Oily', ic:'i-sparkle', w:{oil:3}},
+      {t1:'Tight or flaky', t2:'Dry', ic:'i-droplet-off', w:{dehydration:3}},
+      {t1:'Oily in some spots, dry in others', t2:'Combination', ic:'i-half-circle', w:{oil:2,dehydration:1}},
+      {t1:'Comfortable, not much changes', t2:'Normal', ic:'i-check-circle', w:{}},
+    ]},
+  { id:'topConcern', kicker:'Main concern', title:"What's bothering you most right now?",
+    hint:'Choose one — this becomes your headline concern.', multi:false,
+    options:[
+      {t1:'Acne & breakouts', t2:'', ic:'i-alert-triangle', w:{oil:2,sensitivity:1}},
+      {t1:'Dark spots & pigmentation', t2:'', ic:'i-target', w:{sun:2}},
+      {t1:'Fine lines & early aging', t2:'', ic:'i-hourglass', w:{dehydration:1}},
+      {t1:'Dullness & uneven tone', t2:'', ic:'i-cloud', w:{dehydration:2}},
+      {t1:'Redness & sensitivity', t2:'', ic:'i-pulse', w:{sensitivity:3}},
+    ]},
+  { id:'secondary', kicker:'Also going on', title:'Anything else on this list? (pick up to 3)',
+    hint:'Multi-select — tap all that apply.', multi:true, max:3,
+    options:[
+      {t1:'Large or visible pores', t2:'', ic:'i-grid', w:{oil:1}},
+      {t1:'Tanning easily', t2:'', ic:'i-sun-high', w:{sun:2}},
+      {t1:'Feels dehydrated even when oily', t2:'', ic:'i-droplet', w:{dehydration:2}},
+      {t1:'Reacts to new products often', t2:'', ic:'i-alert-triangle', w:{sensitivity:2}},
+      {t1:'None of these, just the main one', t2:'', ic:'i-minus-circle', w:{}},
+    ]},
+  { id:'routine', kicker:'Current routine', title:'What does your routine look like today?',
+    hint:'Be honest — this changes how aggressive we can start.', multi:false,
+    options:[
+      {t1:'Nothing consistent', t2:'Starting from zero', ic:'i-minus-circle', w:{sensitivity:1}},
+      {t1:'Cleanser + moisturizer only', t2:'', ic:'i-droplet', w:{}},
+      {t1:'3–5 products, some actives', t2:'', ic:'i-flask', w:{}},
+      {t1:'I already stack actives', t2:'Retinol, acids, vitamin C etc.', ic:'i-sparkle', w:{sensitivity:1}},
+    ]},
+  { id:'sun', kicker:'Sun exposure', title:'How much sun do you actually get in a day?',
+    hint:'Commute counts too, not just the beach.', multi:false,
+    options:[
+      {t1:'Mostly indoors / AC all day', t2:'', ic:'i-home', w:{sun:0}},
+      {t1:'Some outdoor commute or errands', t2:'', ic:'i-sun-low', w:{sun:2}},
+      {t1:'Outdoors most of the day', t2:'', ic:'i-sun-high', w:{sun:3}},
+    ]},
+  { id:'sensitivity', kicker:'Sensitivity', title:'How does your skin react to new products?',
+    hint:'This decides how gently we introduce actives.', multi:false,
+    options:[
+      {t1:'Never really reacts', t2:'', ic:'i-shield-check', w:{sensitivity:0}},
+      {t1:'Occasionally, mild', t2:'', ic:'i-shield', w:{sensitivity:2}},
+      {t1:'Easily irritated / reactive', t2:'', ic:'i-alert-triangle', w:{sensitivity:3}},
+    ]},
+  { id:'budget', kicker:'Budget', title:'Roughly what would you spend monthly on skincare?',
+    hint:'This shapes which routine we build first — nothing is locked in.', multi:false,
+    options:[
+      {t1:'₹800 – 1,500', t2:'', ic:'₹', w:{}},
+      {t1:'₹1,500 – 3,000', t2:'', ic:'₹₹', w:{}},
+      {t1:'₹3,000+', t2:'', ic:'₹₹₹', w:{}},
+      {t1:'Not sure yet', t2:'', ic:'i-help-circle', w:{}},
+    ]},
+];
+
+let qIndex = 0;
+let leadShownAfter = 3;
+let leadShown = false;
+let funShownAfter = 5;
+let funShown = false;
+let answers = {};
+let scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('meterWrap').style.display =
+    (id==='screen-question' || id==='screen-lead' || id==='screen-result') ? 'block' : 'none';
+  window.scrollTo(0,0);
+}
+
+function startQuiz(){
+  qIndex = 0; answers = {}; scores = {oil:0, dehydration:0, sensitivity:0, sun:0}; funShown = false;
+  renderQuestion();
+  goTo('screen-question');
+}
+
+function iconHtml(ic){
+  if(ic && ic.startsWith('i-')){
+    return `<span class="opt-ic-wrap"><svg class="icon"><use href="#${ic}"/></svg></span>`;
+  }
+  return `<span class="opt-ic-wrap opt-text-chip">${ic}</span>`;
+}
+
+function renderQuestion(){
+  const q = questions[qIndex];
+  document.getElementById('qKicker').textContent = q.kicker;
+  document.getElementById('qTitle').textContent = q.title;
+  document.getElementById('qHint').textContent = q.hint;
+  document.getElementById('stepLabel').textContent = `Q${qIndex+1} / ${questions.length}`;
+
+  const wrap = document.getElementById('qOptions');
+  wrap.innerHTML = '';
+  const selected = answers[q.id] || [];
+  q.options.forEach((o, i)=>{
+    const div = document.createElement('div');
+    div.className = 'option' + (q.multi?' multi':'') + (selected.includes(i)?' selected':'');
+    div.innerHTML = `${iconHtml(o.ic)}<div class="tx"><div class="t1">${o.t1}</div>${o.t2?`<div class="t2">${o.t2}</div>`:''}</div><div class="ck"></div>`;
+    div.onclick = ()=> selectOption(q, i);
+    wrap.appendChild(div);
+  });
+  updateNextBtn(q);
+  updateMeter();
+}
+
+function selectOption(q, i){
+  let sel = answers[q.id] || [];
+  if(q.multi){
+    if(sel.includes(i)){ sel = sel.filter(x=>x!==i); }
+    else{ if(sel.length >= (q.max||99)) return; sel.push(i); }
+  } else { sel = [i]; }
+  answers[q.id] = sel;
+  renderQuestion();
+}
+
+function updateNextBtn(q){
+  const sel = answers[q.id] || [];
+  document.getElementById('qNextBtn').disabled = sel.length===0;
+}
+
+function computeScores(){
+  scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
+  questions.forEach(q=>{
+    const sel = answers[q.id] || [];
+    sel.forEach(i=>{
+      const w = q.options[i].w || {};
+      Object.keys(w).forEach(k=> scores[k]+=w[k]);
+    });
+  });
+}
+
+function updateMeter(){
+  computeScores();
+  const dims = ['oil','dehydration','sensitivity','sun'];
+  const total = dims.reduce((s,k)=>s+scores[k],0) || 1;
+  dims.forEach(k=>{
+    document.getElementById('seg-'+k).style.width = ((scores[k]/total)*100) + '%';
+  });
+  const parts = dims.filter(k=>scores[k]>0).sort((a,b)=>scores[b]-scores[a]).map(k=> `${cap(k)} ${scores[k]}`);
+  const eq = document.getElementById('equationLine');
+  eq.innerHTML = parts.length ? `<span class="tag">so far →</span> ${parts.join(' · ')}` : `<span class="tag">building your ratio…</span>`;
+}
+
+function cap(s){ return {oil:'Oil',dehydration:'Dehydration',sensitivity:'Sensitivity',sun:'Sun'}[s]||s; }
+
+function nextQuestion(){
+  qIndex++;
+  if(qIndex === leadShownAfter && !leadShown){ leadShown = true; goTo('screen-lead'); return; }
+  if(qIndex === funShownAfter && !funShown){ funShown = true; goTo('screen-fun'); return; }
+  if(qIndex >= questions.length){ runAnalyzing(); return; }
+  renderQuestion();
+}
+
+function afterFun(){ renderQuestion(); goTo('screen-question'); }
+
+function afterLead(){ renderQuestion(); goTo('screen-question'); }
+
+function prevQuestion(){
+  if(qIndex===0){ goTo('screen-hero'); return; }
+  qIndex--; renderQuestion(); goTo('screen-question');
+}
+
+function runAnalyzing(){
+  goTo('screen-analyzing');
+  const steps = document.querySelectorAll('.analyzing-step');
+  steps.forEach(s=>s.classList.remove('done'));
+  let i = 0;
+  const iv = setInterval(()=>{
+    if(steps[i]) steps[i].classList.add('done');
+    i++;
+    if(i>=steps.length){ clearInterval(iv); setTimeout(showResult, 450); }
+  }, 420);
+}
+
+function buildDonut(){
+  const dims = ['oil','dehydration','sensitivity','sun'];
+  const colors = {oil:'#FFB020', dehydration:'#F0347D', sensitivity:'#0FA968', sun:'#17C77D'};
+  const names = {oil:'Oil',dehydration:'Dehydration',sensitivity:'Sensitivity',sun:'Sun exposure'};
+  const active = dims.filter(k=>scores[k]>0).sort((a,b)=>scores[b]-scores[a]);
+  const list = active.length ? active : ['oil'];
+  const total = list.reduce((s,k)=>s+(scores[k]||1),0) || 1;
+  const r=48, circ=2*Math.PI*r;
+  let offset=0, segs='';
+  list.forEach(k=>{
+    const val = scores[k]||1;
+    const frac = val/total;
+    const len = frac*circ - 2;
+    segs += `<circle cx="55" cy="55" r="${r}" fill="none" stroke="${colors[k]}" stroke-width="13" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 55 55)"/>`;
+    offset += frac*circ;
+  });
+  document.getElementById('donutWrap').innerHTML = `<svg width="110" height="110" viewBox="0 0 110 110">
+    <circle cx="55" cy="55" r="${r}" fill="none" stroke="var(--paper-deep)" stroke-width="13"/>
+    ${segs}
+  </svg>`;
+  document.getElementById('legendWrap').innerHTML = list.map(k=>{
+    const pct = Math.round(((scores[k]||1)/total)*100);
+    return `<div class="legend-row"><span class="legend-dot" style="background:${colors[k]}"></span><span class="legend-label">${names[k]}</span><span class="legend-pct">${pct}%</span></div>`;
+  }).join('');
+}
+
+function spawnConfetti(){
+  const layer = document.getElementById('confettiLayer');
+  const colors = ['#0FA968','#FF6FA5','#FFB020','#17C77D','#F0347D'];
+  for(let i=0;i<28;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const size = 6 + Math.random()*6;
+    el.style.left = (Math.random()*100) + 'vw';
+    el.style.width = size+'px';
+    el.style.height = (size*0.4)+'px';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration = (1.6 + Math.random()*1.2)+'s';
+    el.style.animationDelay = (Math.random()*0.3)+'s';
+    layer.appendChild(el);
+    setTimeout(()=>el.remove(), 3200);
+  }
+}
+
+function showResult(){
+  computeScores();
+  buildDonut();
+  const dims = ['oil','dehydration','sensitivity','sun'];
+  const sorted = dims.filter(k=>scores[k]>0).sort((a,b)=>scores[b]-scores[a]);
+  const primary = sorted[0] || 'oil';
+  const secondary = sorted[1];
+  const descMap = {
+    oil: "Your Quotient skews <strong>oil-dominant</strong> — the goal isn't to strip oil, it's to regulate it so your barrier stops overcompensating.",
+    dehydration: "Your Quotient skews <strong>dehydration-dominant</strong> — a very common but often mis-treated pattern. Most \"oily skin\" products will strip you further.",
+    sensitivity: "Your Quotient skews <strong>sensitivity-dominant</strong> — we'll build slowly, one active at a time, so nothing backfires.",
+    sun: "Your Quotient skews <strong>sun-exposure-dominant</strong> — pigmentation prevention matters more here than treatment.",
+  };
+  let desc = descMap[primary] || descMap.oil;
+  if(secondary){ desc += ` With a secondary ${cap(secondary).toLowerCase()} signal, your routine layers both.`; }
+  document.getElementById('resultDesc').innerHTML = desc;
+  goTo('screen-result');
+  spawnConfetti();
+}
+
+function resetProto(){ qIndex=0; answers={}; leadShown=false; funShown=false; goTo('screen-hero'); }
+</script>
+</body>
+</html>
