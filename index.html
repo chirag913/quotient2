@@ -15,8 +15,7 @@
     --ink-soft:#4B6158;
     --ink-faint:#8AA298;
 
-    /* Official Brand Guidelines Color */
-    --brand-lilac:#B2A2FF;
+    --brand-lilac:#B2A2FF; /*[span_0](start_span)[span_0](end_span) */
     --teal:#0FA968;
     --teal-mid:#17C77D;
     --teal-text:#0A7A4C;
@@ -37,58 +36,45 @@
     --radius-sm:14px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;}
+  
+  /* Allow normal document scrolling */
+  html{
+    margin:0;
+    padding:0;
+    background:var(--teal-mist);
+  }
   body{
+    margin:0;
+    padding:0;
     background:var(--teal-mist);
     color:var(--ink);
     font-family:'Inter',sans-serif;
     display:flex;
     justify-content:center;
-    align-items:center;
     min-height:100vh;
-    padding:20px 0;
   }
   ::selection{background:var(--rose); color:#fff;}
   :focus-visible{outline:3px solid var(--rose-deep); outline-offset:2px; border-radius:8px;}
 
-  /* Scrollable Device Shell (Prevents Mobile Cropping) */
+  /* Main wrapper */
   .device-frame{
     width:100%;
     max-width:440px;
-    min-height:92vh;
+    min-height:100vh;
     background:var(--paper);
     position:relative;
     display:flex;
     flex-direction:column;
-    border-radius:28px;
-    border:3px solid var(--line-strong);
-    box-shadow:8px 10px 0 var(--line-strong);
-    overflow-y:auto;
-    overflow-x:hidden;
-    -webkit-overflow-scrolling:touch;
+    border-left:3px solid var(--line-strong);
+    border-right:3px solid var(--line-strong);
+    box-shadow:8px 0 0 rgba(14,32,25,0.08);
   }
 
   @media (max-width: 480px){
-    body{
-      padding:0;
-      align-items:flex-start;
-    }
     .device-frame{
-      border-radius:0;
-      border:none;
+      border-left:none;
+      border-right:none;
       box-shadow:none;
-      min-height:100dvh;
-    }
-    .hero-title{
-      font-size:30px !important;
-      line-height:1.1 !important;
-    }
-    .hero-formula{
-      font-size:11.5px !important;
-      padding:12px 14px !important;
-    }
-    .founder-card{
-      padding:12px 14px !important;
     }
   }
 
@@ -97,35 +83,38 @@
   .ambient .b1{width:280px; height:280px; background:var(--teal-mist); top:-90px; right:-90px;}
   .ambient .b2{width:240px; height:240px; background:var(--brand-lilac); opacity:0.28; bottom:10%; left:-90px;}
 
-  /* Persistent Topbar */
+  /* Topbar with fully responsive logo */
   .topbar{
     position:sticky; top:0; z-index:40;
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 18px;
-    background:linear-gradient(var(--paper) 82%, transparent);
+    background:linear-gradient(var(--paper) 86%, rgba(244,251,246,0.6));
     backdrop-filter:blur(8px);
   }
-  .brand{display:flex; align-items:center; gap:8px; cursor:pointer;}
-  .brand-logo-svg{height:28px; width:auto; display:block;}
-  .by-tag{
-    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700;
-    color:var(--ink-soft); background:var(--paper-deep); padding:2px 7px;
-    border-radius:6px; border:1.5px solid var(--line-strong);
+  .brand{
+    display:flex; align-items:center; gap:8px; cursor:pointer; text-decoration:none;
   }
-  .top-actions{display:flex; align-items:center; gap:8px;}
+  .brand-logo-svg{
+    width:138px; height:32px; display:block;
+  }
+  .by-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700;
+    color:var(--ink-soft); background:var(--paper-deep); padding:2px 6px;
+    border-radius:6px; border:1.5px solid var(--line-strong); white-space:nowrap;
+  }
   .privacy-pill{
     display:flex; align-items:center; gap:5px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; color:var(--teal-text);
     background:var(--teal-mist-2); border:2px solid var(--line-strong); border-radius:20px;
-    padding:4px 9px; box-shadow:0 2px 0 var(--line-strong); cursor:pointer;
+    padding:4px 9px; box-shadow:0 2px 0 var(--line-strong);
   }
   .privacy-pill .icon{width:12px; height:12px;}
 
   /* Progress Meter */
   .quotient-meter{
-    padding:4px 20px 14px;
+    padding:4px 18px 14px;
     background:var(--paper);
-    position:sticky; top:56px; z-index:35;
+    position:sticky; top:60px; z-index:35;
     border-bottom:2.5px solid var(--line-strong);
   }
   .qm-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
@@ -140,43 +129,42 @@
   .qm-equation{margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; color:var(--ink); min-height:16px;}
   .qm-equation .tag{color:var(--ink-faint); font-weight:500;}
 
-  /* Screen Transitions & Scrolling Freedom */
+  /* Screens */
   .screen{
     position:relative; z-index:1;
-    flex:1 0 auto;
     display:none; flex-direction:column;
-    padding:18px 18px 44px;
-    animation:rise 0.35s cubic-bezier(.34,1.56,.64,1);
+    padding:16px 18px 90px; /* Generous bottom room for mobile buttons */
+    animation:rise 0.3s cubic-bezier(.34,1.56,.64,1);
   }
   .screen.active{display:flex;}
-  @keyframes rise{ from{opacity:0; transform:translateY(14px) scale(0.98);} to{opacity:1; transform:translateY(0) scale(1);} }
+  @keyframes rise{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);} }
 
   /* Hero Elements */
   .eyebrow{
     display:inline-flex; align-items:center; gap:8px;
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
     color:var(--ink); background:var(--teal-mist); border:2px solid var(--line-strong);
-    padding:6px 12px; border-radius:20px; margin-bottom:16px; width:fit-content;
+    padding:6px 12px; border-radius:20px; margin-bottom:14px; width:fit-content;
     box-shadow:var(--shadow-sm);
   }
   .hero-title{
     font-family:'Space Grotesk',sans-serif; font-weight:700;
-    font-size:35px; line-height:1.06; letter-spacing:-0.02em; margin:0 0 14px;
+    font-size:32px; line-height:1.1; letter-spacing:-0.02em; margin:0 0 14px;
   }
   .hero-title em{font-style:italic; font-weight:800; color:var(--teal-text);}
-  .hero-sub{font-size:14.5px; line-height:1.55; color:var(--ink-soft); margin-bottom:18px;}
+  .hero-sub{font-size:14px; line-height:1.55; color:var(--ink-soft); margin-bottom:18px;}
   .hero-sub strong{color:var(--ink); font-weight:700;}
 
   .hero-formula{
-    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600;
     background:var(--rose-deep); color:#FFE5EF;
-    padding:14px 16px; border-radius:16px; line-height:1.6; margin-bottom:20px;
+    padding:14px 15px; border-radius:16px; line-height:1.6; margin-bottom:18px;
     border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
   }
-  .hero-formula .eq-result{color:#fff; font-weight:800; display:block; margin-top:3px;}
+  .hero-formula .eq-result{color:#fff; font-weight:800; display:block; margin-top:4px;}
 
-  .trust-row{display:flex; flex-direction:column; gap:9px; margin-bottom:20px;}
-  .trust-item{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft);}
+  .trust-row{display:flex; flex-direction:column; gap:9px; margin-bottom:18px;}
+  .trust-item{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-soft);}
   .trust-item .ic-wrap{
     width:30px; height:30px; border-radius:8px; flex-shrink:0;
     background:var(--teal-mist-2); color:var(--teal-text); border:1.5px solid var(--line-strong);
@@ -188,23 +176,21 @@
   .founder-card{
     display:flex; align-items:center; gap:12px;
     background:var(--teal-mid); border:2.5px solid var(--line-strong); border-radius:var(--radius);
-    padding:14px 16px; margin-bottom:18px; box-shadow:var(--shadow-md);
+    padding:14px; margin-bottom:22px; box-shadow:var(--shadow-md);
   }
   .founder-avatar{
-    width:48px; height:48px; border-radius:50%; flex-shrink:0;
+    width:46px; height:46px; border-radius:50%; flex-shrink:0;
     background:var(--teal-mist); color:var(--teal-text);
     display:flex; align-items:center; justify-content:center;
     font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:18px;
     border:2px solid var(--line-strong);
   }
   .founder-text{flex:1;}
-  .founder-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; color:#fff;}
-  .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--paper-deep); margin-bottom:4px; font-weight:600;}
-  .founder-quote{font-size:12px; line-height:1.45; color:rgba(255,255,255,0.95);}
+  .founder-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px; color:#fff;}
+  .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--paper-deep); margin-bottom:4px; font-weight:600;}
+  .founder-quote{font-size:11.5px; line-height:1.45; color:rgba(255,255,255,0.95);}
 
-  .spacer{flex:1; min-height:16px;}
-
-  /* Tactile Neo-Brutalist Buttons */
+  /* Buttons */
   .btn{
     display:flex; align-items:center; justify-content:center; gap:8px;
     width:100%; padding:15px 18px; border-radius:15px; border:2.5px solid var(--line-strong);
@@ -218,44 +204,44 @@
   .btn-ghost{
     background:none; border:none; color:var(--ink-soft);
     font-size:13px; text-decoration:underline; text-underline-offset:3px;
-    padding:10px; cursor:pointer; font-family:'Inter',sans-serif; width:100%; font-weight:600;
+    padding:12px; cursor:pointer; font-family:'Inter',sans-serif; width:100%; font-weight:600;
   }
 
-  /* Question Engine */
+  /* Questions */
   .q-kicker{
     display:inline-flex; align-items:center; gap:6px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
-    color:var(--rose-deep); margin-bottom:10px;
+    color:var(--rose-deep); margin-bottom:8px;
   }
-  .q-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:23px; line-height:1.2; margin:0 0 6px;}
-  .q-hint{font-size:13px; color:var(--ink-soft); margin:0 0 18px; line-height:1.45;}
+  .q-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px; line-height:1.2; margin:0 0 6px;}
+  .q-hint{font-size:13px; color:var(--ink-soft); margin:0 0 16px; line-height:1.45;}
 
-  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:16px;}
+  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:20px;}
   .option{
     display:flex; align-items:center; gap:12px;
-    padding:13px 14px; border:2.5px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:12px 14px; border:2.5px solid var(--line-strong); border-radius:var(--radius-sm);
     background:var(--card); cursor:pointer; text-align:left;
     transition:border-color 0.12s ease, background 0.12s ease, transform 0.16s cubic-bezier(.34,1.56,.64,1), box-shadow 0.12s ease;
   }
-  .option:active{transform:scale(0.96);}
+  .option:active{transform:scale(0.97);}
   .option.selected{border-color:var(--line-strong); background:var(--teal-mist-2); box-shadow:var(--shadow-sm); animation:pop 0.28s cubic-bezier(.34,1.56,.64,1);}
   @keyframes pop{ 0%{transform:scale(1);} 50%{transform:scale(1.03) rotate(0.4deg);} 100%{transform:scale(1);} }
   .opt-ic-wrap{
-    width:36px; height:36px; border-radius:9px; flex-shrink:0;
+    width:34px; height:34px; border-radius:9px; flex-shrink:0;
     background:var(--paper-deep); color:var(--ink-soft); border:1.5px solid var(--line-strong);
     display:flex; align-items:center; justify-content:center;
   }
   .opt-text-chip{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:800;}
   .option .tx{flex:1;}
-  .option .tx .t1{font-size:14px; font-weight:700; line-height:1.3;}
-  .option .tx .t2{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .option .tx .t1{font-size:13.5px; font-weight:700; line-height:1.3;}
+  .option .tx .t2{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
   .option .ck{width:20px; height:20px; border-radius:50%; border:2px solid var(--line-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
   .option.multi .ck{border-radius:6px;}
   .option.selected .opt-ic-wrap{background:var(--teal); color:#fff;}
   .option.selected .ck{background:var(--teal-text); border-color:var(--line-strong);}
   .option.selected .ck::after{content:''; width:8px; height:5px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(1px,-1px);}
 
-  .q-nav{display:flex; gap:10px; margin-top:auto; padding-top:10px;}
+  .q-nav{display:flex; gap:10px; margin-top:8px;}
   .q-nav .btn-secondary{flex:0 0 52px; padding:14px;}
   .q-nav .btn-primary{flex:1;}
   .btn-primary:disabled{opacity:0.4; pointer-events:none; box-shadow:none;}
@@ -263,26 +249,26 @@
   /* Interstitial Fun Screen */
   #screen-fun{align-items:center; text-align:center; justify-content:center;}
   .fun-badge{
-    width:72px; height:72px; border-radius:50%;
+    width:68px; height:68px; border-radius:50%;
     background:var(--rose); border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
-    display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
   }
-  .fun-badge .icon{width:32px; height:32px; color:#fff; stroke-width:2.4;}
-  .fun-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:22px; line-height:1.25; margin-bottom:10px;}
-  .fun-sub{font-size:13.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:20px; max-width:280px;}
+  .fun-badge .icon{width:30px; height:30px; color:#fff; stroke-width:2.4;}
+  .fun-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; line-height:1.25; margin-bottom:8px;}
+  .fun-sub{font-size:13px; color:var(--ink-soft); line-height:1.5; margin-bottom:18px; max-width:280px;}
   .fun-stat{
     display:inline-flex; align-items:center; gap:8px;
     background:var(--amber); border:2.5px solid var(--line-strong); border-radius:20px;
-    padding:7px 14px; font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11.5px;
+    padding:7px 14px; font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px;
     box-shadow:var(--shadow-sm); margin-bottom:24px;
   }
 
   /* Analyzing Simulator */
-  #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:0;}
-  .analyzing-ring{width:88px; height:88px; margin-bottom:22px; position:relative;}
+  #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:40px;}
+  .analyzing-ring{width:84px; height:84px; margin-bottom:20px; position:relative;}
   .analyzing-ring svg{animation:spin 1.4s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:22px; margin-bottom:6px;}
+  .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; margin-bottom:6px;}
   .analyzing-sub{font-size:13px; color:var(--ink-soft); line-height:1.45; max-width:270px;}
   .analyzing-list{margin-top:20px; display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
   .analyzing-step{display:flex; align-items:center; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint); opacity:0.4; font-weight:600;}
@@ -305,7 +291,7 @@
   .field-error{font-size:11px; color:var(--error); font-weight:600; margin-top:-8px; margin-bottom:10px; display:none;}
   .lead-field.is-invalid + .field-error{display:block;}
 
-  /* Result Screen Elements */
+  /* Result Screen */
   .result-badge{
     display:inline-flex; align-items:center; gap:6px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase;
@@ -317,8 +303,8 @@
     background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
     padding:16px; margin-bottom:14px; box-shadow:var(--shadow-sm);
   }
-  #donutWrap{flex-shrink:0; width:104px; height:104px;}
-  .legend{display:flex; flex-direction:column; gap:7px; flex:1;}
+  #donutWrap{flex-shrink:0; width:100px; height:100px;}
+  .legend{display:flex; flex-direction:column; gap:6px; flex:1;}
   .legend-row{display:flex; align-items:center; gap:8px; font-size:12px;}
   .legend-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0; border:1px solid var(--line-strong);}
   .legend-label{flex:1; color:var(--ink); font-weight:600;}
@@ -381,7 +367,7 @@
     100%{transform:translateY(110vh) rotate(540deg); opacity:0.9;}
   }
 
-  /* Admin CRM Screen */
+  /* Admin CRM Screen (Route-locked) */
   .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
   .admin-metrics{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
   .metric-box{
@@ -390,7 +376,7 @@
   }
   .metric-val{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:var(--teal-text);}
   .metric-label{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); text-transform:uppercase;}
-  .lead-list-wrap{flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:2px;}
+  .lead-list-wrap{display:flex; flex-direction:column; gap:10px;}
   .lead-entry{
     background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
     padding:12px 14px; box-shadow:var(--shadow-sm);
@@ -431,7 +417,7 @@
 <body>
 
 <svg style="display:none" aria-hidden="true">
-  <!-- Exact Geometric Wordmark from Skin Quotient Brand Guidelines[cite: 2, 3] -->
+  <!-- Exact Geometric Wordmark from Skin Quotient Brand Guidelines[span_1](start_span)[span_1](end_span)[span_2](start_span)[span_2](end_span) -->
   <symbol id="sq-logo" viewBox="0 0 200 48">
     <text x="0" y="27" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="28px" letter-spacing="-0.03em" fill="var(--ink)">sk</text>
     <g transform="translate(36, 6)">
@@ -443,7 +429,7 @@
     <text x="1" y="44" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="10.5px" letter-spacing="0.32em" fill="var(--ink)">QUOTIENT</text>
   </symbol>
 
-  <!-- Skin Quotient Division Glyph Icon[cite: 1, 3] -->
+  <!-- Skin Quotient Division Glyph Icon[span_3](start_span)[span_3](end_span)[span_4](start_span)[span_4](end_span) -->
   <symbol id="sq-icon" viewBox="0 0 24 24">
     <circle cx="12" cy="5" r="2.8" fill="currentColor"/>
     <rect x="3" y="10.5" width="18" height="3" rx="1.5" fill="currentColor"/>
@@ -483,15 +469,13 @@
 <div class="device-frame">
   <div class="ambient"><div class="blob b1"></div><div class="blob b2"></div></div>
 
-  <!-- PERSISTENT TOPBAR -->
+  <!-- PERSISTENT TOPBAR (Admin button removed) -->
   <div class="topbar">
-    <div class="brand" onclick="handleBrandClick()">
+    <div class="brand" onclick="resetProto()">
       <svg class="brand-logo-svg"><use href="#sq-logo"/></svg>
       <span class="by-tag">by Shahima</span>
     </div>
-    <div class="top-actions">
-      <div class="privacy-pill" onclick="promptAdmin()"><svg class="icon"><use href="#i-lock"/></svg>Admin</div>
-    </div>
+    <div class="privacy-pill"><svg class="icon"><use href="#i-lock"/></svg>Private</div>
   </div>
 
   <div class="quotient-meter" id="meterWrap" style="display:none;">
@@ -537,7 +521,6 @@
       </div>
     </div>
 
-    <div class="spacer"></div>
     <button class="btn btn-primary" onclick="startQuiz()">Calculate My Quotient <svg class="icon"><use href="#i-arrow-right"/></svg></button>
     <button class="btn-ghost" onclick="goTo('screen-result-direct')">Skip quiz & schedule 1:1 consult instead</button>
   </div>
@@ -566,7 +549,7 @@
   <!-- SCREEN 4: ANALYZING SIMULATION -->
   <div class="screen" id="screen-analyzing">
     <div class="analyzing-ring">
-      <svg width="88" height="88" viewBox="0 0 88 88">
+      <svg width="84" height="84" viewBox="0 0 88 88">
         <circle cx="44" cy="44" r="38" fill="none" stroke="var(--paper-deep)" stroke-width="7"/>
         <circle cx="44" cy="44" r="38" fill="none" stroke="var(--teal-mid)" stroke-width="7" stroke-linecap="round" stroke-dasharray="90 150"/>
       </svg>
@@ -598,7 +581,6 @@
       <label class="input-label" for="leadPhone">WhatsApp / Mobile (Optional)</label>
       <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
     </div>
-    <div class="spacer"></div>
     <button class="btn btn-primary" id="submitLeadBtn" onclick="submitLead()">Unlock My Report & Routine <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
@@ -646,11 +628,11 @@
     </div>
   </div>
 
-  <!-- SCREEN 7: ADMIN DASHBOARD (LEAD CRM) -->
+  <!-- SCREEN 7: ADMIN DASHBOARD (ACCESSIBLE ONLY VIA /admin or #admin) -->
   <div class="screen" id="screen-admin">
     <div class="admin-header">
       <h2 style="font-family:'Space Grotesk',sans-serif; margin:0; font-size:20px;">Lead Intelligence</h2>
-      <button class="btn-secondary" onclick="goTo('screen-hero')" style="padding:6px 12px; font-size:12px; width:auto;">Exit</button>
+      <button class="btn-secondary" onclick="window.location.hash=''; goTo('screen-hero')" style="padding:6px 12px; font-size:12px; width:auto;">Exit</button>
     </div>
 
     <div class="admin-metrics">
@@ -665,7 +647,7 @@
     </div>
 
     <div class="lead-list-wrap" id="leadListContainer">
-      <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet. Submit the quiz to see entries appear here.</p>
+      <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet.</p>
     </div>
   </div>
 
@@ -674,7 +656,6 @@
     <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
     <h2 class="q-title">Protocol in Motion</h2>
     <p class="q-hint">Dr. Shahima's clinical team has received your Quotient data. Your custom formulations, product recommendations, and PM titration schedule will arrive via email and WhatsApp within 24 hours.</p>
-    <div class="spacer"></div>
     <button class="btn btn-secondary" onclick="resetProto()">Return to Start</button>
   </div>
 
@@ -687,7 +668,6 @@
       <div class="option selected" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Today, 6:30 PM</div><div class="t2">Dr. Shahima's Clinical Team</div></div></div>
       <div class="option" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Tomorrow, 11:00 AM</div><div class="t2">Dr. Shahima · Senior Consult</div></div></div>
     </div>
-    <div class="spacer"></div>
     <button class="btn btn-primary" onclick="alert('Slot confirmed! Check your email for details.'); resetProto();">Confirm Booking <svg class="icon"><use href="#i-check"/></svg></button>
   </div>
 
@@ -704,8 +684,8 @@
       <label class="input-label">Phone Number</label>
       <input class="lead-field" id="directPhone" type="tel" placeholder="+91 98765 43210">
     </div>
-    <div class="spacer"></div>
     <button class="btn btn-primary" onclick="handleDirectBooking()">View Times <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="goTo('screen-hero')">← Take the 90-sec quiz instead</button>
   </div>
 
 </div>
@@ -722,15 +702,9 @@
 </div>
 
 <script>
-/* -------------------------------------------------------------
-   CONFIGURATION: PASTE YOUR APPS SCRIPT WEBHOOK URL HERE
-------------------------------------------------------------- */
-const BACKEND_WEBHOOK_URL = ""; // e.g. "https://script.google.com/macros/s/AKfycb.../exec"
+const BACKEND_WEBHOOK_URL = ""; 
 const ADMIN_PIN = "1234";
 
-/* -------------------------------------------------------------
-   QUIZ QUESTIONS & LOGIC
-------------------------------------------------------------- */
 const questions = [
   { id:'skinFeel', kicker:'Skin Barrier State', title:'How does your skin feel around midday?',
     hint:"Pick the closest match to your unwashed baseline.", multi:false,
@@ -830,7 +804,6 @@ let answers = {};
 let scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
 let funShown = false;
 let leadData = {name:'', email:'', phone:''};
-let brandClickCount = 0;
 
 function goTo(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -839,7 +812,7 @@ function goTo(id){
 
   const showMeter = (id === 'screen-question');
   document.getElementById('meterWrap').style.display = showMeter ? 'block' : 'none';
-  window.scrollTo(0,0);
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function startQuiz(){
@@ -850,9 +823,9 @@ function startQuiz(){
 
 function iconHtml(ic){
   if(ic && ic.startsWith('i-')){
-    return `<span class="opt-ic-wrap"><svg class="icon"><use href="#${ic}"/></svg></span>`;
+    return <span class="opt-ic-wrap"><svg class="icon"><use href="#${ic}"/></svg></span>;
   }
-  return `<span class="opt-ic-wrap opt-text-chip">${ic}</span>`;
+  return <span class="opt-ic-wrap opt-text-chip">${ic}</span>;
 }
 
 function renderQuestion(){
@@ -860,7 +833,7 @@ function renderQuestion(){
   document.getElementById('qKicker').textContent = q.kicker;
   document.getElementById('qTitle').textContent = q.title;
   document.getElementById('qHint').textContent = q.hint;
-  document.getElementById('stepLabel').textContent = `Q${qIndex+1} / ${questions.length}`;
+  document.getElementById('stepLabel').textContent = Q${qIndex+1} / ${questions.length};
 
   const wrap = document.getElementById('qOptions');
   wrap.innerHTML = '';
@@ -869,7 +842,7 @@ function renderQuestion(){
   q.options.forEach((o, i)=>{
     const div = document.createElement('div');
     div.className = 'option' + (q.multi ? ' multi' : '') + (selected.includes(i) ? ' selected' : '');
-    div.innerHTML = `${iconHtml(o.ic)}<div class="tx"><div class="t1">${o.t1}</div>${o.t2 ? `<div class="t2">${o.t2}</div>` : ''}</div><div class="ck"></div>`;
+    div.innerHTML = ${iconHtml(o.ic)}<div class="tx"><div class="t1">${o.t1}</div>${o.t2 ? `<div class="t2">${o.t2}</div> : ''}</div><div class="ck"></div>`;
     div.onclick = ()=> selectOption(q, i);
     wrap.appendChild(div);
   });
@@ -915,9 +888,9 @@ function updateMeter(){
   dims.forEach(k=>{
     document.getElementById('seg-'+k).style.width = ((scores[k]/total)*100) + '%';
   });
-  const parts = dims.filter(k => scores[k] > 0).sort((a,b) => scores[b] - scores[a]).map(k => `${cap(k)} ${scores[k]}`);
+  const parts = dims.filter(k => scores[k] > 0).sort((a,b) => scores[b] - scores[a]).map(k => ${cap(k)} ${scores[k]});
   const eq = document.getElementById('equationLine');
-  eq.innerHTML = parts.length ? `<span class="tag">Ratio:</span> ${parts.join(' · ')}` : `<span class="tag">building your ratio…</span>`;
+  eq.innerHTML = parts.length ? <span class="tag">Ratio:</span> ${parts.join(' · ')} : <span class="tag">building your ratio…</span>;
 }
 
 function cap(s){ return {oil:'Sebum',dehydration:'Hydration Deficit',sensitivity:'Reactivity',sun:'UV Burden'}[s] || s; }
@@ -963,9 +936,6 @@ function runAnalyzing(){
   }, 420);
 }
 
-/* -------------------------------------------------------------
-   DISPATCH PIPELINE & LOCAL CRM SYNC
-------------------------------------------------------------- */
 function validateEmail(email){
   return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 }
@@ -1022,12 +992,33 @@ function saveLocalLead(lead){
   localStorage.setItem('sq_leads', JSON.stringify(leads));
 }
 
+/* -------------------------------------------------------------
+   ADMIN PORTAL (Route-protected via /admin or #admin)
+------------------------------------------------------------- */
+function checkAdminRoute(){
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  if(path.endsWith('/admin') || hash === '#admin'){
+    const pin = prompt("Enter Admin PIN:");
+    if(pin === ADMIN_PIN){
+      renderAdminDashboard();
+      goTo('screen-admin');
+    } else {
+      alert("Unauthorized Access.");
+      window.location.hash = '';
+      goTo('screen-hero');
+    }
+  }
+}
+window.addEventListener('load', checkAdminRoute);
+window.addEventListener('hashchange', checkAdminRoute);
+
 function renderAdminDashboard(){
   let leads = JSON.parse(localStorage.getItem('sq_leads') || '[]');
   document.getElementById('totalLeadsCount').textContent = leads.length;
 
   if(leads.length === 0){
-    document.getElementById('leadListContainer').innerHTML = `<p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads captured yet.</p>`;
+    document.getElementById('leadListContainer').innerHTML = <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads captured yet.</p>;
     return;
   }
 
@@ -1052,25 +1043,6 @@ function renderAdminDashboard(){
   `).join('');
 }
 
-function promptAdmin(){
-  const pin = prompt("Enter Admin PIN:");
-  if(pin === ADMIN_PIN){
-    renderAdminDashboard();
-    goTo('screen-admin');
-  } else if (pin !== null) {
-    alert("Incorrect PIN.");
-  }
-}
-
-function handleBrandClick(){
-  brandClickCount++;
-  if(brandClickCount >= 3){
-    brandClickCount = 0;
-    promptAdmin();
-  }
-  setTimeout(() => brandClickCount = 0, 1200);
-}
-
 function handleDirectBooking(){
   const name = document.getElementById('directName').value.trim();
   const email = document.getElementById('directEmail').value.trim();
@@ -1093,9 +1065,6 @@ function handleDirectBooking(){
   goTo('screen-confirm-call');
 }
 
-/* -------------------------------------------------------------
-   RESULTS VISUALIZATION & MODAL
-------------------------------------------------------------- */
 function buildDonut(){
   const dims = ['oil','dehydration','sensitivity','sun'];
   const colors = {oil:'#FFB020', dehydration:'#F0347D', sensitivity:'#0FA968', sun:'#B2A2FF'};
@@ -1110,18 +1079,18 @@ function buildDonut(){
     const val = scores[k] || 1;
     const frac = val / total;
     const len = frac * circ - 2;
-    segs += `<circle cx="52" cy="52" r="${r}" fill="none" stroke="${colors[k]}" stroke-width="12" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 52 52)"/>`;
+    segs += <circle cx="50" cy="50" r="${r}" fill="none" stroke="${colors[k]}" stroke-width="12" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 50 50)"/>;
     offset += frac * circ;
   });
 
-  document.getElementById('donutWrap').innerHTML = `<svg width="104" height="104" viewBox="0 0 104 104">
-    <circle cx="52" cy="52" r="${r}" fill="none" stroke="var(--paper-deep)" stroke-width="12"/>
+  document.getElementById('donutWrap').innerHTML = `<svg width="100" height="100" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--paper-deep)" stroke-width="12"/>
     ${segs}
   </svg>`;
 
   document.getElementById('legendWrap').innerHTML = list.map(k=>{
     const pct = Math.round(((scores[k] || 1) / total) * 100);
-    return `<div class="legend-row"><span class="legend-dot" style="background:${colors[k]}"></span><span class="legend-label">${names[k]}</span><span class="legend-pct">${pct}%</span></div>`;
+    return <div class="legend-row"><span class="legend-dot" style="background:${colors[k]}"></span><span class="legend-label">${names[k]}</span><span class="legend-pct">${pct}%</span></div>;
   }).join('');
 }
 
@@ -1135,10 +1104,10 @@ function showResult(){
   const template = ROUTINE_TEMPLATES[primary] || ROUTINE_TEMPLATES.oil;
 
   if(leadData.name){
-    document.getElementById('userBadgeGreeting').textContent = `${leadData.name}'s Ratio`;
+    document.getElementById('userBadgeGreeting').textContent = ${leadData.name}'s Ratio;
   }
   if(leadData.email){
-    document.getElementById('reportDeliveryTarget').textContent = `Dispatched to ${leadData.email}`;
+    document.getElementById('reportDeliveryTarget').textContent = Dispatched to ${leadData.email};
   }
 
   document.getElementById('resultDesc').innerHTML = template.desc;
