@@ -15,7 +15,7 @@
     --ink-soft:#4B6158;
     --ink-faint:#8AA298;
 
-    --brand-lilac:#B2A2FF;
+    --brand-lilac:#B2A2FF; /*[cite: 3] */
     --teal:#0FA968;
     --teal-mid:#17C77D;
     --teal-text:#0A7A4C;
@@ -36,16 +36,17 @@
     --radius-sm:14px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;}
+  
+  html{
+    margin:0; padding:0; background:var(--teal-mist);
+  }
   body{
+    margin:0; padding:0;
     background:var(--teal-mist);
     color:var(--ink);
     font-family:'Inter',sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    display:flex; justify-content:center;
     min-height:100vh;
-    padding:20px 0;
   }
   ::selection{background:var(--rose); color:#fff;}
   :focus-visible{outline:3px solid var(--rose-deep); outline-offset:2px; border-radius:8px;}
@@ -53,20 +54,22 @@
   .device-frame{
     width:100%;
     max-width:440px;
-    min-height:92vh;
+    min-height:100vh;
     background:var(--paper);
     position:relative;
     display:flex;
     flex-direction:column;
-    border-radius:28px;
-    border:3px solid var(--line-strong);
-    box-shadow:8px 10px 0 var(--line-strong);
-    overflow:hidden;
+    border-left:3px solid var(--line-strong);
+    border-right:3px solid var(--line-strong);
+    box-shadow:8px 0 0 rgba(14,32,25,0.08);
   }
 
   @media (max-width: 480px){
-    body{padding:0;}
-    .device-frame{border-radius:0; border:none; box-shadow:none; min-height:100vh;}
+    .device-frame{
+      border-left:none;
+      border-right:none;
+      box-shadow:none;
+    }
   }
 
   .ambient{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
@@ -74,33 +77,46 @@
   .ambient .b1{width:280px; height:280px; background:var(--teal-mist); top:-90px; right:-90px;}
   .ambient .b2{width:240px; height:240px; background:var(--brand-lilac); opacity:0.28; bottom:10%; left:-90px;}
 
+  .icon{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px;
+    min-height:18px;
+    max-width:18px;
+    max-height:18px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    display:inline-block;
+    flex-shrink:0;
+  }
+
   .topbar{
     position:sticky; top:0; z-index:40;
     display:flex; align-items:center; justify-content:space-between;
-    padding:14px 18px;
-    background:linear-gradient(var(--paper) 82%, transparent);
+    padding:16px 20px;
+    background:linear-gradient(var(--paper) 86%, rgba(244,251,246,0.7));
     backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
   }
-  .brand{display:flex; align-items:center; gap:8px; cursor:pointer;}
-  .brand-logo-svg{height:28px; width:auto; display:block;}
+  .brand{
+    display:flex; align-items:center; gap:8px; cursor:pointer; text-decoration:none;
+  }
+  .brand-logo-svg{
+    width:142px; height:34px; display:block;
+  }
   .by-tag{
     font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700;
     color:var(--ink-soft); background:var(--paper-deep); padding:2px 7px;
-    border-radius:6px; border:1.5px solid var(--line-strong);
+    border-radius:6px; border:1.5px solid var(--line-strong); white-space:nowrap;
   }
-  .top-actions{display:flex; align-items:center; gap:8px;}
-  .privacy-pill{
-    display:flex; align-items:center; gap:5px;
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; color:var(--teal-text);
-    background:var(--teal-mist-2); border:2px solid var(--line-strong); border-radius:20px;
-    padding:4px 9px; box-shadow:0 2px 0 var(--line-strong); cursor:pointer;
-  }
-  .privacy-pill .icon{width:12px; height:12px;}
 
   .quotient-meter{
-    padding:4px 20px 14px;
+    padding:8px 20px 14px;
     background:var(--paper);
-    position:sticky; top:56px; z-index:35;
+    position:sticky; top:67px; z-index:35;
     border-bottom:2.5px solid var(--line-strong);
   }
   .qm-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
@@ -117,68 +133,65 @@
 
   .screen{
     position:relative; z-index:1;
-    flex:1; display:none; flex-direction:column;
-    padding:20px 20px 32px;
-    animation:rise 0.35s cubic-bezier(.34,1.56,.64,1);
+    display:none; flex-direction:column;
+    padding:20px 20px 80px;
+    animation:rise 0.3s cubic-bezier(.34,1.56,.64,1);
   }
   .screen.active{display:flex;}
-  @keyframes rise{ from{opacity:0; transform:translateY(14px) scale(0.98);} to{opacity:1; transform:translateY(0) scale(1);} }
+  @keyframes rise{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);} }
 
   .eyebrow{
     display:inline-flex; align-items:center; gap:8px;
-    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
     color:var(--ink); background:var(--teal-mist); border:2px solid var(--line-strong);
-    padding:6px 12px; border-radius:20px; margin-bottom:16px; width:fit-content;
+    padding:5px 12px; border-radius:20px; margin-bottom:14px; width:fit-content;
     box-shadow:var(--shadow-sm);
   }
   .hero-title{
     font-family:'Space Grotesk',sans-serif; font-weight:700;
-    font-size:35px; line-height:1.06; letter-spacing:-0.02em; margin:0 0 14px;
+    font-size:32px; line-height:1.1; letter-spacing:-0.02em; margin:0 0 14px;
   }
   .hero-title em{font-style:italic; font-weight:800; color:var(--teal-text);}
-  .hero-sub{font-size:14.5px; line-height:1.55; color:var(--ink-soft); margin-bottom:18px;}
+  .hero-sub{font-size:14.5px; line-height:1.55; color:var(--ink-soft); margin:0 0 18px;}
   .hero-sub strong{color:var(--ink); font-weight:700;}
 
   .hero-formula{
-    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600;
     background:var(--rose-deep); color:#FFE5EF;
-    padding:14px 16px; border-radius:16px; line-height:1.6; margin-bottom:20px;
+    padding:13px 15px; border-radius:15px; line-height:1.6; margin-bottom:18px;
     border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
   }
-  .hero-formula .eq-result{color:#fff; font-weight:800; display:block; margin-top:3px;}
+  .hero-formula .eq-result{color:#fff; font-weight:800; display:block; margin-top:4px;}
 
-  .trust-row{display:flex; flex-direction:column; gap:9px; margin-bottom:20px;}
-  .trust-item{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-soft);}
+  .trust-row{display:flex; flex-direction:column; gap:9px; margin-bottom:18px;}
+  .trust-item{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-soft);}
   .trust-item .ic-wrap{
     width:30px; height:30px; border-radius:8px; flex-shrink:0;
     background:var(--teal-mist-2); color:var(--teal-text); border:1.5px solid var(--line-strong);
     display:flex; align-items:center; justify-content:center;
   }
-  .trust-item .ic-wrap .icon{width:16px; height:16px;}
   .trust-item b{color:var(--ink); font-weight:700;}
 
   .founder-card{
     display:flex; align-items:center; gap:12px;
     background:var(--teal-mid); border:2.5px solid var(--line-strong); border-radius:var(--radius);
-    padding:14px 16px; margin-bottom:18px; box-shadow:var(--shadow-md);
+    padding:14px; margin-bottom:20px; box-shadow:var(--shadow-md);
   }
   .founder-avatar{
-    width:48px; height:48px; border-radius:50%; flex-shrink:0;
+    width:46px; height:46px; border-radius:50%; flex-shrink:0;
     background:var(--teal-mist); color:var(--teal-text);
     display:flex; align-items:center; justify-content:center;
     font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:18px;
     border:2px solid var(--line-strong);
   }
   .founder-text{flex:1;}
-  .founder-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; color:#fff;}
-  .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--paper-deep); margin-bottom:4px; font-weight:600;}
-  .founder-quote{font-size:12px; line-height:1.45; color:rgba(255,255,255,0.95);}
-
-  .spacer{flex:1;}
+  .founder-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px; color:#fff;}
+  .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--paper-deep); margin-bottom:3px; font-weight:600;}
+  .founder-quote{font-size:12px; line-height:1.4; color:rgba(255,255,255,0.95);}
 
   .btn{
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    width:100%; padding:15px 18px; border-radius:15px; border:2.5px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; min-height:52px; padding:14px 20px; border-radius:14px; border:2.5px solid var(--line-strong);
     font-family:'Inter',sans-serif; font-size:15px; font-weight:800; cursor:pointer;
     transition:transform 0.12s cubic-bezier(.34,1.56,.64,1), box-shadow 0.1s ease;
   }
@@ -189,68 +202,68 @@
   .btn-ghost{
     background:none; border:none; color:var(--ink-soft);
     font-size:13px; text-decoration:underline; text-underline-offset:3px;
-    padding:10px; cursor:pointer; font-family:'Inter',sans-serif; width:100%; font-weight:600;
+    padding:12px; cursor:pointer; font-family:'Inter',sans-serif; width:100%; font-weight:600; text-align:center;
   }
 
   .q-kicker{
     display:inline-flex; align-items:center; gap:6px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
-    color:var(--rose-deep); margin-bottom:10px;
+    color:var(--rose-deep); margin-bottom:8px;
   }
-  .q-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:23px; line-height:1.2; margin:0 0 6px;}
-  .q-hint{font-size:13px; color:var(--ink-soft); margin:0 0 18px; line-height:1.45;}
+  .q-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px; line-height:1.2; margin:0 0 6px;}
+  .q-hint{font-size:13px; color:var(--ink-soft); margin:0 0 16px; line-height:1.45;}
 
-  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:16px;}
+  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:20px;}
   .option{
     display:flex; align-items:center; gap:12px;
-    padding:13px 14px; border:2.5px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:12px 14px; border:2.5px solid var(--line-strong); border-radius:var(--radius-sm);
     background:var(--card); cursor:pointer; text-align:left;
     transition:border-color 0.12s ease, background 0.12s ease, transform 0.16s cubic-bezier(.34,1.56,.64,1), box-shadow 0.12s ease;
   }
-  .option:active{transform:scale(0.96);}
+  .option:active{transform:scale(0.97);}
   .option.selected{border-color:var(--line-strong); background:var(--teal-mist-2); box-shadow:var(--shadow-sm); animation:pop 0.28s cubic-bezier(.34,1.56,.64,1);}
   @keyframes pop{ 0%{transform:scale(1);} 50%{transform:scale(1.03) rotate(0.4deg);} 100%{transform:scale(1);} }
   .opt-ic-wrap{
-    width:36px; height:36px; border-radius:9px; flex-shrink:0;
+    width:34px; height:34px; border-radius:9px; flex-shrink:0;
     background:var(--paper-deep); color:var(--ink-soft); border:1.5px solid var(--line-strong);
     display:flex; align-items:center; justify-content:center;
   }
   .opt-text-chip{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:800;}
   .option .tx{flex:1;}
-  .option .tx .t1{font-size:14px; font-weight:700; line-height:1.3;}
-  .option .tx .t2{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .option .tx .t1{font-size:13.5px; font-weight:700; line-height:1.3;}
+  .option .tx .t2{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
   .option .ck{width:20px; height:20px; border-radius:50%; border:2px solid var(--line-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
   .option.multi .ck{border-radius:6px;}
   .option.selected .opt-ic-wrap{background:var(--teal); color:#fff;}
   .option.selected .ck{background:var(--teal-text); border-color:var(--line-strong);}
   .option.selected .ck::after{content:''; width:8px; height:5px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(1px,-1px);}
 
-  .q-nav{display:flex; gap:10px; margin-top:auto; padding-top:10px;}
+  .q-nav{display:flex; gap:10px; margin-top:8px;}
   .q-nav .btn-secondary{flex:0 0 52px; padding:14px;}
   .q-nav .btn-primary{flex:1;}
   .btn-primary:disabled{opacity:0.4; pointer-events:none; box-shadow:none;}
 
   #screen-fun{align-items:center; text-align:center; justify-content:center;}
   .fun-badge{
-    width:72px; height:72px; border-radius:50%;
+    width:68px; height:68px; border-radius:50%;
     background:var(--rose); border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
-    display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
   }
-  .fun-badge .icon{width:32px; height:32px; color:#fff; stroke-width:2.4;}
-  .fun-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:22px; line-height:1.25; margin-bottom:10px;}
-  .fun-sub{font-size:13.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:20px; max-width:280px;}
+  .fun-badge .icon{width:30px; height:30px; color:#fff; stroke-width:2.4;}
+  .fun-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; line-height:1.25; margin-bottom:8px;}
+  .fun-sub{font-size:13px; color:var(--ink-soft); line-height:1.5; margin-bottom:18px; max-width:280px;}
   .fun-stat{
     display:inline-flex; align-items:center; gap:8px;
     background:var(--amber); border:2.5px solid var(--line-strong); border-radius:20px;
-    padding:7px 14px; font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11.5px;
+    padding:7px 14px; font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px;
     box-shadow:var(--shadow-sm); margin-bottom:24px;
   }
 
-  #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:0;}
-  .analyzing-ring{width:88px; height:88px; margin-bottom:22px; position:relative;}
+  #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:40px;}
+  .analyzing-ring{width:84px; height:84px; margin-bottom:20px; position:relative;}
   .analyzing-ring svg{animation:spin 1.4s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
-  .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:22px; margin-bottom:6px;}
+  .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; margin-bottom:6px;}
   .analyzing-sub{font-size:13px; color:var(--ink-soft); line-height:1.45; max-width:270px;}
   .analyzing-list{margin-top:20px; display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
   .analyzing-step{display:flex; align-items:center; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint); opacity:0.4; font-weight:600;}
@@ -283,8 +296,8 @@
     background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
     padding:16px; margin-bottom:14px; box-shadow:var(--shadow-sm);
   }
-  #donutWrap{flex-shrink:0; width:104px; height:104px;}
-  .legend{display:flex; flex-direction:column; gap:7px; flex:1;}
+  #donutWrap{flex-shrink:0; width:100px; height:100px;}
+  .legend{display:flex; flex-direction:column; gap:6px; flex:1;}
   .legend-row{display:flex; align-items:center; gap:8px; font-size:12px;}
   .legend-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0; border:1px solid var(--line-strong);}
   .legend-label{flex:1; color:var(--ink); font-weight:600;}
@@ -300,7 +313,6 @@
   .routine-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
   .routine-head .lbl{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); font-weight:700;}
   .derm-badge{display:flex; align-items:center; gap:5px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--teal-text); background:var(--teal-mist-2); padding:4px 8px; border-radius:20px; border:1.5px solid var(--line-strong); font-weight:700;}
-  .derm-badge .icon{width:11px; height:11px;}
   
   .routine-step{display:flex; gap:11px; padding-bottom:12px; margin-bottom:12px; border-bottom:2px dashed var(--line-strong); position:relative;}
   .routine-step:last-child{border-bottom:none; margin-bottom:0; padding-bottom:0;}
@@ -347,31 +359,55 @@
     100%{transform:translateY(110vh) rotate(540deg); opacity:0.9;}
   }
 
-  /* Admin Dashboard Styles */
-  .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
-  .admin-metrics{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
+  /* Admin CRM Screen Styles */
+  #screen-admin{
+    padding-top:24px;
+  }
+  .admin-header{
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;
+  }
+  .admin-title{font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; margin:0;}
+  .admin-exit-btn{
+    background:var(--card); border:2px solid var(--line-strong); border-radius:10px;
+    padding:6px 14px; font-family:'Inter',sans-serif; font-weight:700; font-size:12px; cursor:pointer;
+    box-shadow:var(--shadow-sm);
+  }
+  .admin-exit-btn:active{transform:scale(0.96);}
+  
+  .admin-metrics{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:9px; margin-bottom:18px;
+  }
   .metric-box{
-    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
-    padding:12px; box-shadow:var(--shadow-sm);
+    background:var(--card); border:2px solid var(--line-strong); border-radius:14px;
+    padding:11px 12px; box-shadow:var(--shadow-sm);
   }
-  .metric-val{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:var(--teal-text);}
-  .metric-label{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); text-transform:uppercase;}
-  .lead-list-wrap{flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:2px;}
+  .metric-box.accent{background:var(--teal-mist-2); border-color:var(--teal-text);}
+  .metric-val{font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; color:var(--teal-text); line-height:1.15;}
+  .metric-label{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; margin-top:4px;}
+  
+  .lead-list-wrap{display:flex; flex-direction:column; gap:10px;}
   .lead-entry{
-    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
-    padding:12px 14px; box-shadow:var(--shadow-sm);
+    background:var(--card); border:2px solid var(--line-strong); border-radius:14px;
+    padding:13px 14px; box-shadow:var(--shadow-sm); position:relative;
   }
-  .lead-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;}
-  .lead-name{font-weight:700; font-size:14px;}
-  .lead-pill{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; padding:2px 6px; border-radius:12px; border:1px solid var(--line-strong);}
+  .lead-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding-right:26px;}
+  .lead-name{font-weight:700; font-size:14.5px;}
+  .lead-pill{font-family:'IBM Plex Mono',monospace; font-size:9px; font-weight:700; padding:2px 7px; border-radius:12px; border:1px solid var(--line-strong);}
   .lead-pill.oil{background:var(--amber); color:#000;}
   .lead-pill.dehydration{background:var(--rose-deep); color:#fff;}
   .lead-pill.sensitivity{background:var(--teal); color:#fff;}
   .lead-pill.sun{background:var(--brand-lilac); color:#000;}
-  .lead-meta{font-size:11.5px; color:var(--ink-soft); margin-bottom:2px;}
+  .lead-pill.consultation_skip{background:var(--paper-deep); color:var(--ink-soft);}
+  .lead-meta{font-size:12px; color:var(--ink-soft); margin-bottom:2px; display:flex; align-items:center; gap:6px;}
   .lead-date{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--ink-faint); margin-top:4px;}
+  .delete-lead-btn{
+    position:absolute; top:12px; right:12px; background:none; border:none; color:var(--error);
+    cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center;
+    opacity:0.75; transition:opacity 0.15s, transform 0.1s;
+  }
+  .delete-lead-btn:hover{opacity:1; transform:scale(1.15);}
 
-  /* Simulated Transactional Email Modal */
+  /* Modal */
   .email-preview-modal{
     position:fixed; inset:0; z-index:100; background:rgba(14,32,25,0.6);
     backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:16px;
@@ -391,12 +427,12 @@
   .email-body{padding:18px 16px; font-size:13px; line-height:1.6; color:#222;}
 
   .confirm-icon{width:56px; height:56px; border-radius:50%; background:var(--teal-text); border:2.5px solid var(--line-strong); display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:18px; box-shadow:var(--shadow-md);}
-  .confirm-icon .icon{width:26px; height:26px;}
 </style>
 </head>
 <body>
 
 <svg style="display:none" aria-hidden="true">
+  <!-- Exact Geometric Wordmark from Skin Quotient Brand Guidelines[cite: 2, 3] -->
   <symbol id="sq-logo" viewBox="0 0 200 48">
     <text x="0" y="27" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="28px" letter-spacing="-0.03em" fill="var(--ink)">sk</text>
     <g transform="translate(36, 6)">
@@ -408,6 +444,7 @@
     <text x="1" y="44" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="10.5px" letter-spacing="0.32em" fill="var(--ink)">QUOTIENT</text>
   </symbol>
 
+  <!-- Skin Quotient Division Glyph Icon[cite: 1, 3] -->
   <symbol id="sq-icon" viewBox="0 0 24 24">
     <circle cx="12" cy="5" r="2.8" fill="currentColor"/>
     <rect x="3" y="10.5" width="18" height="3" rx="1.5" fill="currentColor"/>
@@ -440,7 +477,7 @@
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C11 4 5 10 5 17c0 1 .1 1.7.2 2 4-1 9-3.5 12-7.3M6 20c1-3 3-6.5 6-9"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
 </svg>
 
 <div id="confettiLayer"></div>
@@ -449,14 +486,10 @@
   <div class="ambient"><div class="blob b1"></div><div class="blob b2"></div></div>
 
   <!-- PERSISTENT TOPBAR -->
-  <div class="topbar">
-    <!-- Click 3 times to open admin portal -->
-    <div class="brand" onclick="handleBrandClick()">
+  <div class="topbar" id="mainTopbar">
+    <div class="brand" onclick="resetProto()">
       <svg class="brand-logo-svg"><use href="#sq-logo"/></svg>
       <span class="by-tag">by Shahima</span>
-    </div>
-    <div class="top-actions">
-      <div class="privacy-pill" onclick="promptAdmin()"><svg class="icon"><use href="#i-lock"/></svg>Admin</div>
     </div>
   </div>
 
@@ -503,8 +536,10 @@
       </div>
     </div>
 
-    <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="startQuiz()">Calculate My Quotient <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn btn-primary" onclick="startQuiz()">
+      <span>Calculate My Quotient</span>
+      <svg class="icon"><use href="#i-arrow-right"/></svg>
+    </button>
     <button class="btn-ghost" onclick="goTo('screen-result-direct')">Skip quiz & schedule 1:1 consult instead</button>
   </div>
 
@@ -532,7 +567,7 @@
   <!-- SCREEN 4: ANALYZING SIMULATION -->
   <div class="screen" id="screen-analyzing">
     <div class="analyzing-ring">
-      <svg width="88" height="88" viewBox="0 0 88 88">
+      <svg width="84" height="84" viewBox="0 0 88 88">
         <circle cx="44" cy="44" r="38" fill="none" stroke="var(--paper-deep)" stroke-width="7"/>
         <circle cx="44" cy="44" r="38" fill="none" stroke="var(--teal-mid)" stroke-width="7" stroke-linecap="round" stroke-dasharray="90 150"/>
       </svg>
@@ -564,7 +599,6 @@
       <label class="input-label" for="leadPhone">WhatsApp / Mobile (Optional)</label>
       <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
     </div>
-    <div class="spacer"></div>
     <button class="btn btn-primary" id="submitLeadBtn" onclick="submitLead()">Unlock My Report & Routine <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
@@ -581,7 +615,7 @@
 
     <div class="email-status-card">
       <div class="email-status-txt">
-        <svg class="icon" style="width:16px;height:16px;"><use href="#i-mail"/></svg>
+        <svg class="icon"><use href="#i-mail"/></svg>
         <span id="reportDeliveryTarget">Sent to your inbox</span>
       </div>
       <button onclick="openEmailPreview()" style="background:none; border:none; color:var(--teal-text); font-family:'IBM Plex Mono',monospace; font-size:11px; text-decoration:underline; cursor:pointer; font-weight:700;">View copy</button>
@@ -597,13 +631,13 @@
 
     <p class="q-hint" style="margin-bottom:12px;">Choose how Dr. Shahima's team fulfills your plan:</p>
     <div class="path-choice">
-      <div class="path-card reco" onclick="goTo('screen-confirm-plan')">
+      <div class="path-card reco" onclick="handleCustomerPurchase('plan', 1499)">
         <div class="path-tag">Recommended for your quotient</div>
         <div class="path-title-row"><div class="path-title">Full Active Protocol + Products</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
         <div class="path-desc">Unlocks exact brand names, formula concentrations, night retinol ramping, and WhatsApp check-ins.</div>
         <div class="path-price">₹1,499 / month · cancel anytime</div>
       </div>
-      <div class="path-card" onclick="goTo('screen-confirm-call')">
+      <div class="path-card" onclick="handleCustomerPurchase('consult', 999)">
         <div class="path-tag">For complex or active flare-ups</div>
         <div class="path-title-row"><div class="path-title">1:1 Video Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
         <div class="path-desc">30 min live with Dr. Shahima's team to address clinical acne, rosacea, or previous allergic reactions.</div>
@@ -612,27 +646,50 @@
     </div>
   </div>
 
-  <!-- SCREEN 7: ADMIN DASHBOARD (LEAD CRM) -->
+  <!-- SCREEN 7: ADMIN DASHBOARD (With Metrics & Delete Action) -->
   <div class="screen" id="screen-admin">
     <div class="admin-header">
-      <h2 style="font-family:'Space Grotesk',sans-serif; margin:0; font-size:20px;">Lead Intelligence</h2>
-      <button class="btn-secondary" onclick="goTo('screen-hero')" style="padding:6px 12px; font-size:12px; width:auto;">Exit</button>
+      <div>
+        <h2 class="admin-title">Lead Intelligence</h2>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft);">Real-Time Performance Dashboard</span>
+      </div>
+      <button class="admin-exit-btn" onclick="exitAdmin()">Exit</button>
     </div>
 
+    <!-- Live Business Intelligence Grid -->
     <div class="admin-metrics">
       <div class="metric-box">
-        <div class="metric-val" id="totalLeadsCount">0</div>
+        <div class="metric-val" id="metricTotalLeads">0</div>
         <div class="metric-label">Total Leads</div>
       </div>
       <div class="metric-box">
-        <div class="metric-val" id="topProfileType">-</div>
+        <div class="metric-val" id="metricDailyLeads">0</div>
+        <div class="metric-label">Daily Leads (Today)</div>
+      </div>
+      <div class="metric-box accent">
+        <div class="metric-val" id="metricRevenue">₹0</div>
+        <div class="metric-label">Pipeline Value</div>
+      </div>
+      <div class="metric-box accent">
+        <div class="metric-val" id="metricPaidCustomers">0</div>
+        <div class="metric-label">Converted Users</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="metricSiteVisits">0</div>
+        <div class="metric-label">Total Site Visits</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="metricTopQuotient" style="font-size:18px;">-</div>
         <div class="metric-label">Top Quotient</div>
       </div>
     </div>
 
-    <div class="lead-list-wrap" id="leadListContainer">
-      <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet. Submit the quiz to see entries appear here.</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--ink);">Captured Profiles</span>
+      <button onclick="clearAllLeads()" style="background:none; border:none; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--error); cursor:pointer; text-decoration:underline;">Clear All</button>
     </div>
+
+    <div class="lead-list-wrap" id="leadListContainer"></div>
   </div>
 
   <!-- SCREEN 8: CONFIRM PLAN -->
@@ -640,7 +697,6 @@
     <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
     <h2 class="q-title">Protocol in Motion</h2>
     <p class="q-hint">Dr. Shahima's clinical team has received your Quotient data. Your custom formulations, product recommendations, and PM titration schedule will arrive via email and WhatsApp within 24 hours.</p>
-    <div class="spacer"></div>
     <button class="btn btn-secondary" onclick="resetProto()">Return to Start</button>
   </div>
 
@@ -653,7 +709,6 @@
       <div class="option selected" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Today, 6:30 PM</div><div class="t2">Dr. Shahima's Clinical Team</div></div></div>
       <div class="option" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Tomorrow, 11:00 AM</div><div class="t2">Dr. Shahima · Senior Consult</div></div></div>
     </div>
-    <div class="spacer"></div>
     <button class="btn btn-primary" onclick="alert('Slot confirmed! Check your email for details.'); resetProto();">Confirm Booking <svg class="icon"><use href="#i-check"/></svg></button>
   </div>
 
@@ -670,8 +725,8 @@
       <label class="input-label">Phone Number</label>
       <input class="lead-field" id="directPhone" type="tel" placeholder="+91 98765 43210">
     </div>
-    <div class="spacer"></div>
     <button class="btn btn-primary" onclick="handleDirectBooking()">View Times <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="goTo('screen-hero')">← Take the 90-sec quiz instead</button>
   </div>
 
 </div>
@@ -688,15 +743,16 @@
 </div>
 
 <script>
-/* -------------------------------------------------------------
-   CONFIGURATION: PASTE YOUR APPS SCRIPT WEBHOOK URL HERE
-------------------------------------------------------------- */
-const BACKEND_WEBHOOK_URL = ""; // e.g. "https://script.google.com/macros/s/AKfycb.../exec"
+const BACKEND_WEBHOOK_URL = ""; 
 const ADMIN_PIN = "1234";
 
-/* -------------------------------------------------------------
-   QUIZ QUESTIONS & LOGIC
-------------------------------------------------------------- */
+// Track Visits Automatically
+(function trackSiteVisits(){
+  let visits = parseInt(localStorage.getItem('sq_site_visits') || '0', 10);
+  visits++;
+  localStorage.setItem('sq_site_visits', visits.toString());
+})();
+
 const questions = [
   { id:'skinFeel', kicker:'Skin Barrier State', title:'How does your skin feel around midday?',
     hint:"Pick the closest match to your unwashed baseline.", multi:false,
@@ -796,16 +852,20 @@ let answers = {};
 let scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
 let funShown = false;
 let leadData = {name:'', email:'', phone:''};
-let brandClickCount = 0;
+let currentLeadId = null;
 
 function goTo(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(id);
   if(target) target.classList.add('active');
 
+  // Fix: Completely hide Topbar and Meter on Admin Screen to avoid top-right clipping
+  const isSpecialScreen = (id === 'screen-admin');
+  document.getElementById('mainTopbar').style.display = isSpecialScreen ? 'none' : 'flex';
+
   const showMeter = (id === 'screen-question');
   document.getElementById('meterWrap').style.display = showMeter ? 'block' : 'none';
-  window.scrollTo(0,0);
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function startQuiz(){
@@ -929,9 +989,6 @@ function runAnalyzing(){
   }, 420);
 }
 
-/* -------------------------------------------------------------
-   DISPATCH PIPELINE & LOCAL CRM SYNC
-------------------------------------------------------------- */
 function validateEmail(email){
   return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 }
@@ -959,19 +1016,22 @@ function submitLead(){
   const dims = ['oil','dehydration','sensitivity','sun'];
   const sorted = dims.filter(k => scores[k] > 0).sort((a,b) => scores[b] - scores[a]);
   const primary = sorted[0] || 'oil';
+  currentLeadId = 'lead_' + Date.now();
 
   const payload = {
+    id: currentLeadId,
     timestamp: new Date().toLocaleString(),
+    dateRaw: new Date().toISOString(),
     user: leadData,
     scores: scores,
     answers: answers,
-    primaryProfile: primary
+    primaryProfile: primary,
+    paid: false,
+    amount: 0
   };
 
-  // 1. Save to local storage for instant Admin Dashboard preview
   saveLocalLead(payload);
 
-  // 2. Dispatch to your Google Apps Script endpoint (sends you an email + adds to sheet)
   if(BACKEND_WEBHOOK_URL){
     fetch(BACKEND_WEBHOOK_URL, {
       method: 'POST',
@@ -990,59 +1050,150 @@ function saveLocalLead(lead){
   localStorage.setItem('sq_leads', JSON.stringify(leads));
 }
 
+function handleCustomerPurchase(type, amount){
+  let leads = JSON.parse(localStorage.getItem('sq_leads') || '[]');
+  if(leads.length > 0 && currentLeadId){
+    let idx = leads.findIndex(l => l.id === currentLeadId);
+    if(idx !== -1){
+      leads[idx].paid = true;
+      leads[idx].amount = (leads[idx].amount || 0) + amount;
+      localStorage.setItem('sq_leads', JSON.stringify(leads));
+    }
+  }
+  goTo(type === 'plan' ? 'screen-confirm-plan' : 'screen-confirm-call');
+}
+
+/* -------------------------------------------------------------
+   ADMIN PORTAL (Metrics Engine & Delete Functionality)
+------------------------------------------------------------- */
+function checkAdminRoute(){
+  const path = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+  if(path.endsWith('/admin') || hash === '#admin'){
+    const pin = prompt("Enter Admin PIN:");
+    if(pin === ADMIN_PIN){
+      renderAdminDashboard();
+      goTo('screen-admin');
+    } else {
+      alert("Unauthorized Access.");
+      window.location.hash = '';
+      goTo('screen-hero');
+    }
+  }
+}
+window.addEventListener('load', checkAdminRoute);
+window.addEventListener('hashchange', checkAdminRoute);
+
+function exitAdmin(){
+  window.location.hash = '';
+  document.getElementById('mainTopbar').style.display = 'flex';
+  goTo('screen-hero');
+}
+
 function renderAdminDashboard(){
   let leads = JSON.parse(localStorage.getItem('sq_leads') || '[]');
-  document.getElementById('totalLeadsCount').textContent = leads.length;
+  let siteVisits = parseInt(localStorage.getItem('sq_site_visits') || '1', 10);
 
-  if(leads.length === 0){
-    document.getElementById('leadListContainer').innerHTML = `<p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads captured yet.</p>`;
-    return;
-  }
+  // 1. Total Leads
+  document.getElementById('metricTotalLeads').textContent = leads.length;
 
-  // Count top profile
-  const profileCounts = leads.reduce((acc, l) => {
+  // 2. Daily Leads (Today)
+  const todayStr = new Date().toDateString();
+  const dailyCount = leads.filter(l => {
+    return l.dateRaw ? new Date(l.dateRaw).toDateString() === todayStr : true;
+  }).length;
+  document.getElementById('metricDailyLeads').textContent = dailyCount;
+
+  // 3. Revenue & 4. Paid Customers
+  let revenue = 0;
+  let paidCount = 0;
+  leads.forEach(l => {
+    if(l.paid){
+      paidCount++;
+      revenue += (l.amount || 0);
+    }
+  });
+  document.getElementById('metricRevenue').textContent = '₹' + revenue.toLocaleString();
+  document.getElementById('metricPaidCustomers').textContent = paidCount;
+
+  // 5. Total Site Visits
+  document.getElementById('metricSiteVisits').textContent = siteVisits;
+
+  // 6. Top Quotient
+  const profileCounts = leads.filter(l => l.primaryProfile && l.primaryProfile !== 'consultation_skip').reduce((acc, l) => {
     acc[l.primaryProfile] = (acc[l.primaryProfile] || 0) + 1;
     return acc;
   }, {});
   const topProfile = Object.keys(profileCounts).sort((a,b) => profileCounts[b] - profileCounts[a])[0];
-  document.getElementById('topProfileType').textContent = topProfile.toUpperCase();
+  document.getElementById('metricTopQuotient').textContent = topProfile ? topProfile.toUpperCase() : '-';
 
+  // Lead List Rendering
   const container = document.getElementById('leadListContainer');
-  container.innerHTML = leads.map(l => `
+  if(leads.length === 0){
+    container.innerHTML = `<p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = leads.map((l, index) => `
     <div class="lead-entry">
+      <button class="delete-lead-btn" onclick="deleteLead(${index})" title="Delete Lead">
+        <svg class="icon"><use href="#i-trash"/></svg>
+      </button>
       <div class="lead-top">
-        <span class="lead-name">${l.user.name}</span>
-        <span class="lead-pill ${l.primaryProfile}">${l.primaryProfile.toUpperCase()}</span>
+        <span class="lead-name">${l.user.name || 'Anonymous'}</span>
+        <span class="lead-pill ${l.primaryProfile}">${(l.primaryProfile || 'LEAD').toUpperCase()}</span>
       </div>
-      <div class="lead-meta">✉️ ${l.user.email}</div>
+      <div class="lead-meta">✉️ ${l.user.email || 'N/A'}</div>
       <div class="lead-meta">📞 ${l.user.phone || 'No phone'}</div>
+      ${l.paid ? `<div style="font-size:11px; font-weight:700; color:var(--teal-text); margin-top:3px;">✓ Paid Customer (₹${l.amount})</div>` : ''}
       <div class="lead-date">${l.timestamp}</div>
     </div>
   `).join('');
 }
 
-function promptAdmin(){
-  const pin = prompt("Enter Admin PIN:");
-  if(pin === ADMIN_PIN){
+function deleteLead(index){
+  if(confirm("Are you sure you want to delete this lead?")){
+    let leads = JSON.parse(localStorage.getItem('sq_leads') || '[]');
+    leads.splice(index, 1);
+    localStorage.setItem('sq_leads', JSON.stringify(leads));
     renderAdminDashboard();
-    goTo('screen-admin');
-  } else if (pin !== null) {
-    alert("Incorrect PIN.");
   }
 }
 
-function handleBrandClick(){
-  brandClickCount++;
-  if(brandClickCount >= 3){
-    brandClickCount = 0;
-    promptAdmin();
+function clearAllLeads(){
+  if(confirm("Warning: This will permanently delete ALL captured leads. Continue?")){
+    localStorage.removeItem('sq_leads');
+    renderAdminDashboard();
   }
-  setTimeout(() => brandClickCount = 0, 1200);
 }
 
-/* -------------------------------------------------------------
-   RESULTS VISUALIZATION & MODAL
-------------------------------------------------------------- */
+function handleDirectBooking(){
+  const name = document.getElementById('directName').value.trim();
+  const email = document.getElementById('directEmail').value.trim();
+  const phone = document.getElementById('directPhone').value.trim();
+
+  if(!name || !email){
+    alert('Please enter your name and email to proceed.');
+    return;
+  }
+
+  leadData = {name, email, phone};
+  currentLeadId = 'lead_' + Date.now();
+  saveLocalLead({
+    id: currentLeadId,
+    timestamp: new Date().toLocaleString(),
+    dateRaw: new Date().toISOString(),
+    user: leadData,
+    scores: {},
+    answers: {},
+    primaryProfile: 'consultation_skip',
+    paid: false,
+    amount: 0
+  });
+
+  goTo('screen-confirm-call');
+}
+
 function buildDonut(){
   const dims = ['oil','dehydration','sensitivity','sun'];
   const colors = {oil:'#FFB020', dehydration:'#F0347D', sensitivity:'#0FA968', sun:'#B2A2FF'};
@@ -1057,12 +1208,12 @@ function buildDonut(){
     const val = scores[k] || 1;
     const frac = val / total;
     const len = frac * circ - 2;
-    segs += `<circle cx="52" cy="52" r="${r}" fill="none" stroke="${colors[k]}" stroke-width="12" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 52 52)"/>`;
+    segs += `<circle cx="50" cy="50" r="${r}" fill="none" stroke="${colors[k]}" stroke-width="12" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 50 50)"/>`;
     offset += frac * circ;
   });
 
-  document.getElementById('donutWrap').innerHTML = `<svg width="104" height="104" viewBox="0 0 104 104">
-    <circle cx="52" cy="52" r="${r}" fill="none" stroke="var(--paper-deep)" stroke-width="12"/>
+  document.getElementById('donutWrap').innerHTML = `<svg width="100" height="100" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--paper-deep)" stroke-width="12"/>
     ${segs}
   </svg>`;
 
