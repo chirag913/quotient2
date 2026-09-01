@@ -15,9 +15,8 @@
     --ink-soft:#4B6158;
     --ink-faint:#8AA298;
 
-    /* Official Brand Guidelines Color[cite: 3] */
+    /* Official Brand Guidelines Color */
     --brand-lilac:#B2A2FF;
-
     --teal:#0FA968;
     --teal-mid:#17C77D;
     --teal-text:#0A7A4C;
@@ -51,12 +50,8 @@
   }
   ::selection{background:var(--rose); color:#fff;}
   :focus-visible{outline:3px solid var(--rose-deep); outline-offset:2px; border-radius:8px;}
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
-  }
-  .icon{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; display:block;}
 
-  /* Outer Desktop Wrapper Device Frame */
+  /* Scrollable Device Shell (Prevents Mobile Cropping) */
   .device-frame{
     width:100%;
     max-width:440px;
@@ -68,12 +63,33 @@
     border-radius:28px;
     border:3px solid var(--line-strong);
     box-shadow:8px 10px 0 var(--line-strong);
-    overflow:hidden;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
   }
 
   @media (max-width: 480px){
-    body{padding:0;}
-    .device-frame{border-radius:0; border:none; box-shadow:none; min-height:100vh;}
+    body{
+      padding:0;
+      align-items:flex-start;
+    }
+    .device-frame{
+      border-radius:0;
+      border:none;
+      box-shadow:none;
+      min-height:100dvh;
+    }
+    .hero-title{
+      font-size:30px !important;
+      line-height:1.1 !important;
+    }
+    .hero-formula{
+      font-size:11.5px !important;
+      padding:12px 14px !important;
+    }
+    .founder-card{
+      padding:12px 14px !important;
+    }
   }
 
   .ambient{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
@@ -101,7 +117,7 @@
     display:flex; align-items:center; gap:5px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; color:var(--teal-text);
     background:var(--teal-mist-2); border:2px solid var(--line-strong); border-radius:20px;
-    padding:4px 9px; box-shadow:0 2px 0 var(--line-strong);
+    padding:4px 9px; box-shadow:0 2px 0 var(--line-strong); cursor:pointer;
   }
   .privacy-pill .icon{width:12px; height:12px;}
 
@@ -124,17 +140,18 @@
   .qm-equation{margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; color:var(--ink); min-height:16px;}
   .qm-equation .tag{color:var(--ink-faint); font-weight:500;}
 
-  /* Screen Transitions */
+  /* Screen Transitions & Scrolling Freedom */
   .screen{
     position:relative; z-index:1;
-    flex:1; display:none; flex-direction:column;
-    padding:20px 20px 32px;
+    flex:1 0 auto;
+    display:none; flex-direction:column;
+    padding:18px 18px 44px;
     animation:rise 0.35s cubic-bezier(.34,1.56,.64,1);
   }
   .screen.active{display:flex;}
   @keyframes rise{ from{opacity:0; transform:translateY(14px) scale(0.98);} to{opacity:1; transform:translateY(0) scale(1);} }
 
-  /* Hero Screen */
+  /* Hero Elements */
   .eyebrow{
     display:inline-flex; align-items:center; gap:8px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
@@ -185,7 +202,7 @@
   .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--paper-deep); margin-bottom:4px; font-weight:600;}
   .founder-quote{font-size:12px; line-height:1.45; color:rgba(255,255,255,0.95);}
 
-  .spacer{flex:1;}
+  .spacer{flex:1; min-height:16px;}
 
   /* Tactile Neo-Brutalist Buttons */
   .btn{
@@ -243,7 +260,7 @@
   .q-nav .btn-primary{flex:1;}
   .btn-primary:disabled{opacity:0.4; pointer-events:none; box-shadow:none;}
 
-  /* Interstitial */
+  /* Interstitial Fun Screen */
   #screen-fun{align-items:center; text-align:center; justify-content:center;}
   .fun-badge{
     width:72px; height:72px; border-radius:50%;
@@ -260,7 +277,7 @@
     box-shadow:var(--shadow-sm); margin-bottom:24px;
   }
 
-  /* Analyzing Screen */
+  /* Analyzing Simulator */
   #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:0;}
   .analyzing-ring{width:88px; height:88px; margin-bottom:22px; position:relative;}
   .analyzing-ring svg{animation:spin 1.4s linear infinite;}
@@ -272,7 +289,7 @@
   .analyzing-step.done{opacity:1; color:var(--teal-text);}
   .analyzing-step .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
 
-  /* Strategic Lead Gate (Unlocks Result) */
+  /* Strategic Lead Gate */
   .lead-card{
     background:var(--card); border:2.5px solid var(--line-strong);
     border-radius:var(--radius); padding:18px; margin-bottom:14px; box-shadow:var(--shadow-sm);
@@ -288,7 +305,7 @@
   .field-error{font-size:11px; color:var(--error); font-weight:600; margin-top:-8px; margin-bottom:10px; display:none;}
   .lead-field.is-invalid + .field-error{display:block;}
 
-  /* Result Screen */
+  /* Result Screen Elements */
   .result-badge{
     display:inline-flex; align-items:center; gap:6px;
     font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase;
@@ -364,6 +381,30 @@
     100%{transform:translateY(110vh) rotate(540deg); opacity:0.9;}
   }
 
+  /* Admin CRM Screen */
+  .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .admin-metrics{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
+  .metric-box{
+    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:12px; box-shadow:var(--shadow-sm);
+  }
+  .metric-val{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:var(--teal-text);}
+  .metric-label{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); text-transform:uppercase;}
+  .lead-list-wrap{flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:2px;}
+  .lead-entry{
+    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:12px 14px; box-shadow:var(--shadow-sm);
+  }
+  .lead-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;}
+  .lead-name{font-weight:700; font-size:14px;}
+  .lead-pill{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; padding:2px 6px; border-radius:12px; border:1px solid var(--line-strong);}
+  .lead-pill.oil{background:var(--amber); color:#000;}
+  .lead-pill.dehydration{background:var(--rose-deep); color:#fff;}
+  .lead-pill.sensitivity{background:var(--teal); color:#fff;}
+  .lead-pill.sun{background:var(--brand-lilac); color:#000;}
+  .lead-meta{font-size:11.5px; color:var(--ink-soft); margin-bottom:2px;}
+  .lead-date{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--ink-faint); margin-top:4px;}
+
   /* Simulated Transactional Email Modal */
   .email-preview-modal{
     position:fixed; inset:0; z-index:100; background:rgba(14,32,25,0.6);
@@ -389,7 +430,6 @@
 </head>
 <body>
 
-<!-- Master SVG Vector Store -->
 <svg style="display:none" aria-hidden="true">
   <!-- Exact Geometric Wordmark from Skin Quotient Brand Guidelines[cite: 2, 3] -->
   <symbol id="sq-logo" viewBox="0 0 200 48">
@@ -445,12 +485,12 @@
 
   <!-- PERSISTENT TOPBAR -->
   <div class="topbar">
-    <div class="brand" onclick="resetProto()">
+    <div class="brand" onclick="handleBrandClick()">
       <svg class="brand-logo-svg"><use href="#sq-logo"/></svg>
       <span class="by-tag">by Shahima</span>
     </div>
     <div class="top-actions">
-      <div class="privacy-pill"><svg class="icon"><use href="#i-lock"/></svg>Private</div>
+      <div class="privacy-pill" onclick="promptAdmin()"><svg class="icon"><use href="#i-lock"/></svg>Admin</div>
     </div>
   </div>
 
@@ -540,7 +580,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 5: STRATEGIC LEAD GATE (UNLOCKED AFTER WORK IS DONE) -->
+  <!-- SCREEN 5: STRATEGIC LEAD GATE -->
   <div class="screen" id="screen-lead">
     <div class="q-kicker">Your Ratio is Ready</div>
     <h2 class="q-title">Where should we deliver your clinical breakdown?</h2>
@@ -559,10 +599,10 @@
       <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
     </div>
     <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="submitLead()">Unlock My Report & Routine <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn btn-primary" id="submitLeadBtn" onclick="submitLead()">Unlock My Report & Routine <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
-  <!-- SCREEN 6: RESULTS & PERSONALIZED ROUTINE -->
+  <!-- SCREEN 6: RESULTS -->
   <div class="screen" id="screen-result">
     <div class="result-badge"><svg class="icon" style="width:12px;height:12px;"><use href="#i-check-circle"/></svg><span id="userBadgeGreeting">Your Quotient</span></div>
 
@@ -573,7 +613,6 @@
 
     <p class="result-desc" id="resultDesc">Analyzing results...</p>
 
-    <!-- Email Dispatch Indicator & Interactive Preview Trigger -->
     <div class="email-status-card">
       <div class="email-status-txt">
         <svg class="icon" style="width:16px;height:16px;"><use href="#i-mail"/></svg>
@@ -587,9 +626,7 @@
         <span class="lbl">Prescribed AM Protocol</span>
         <span class="derm-badge"><svg class="icon"><use href="#i-shield-check"/></svg>Reviewed by Dr. Shahima</span>
       </div>
-      <div id="routineList">
-        <!-- Dynamically injected via ROUTINE_TEMPLATES -->
-      </div>
+      <div id="routineList"></div>
     </div>
 
     <p class="q-hint" style="margin-bottom:12px;">Choose how Dr. Shahima's team fulfills your plan:</p>
@@ -609,25 +646,30 @@
     </div>
   </div>
 
-  <!-- DIRECT APPOINTMENT BOOKING SCREEN -->
-  <div class="screen" id="screen-result-direct">
-    <div class="confirm-icon"><svg class="icon"><use href="#i-phone"/></svg></div>
-    <h2 class="q-title">Schedule Clinical Video Consult</h2>
-    <p class="q-hint" style="margin-bottom:18px;">Skipping the quiz means our clinical fellow will build your Quotient live on video (~35 mins).</p>
-    <div class="lead-card">
-      <label class="input-label">Full Name</label>
-      <input class="lead-field" id="directName" type="text" placeholder="Your name">
-      <label class="input-label">Email Address</label>
-      <input class="lead-field" id="directEmail" type="email" placeholder="name@domain.com">
-      <label class="input-label">Phone Number</label>
-      <input class="lead-field" id="directPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
+  <!-- SCREEN 7: ADMIN DASHBOARD (LEAD CRM) -->
+  <div class="screen" id="screen-admin">
+    <div class="admin-header">
+      <h2 style="font-family:'Space Grotesk',sans-serif; margin:0; font-size:20px;">Lead Intelligence</h2>
+      <button class="btn-secondary" onclick="goTo('screen-hero')" style="padding:6px 12px; font-size:12px; width:auto;">Exit</button>
     </div>
-    <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="handleDirectBooking()">View Available Slots <svg class="icon"><use href="#i-arrow-right"/></svg></button>
-    <button class="btn-ghost" onclick="goTo('screen-hero')">← Take the 90-sec quiz instead</button>
+
+    <div class="admin-metrics">
+      <div class="metric-box">
+        <div class="metric-val" id="totalLeadsCount">0</div>
+        <div class="metric-label">Total Leads</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val" id="topProfileType">-</div>
+        <div class="metric-label">Top Quotient</div>
+      </div>
+    </div>
+
+    <div class="lead-list-wrap" id="leadListContainer">
+      <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet. Submit the quiz to see entries appear here.</p>
+    </div>
   </div>
 
-  <!-- CONFIRM PLAN SCREEN -->
+  <!-- SCREEN 8: CONFIRM PLAN -->
   <div class="screen" id="screen-confirm-plan">
     <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
     <h2 class="q-title">Protocol in Motion</h2>
@@ -636,7 +678,7 @@
     <button class="btn btn-secondary" onclick="resetProto()">Return to Start</button>
   </div>
 
-  <!-- CONFIRM CALL SCREEN -->
+  <!-- SCREEN 9: CONFIRM CALL -->
   <div class="screen" id="screen-confirm-call">
     <div class="confirm-icon"><svg class="icon"><use href="#i-calendar"/></svg></div>
     <h2 class="q-title">Select Time Slot</h2>
@@ -644,15 +686,31 @@
     <div class="options">
       <div class="option selected" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Today, 6:30 PM</div><div class="t2">Dr. Shahima's Clinical Team</div></div></div>
       <div class="option" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Tomorrow, 11:00 AM</div><div class="t2">Dr. Shahima · Senior Consult</div></div></div>
-      <div class="option" onclick="highlightSlot(this)"><span class="opt-ic-wrap"><svg class="icon"><use href="#i-clock"/></svg></span><div class="tx"><div class="t1">Tomorrow, 7:00 PM</div><div class="t2">Dr. Shahima's Clinical Team</div></div></div>
     </div>
     <div class="spacer"></div>
-    <button class="btn btn-primary" onclick="alert('Slot confirmed! Check your email for the Google Meet link.'); resetProto();">Confirm Booking <svg class="icon"><use href="#i-check"/></svg></button>
+    <button class="btn btn-primary" onclick="alert('Slot confirmed! Check your email for details.'); resetProto();">Confirm Booking <svg class="icon"><use href="#i-check"/></svg></button>
+  </div>
+
+  <!-- SCREEN 10: DIRECT BOOKING -->
+  <div class="screen" id="screen-result-direct">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-phone"/></svg></div>
+    <h2 class="q-title">Schedule Intake</h2>
+    <p class="q-hint" style="margin-bottom:18px;">Skipping the quiz means our clinical fellow will build your Quotient live on video.</p>
+    <div class="lead-card">
+      <label class="input-label">Full Name</label>
+      <input class="lead-field" id="directName" type="text" placeholder="Your name">
+      <label class="input-label">Email Address</label>
+      <input class="lead-field" id="directEmail" type="email" placeholder="name@domain.com">
+      <label class="input-label">Phone Number</label>
+      <input class="lead-field" id="directPhone" type="tel" placeholder="+91 98765 43210">
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" onclick="handleDirectBooking()">View Times <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
 </div>
 
-<!-- TRANSACTIONAL EMAIL PREVIEW MODAL -->
+<!-- TRANSACTIONAL EMAIL MODAL -->
 <div class="email-preview-modal" id="emailModal" onclick="closeEmailPreview(event)">
   <div class="email-box" onclick="event.stopPropagation()">
     <div class="email-box-header">
@@ -665,7 +723,13 @@
 
 <script>
 /* -------------------------------------------------------------
-   QUIZ ENGINE & WEIGHTED MATRIX
+   CONFIGURATION: PASTE YOUR APPS SCRIPT WEBHOOK URL HERE
+------------------------------------------------------------- */
+const BACKEND_WEBHOOK_URL = ""; // e.g. "https://script.google.com/macros/s/AKfycb.../exec"
+const ADMIN_PIN = "1234";
+
+/* -------------------------------------------------------------
+   QUIZ QUESTIONS & LOGIC
 ------------------------------------------------------------- */
 const questions = [
   { id:'skinFeel', kicker:'Skin Barrier State', title:'How does your skin feel around midday?',
@@ -726,9 +790,6 @@ const questions = [
     ]},
 ];
 
-/* -------------------------------------------------------------
-   DYNAMIC CLINICAL ARCHETYPES
-------------------------------------------------------------- */
 const ROUTINE_TEMPLATES = {
   oil: {
     title: "Sebum Dysregulation Profile",
@@ -764,18 +825,13 @@ const ROUTINE_TEMPLATES = {
   }
 };
 
-/* -------------------------------------------------------------
-   APPLICATION STATE
-------------------------------------------------------------- */
 let qIndex = 0;
 let answers = {};
 let scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
 let funShown = false;
 let leadData = {name:'', email:'', phone:''};
+let brandClickCount = 0;
 
-/* -------------------------------------------------------------
-   CORE NAVIGATION
-------------------------------------------------------------- */
 function goTo(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(id);
@@ -902,14 +958,13 @@ function runAnalyzing(){
     i++;
     if(i >= steps.length){ 
       clearInterval(iv); 
-      // User has invested time: gate the output behind lead capture
       setTimeout(() => goTo('screen-lead'), 350); 
     }
   }, 420);
 }
 
 /* -------------------------------------------------------------
-   LEAD CAPTURE & CRM DISPATCH
+   DISPATCH PIPELINE & LOCAL CRM SYNC
 ------------------------------------------------------------- */
 function validateEmail(email){
   return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
@@ -921,20 +976,11 @@ function submitLead(){
   const phoneInput = document.getElementById('leadPhone');
 
   let valid = true;
+  if(!nameInput.value.trim()){ nameInput.classList.add('is-invalid'); valid = false; }
+  else { nameInput.classList.remove('is-invalid'); }
 
-  if(!nameInput.value.trim()){
-    nameInput.classList.add('is-invalid');
-    valid = false;
-  } else {
-    nameInput.classList.remove('is-invalid');
-  }
-
-  if(!emailInput.value.trim() || !validateEmail(emailInput.value.trim())){
-    emailInput.classList.add('is-invalid');
-    valid = false;
-  } else {
-    emailInput.classList.remove('is-invalid');
-  }
+  if(!emailInput.value.trim() || !validateEmail(emailInput.value.trim())){ emailInput.classList.add('is-invalid'); valid = false; }
+  else { emailInput.classList.remove('is-invalid'); }
 
   if(!valid) return;
 
@@ -944,15 +990,85 @@ function submitLead(){
     phone: phoneInput.value.trim()
   };
 
-  dispatchLeadToBackend({
-    event: 'skin_quotient_completed',
+  const dims = ['oil','dehydration','sensitivity','sun'];
+  const sorted = dims.filter(k => scores[k] > 0).sort((a,b) => scores[b] - scores[a]);
+  const primary = sorted[0] || 'oil';
+
+  const payload = {
+    timestamp: new Date().toLocaleString(),
     user: leadData,
     scores: scores,
     answers: answers,
-    timestamp: new Date().toISOString()
-  });
+    primaryProfile: primary
+  };
+
+  saveLocalLead(payload);
+
+  if(BACKEND_WEBHOOK_URL){
+    fetch(BACKEND_WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    }).catch(err => console.warn('Sync notice:', err));
+  }
 
   showResult();
+}
+
+function saveLocalLead(lead){
+  let leads = JSON.parse(localStorage.getItem('sq_leads') || '[]');
+  leads.unshift(lead);
+  localStorage.setItem('sq_leads', JSON.stringify(leads));
+}
+
+function renderAdminDashboard(){
+  let leads = JSON.parse(localStorage.getItem('sq_leads') || '[]');
+  document.getElementById('totalLeadsCount').textContent = leads.length;
+
+  if(leads.length === 0){
+    document.getElementById('leadListContainer').innerHTML = `<p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads captured yet.</p>`;
+    return;
+  }
+
+  const profileCounts = leads.reduce((acc, l) => {
+    acc[l.primaryProfile] = (acc[l.primaryProfile] || 0) + 1;
+    return acc;
+  }, {});
+  const topProfile = Object.keys(profileCounts).sort((a,b) => profileCounts[b] - profileCounts[a])[0];
+  document.getElementById('topProfileType').textContent = topProfile ? topProfile.toUpperCase() : '-';
+
+  const container = document.getElementById('leadListContainer');
+  container.innerHTML = leads.map(l => `
+    <div class="lead-entry">
+      <div class="lead-top">
+        <span class="lead-name">${l.user.name}</span>
+        <span class="lead-pill ${l.primaryProfile}">${l.primaryProfile.toUpperCase()}</span>
+      </div>
+      <div class="lead-meta">✉️ ${l.user.email}</div>
+      <div class="lead-meta">📞 ${l.user.phone || 'No phone'}</div>
+      <div class="lead-date">${l.timestamp}</div>
+    </div>
+  `).join('');
+}
+
+function promptAdmin(){
+  const pin = prompt("Enter Admin PIN:");
+  if(pin === ADMIN_PIN){
+    renderAdminDashboard();
+    goTo('screen-admin');
+  } else if (pin !== null) {
+    alert("Incorrect PIN.");
+  }
+}
+
+function handleBrandClick(){
+  brandClickCount++;
+  if(brandClickCount >= 3){
+    brandClickCount = 0;
+    promptAdmin();
+  }
+  setTimeout(() => brandClickCount = 0, 1200);
 }
 
 function handleDirectBooking(){
@@ -966,29 +1082,19 @@ function handleDirectBooking(){
   }
 
   leadData = {name, email, phone};
-  dispatchLeadToBackend({
-    event: 'direct_consultation_request',
+  saveLocalLead({
+    timestamp: new Date().toLocaleString(),
     user: leadData,
-    timestamp: new Date().toISOString()
+    scores: {},
+    answers: {},
+    primaryProfile: 'consultation_skip'
   });
 
   goTo('screen-confirm-call');
 }
 
-function dispatchLeadToBackend(payload){
-  // Hook up your production CRM / Webhook here (Klaviyo, Make, Zapier, Supabase):
-  /*
-  fetch('https://api.yourbrand.com/v1/leads', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload)
-  });
-  */
-  console.log('Lead Dispatched to Backend:', payload);
-}
-
 /* -------------------------------------------------------------
-   DYNAMIC RESULTS & VISUALIZATIONS
+   RESULTS VISUALIZATION & MODAL
 ------------------------------------------------------------- */
 function buildDonut(){
   const dims = ['oil','dehydration','sensitivity','sun'];
@@ -1067,9 +1173,6 @@ function showResult(){
   spawnConfetti();
 }
 
-/* -------------------------------------------------------------
-   CONFETTI & TRANSACTIONAL EMAIL VIEWER
-------------------------------------------------------------- */
 function spawnConfetti(){
   const layer = document.getElementById('confettiLayer');
   const colors = ['#0FA968','#FF6FA5','#FFB020','#17C77D','#F0347D','#B2A2FF'];
