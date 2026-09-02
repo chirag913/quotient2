@@ -317,6 +317,17 @@
 
   .result-desc{font-size:13.5px; line-height:1.55; color:var(--ink-soft); margin-bottom:14px;}
   .result-desc strong{color:var(--ink);}
+  .result-explainer{
+    background:var(--teal-mist-2); border:2px solid var(--line-strong);
+    border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:14px;
+    box-shadow:var(--shadow-sm);
+  }
+  .result-explainer-title{
+    font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:800; margin-bottom:3px;
+  }
+  .result-explainer-copy{
+    font-size:12px; line-height:1.45; color:var(--ink-soft);
+  }
 
   .routine-card{
     background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
@@ -482,7 +493,7 @@
 
   <div class="quotient-meter" id="meterWrap" style="display:none;">
     <div class="qm-top">
-      <span class="qm-label">Skin Quotient Ratio</span>
+      <span class="qm-label">Your Skin Progress</span>
       <span class="qm-step" id="stepLabel">Q1 / 7</span>
     </div>
     <div class="qm-bar">
@@ -498,20 +509,20 @@
   <div class="screen active" id="screen-hero">
     <div class="eyebrow">
       <svg style="width:14px; height:14px; color:var(--rose-deep);"><use href="#sq-icon"/></svg>
-      <span>Clinical 90-Second Diagnostic</span>
+      <span>90-Second Skin Assessment</span>
     </div>
-    <h1 class="hero-title">Every skin has a <em>quotient.</em><br>Yours hasn't been calculated yet.</h1>
-    <p class="hero-sub">Stop buying serums based on hype. Answer honest questions, watch your ratio form in real time, and unlock a regimen built around <strong>your exact biological markers</strong>.</p>
+    <h1 class="hero-title">Think you know your skin type?<br><em>Let's actually find out.</em></h1>
+    <p class="hero-sub">Answer a few simple questions to discover what your skin may need right now — then get a personalized Skin Quotient and routine from Dr. Shahima's team.</p>
 
     <div class="hero-formula">
-      <div>Sebum × Transepidermal Water Deficit × Reactivity × UV Burden</div>
-      <span class="eq-result">= clinical precision, zero guessing</span>
+      <div>Oil Balance × Hydration × Sensitivity × Sun Exposure</div>
+      <span class="eq-result">= a clearer starting point for your routine</span>
     </div>
 
     <div class="trust-row">
-      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-shield-check"/></svg></span><span>Individually validated by <b>Dr. Shahima's clinical team</b></span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-shield-check"/></svg></span><span>Personalized with input from <b>Dr. Shahima's team</b></span></div>
       <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-lock"/></svg></span><span>Your responses remain <b>confidential & private</b></span></div>
-      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-leaf"/></svg></span><span>Formulations based on <b>active molecules, not trends</b></span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-leaf"/></svg></span><span>Recommendations focused on <b>your skin goals, not trends</b></span></div>
     </div>
 
     <div class="founder-card">
@@ -519,7 +530,7 @@
       <div class="founder-text">
         <div class="founder-name">Dr. Shahima</div>
         <div class="founder-cred">MBBS · Aesthetic Dermatologist</div>
-        <div class="founder-quote">"Most 'oily skin' I see is actually parched skin screaming for moisture. Quotient stops the guesswork."</div>
+        <div class="founder-quote">"Your skin can be oily and still need hydration. Let's figure out what it actually needs."</div>
       </div>
     </div>
 
@@ -546,10 +557,10 @@
   <!-- SCREEN 3: FUN INTERSTITIAL BREAK -->
   <div class="screen" id="screen-fun">
     <div class="fun-badge"><svg class="icon"><use href="#i-sparkle"/></svg></div>
-    <div class="fun-title">POV: you own 6 serums and still don't know your skin type 💀</div>
-    <p class="fun-sub">Relatable. That is precisely the guessing loop Quotient solves — 2 quick questions left to calibrate your active strengths.</p>
-    <div class="fun-stat"><svg class="icon" style="width:14px;height:14px;"><use href="#i-target"/></svg> 68% of people misdiagnose their own skin type</div>
-    <button class="btn btn-primary" style="max-width:260px;" onclick="afterFun()">Let's finish it <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <div class="fun-title">You're halfway there.</div>
+    <p class="fun-sub">A couple more questions and we'll have enough information to build your Skin Quotient.</p>
+    <div class="fun-stat"><svg class="icon" style="width:14px;height:14px;"><use href="#i-target"/></svg> Just 2 quick questions left</div>
+    <button class="btn btn-primary" style="max-width:260px;" onclick="afterFun()">Finish my assessment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
   <!-- SCREEN 4: ANALYZING SIMULATION -->
@@ -560,39 +571,39 @@
         <circle cx="44" cy="44" r="38" fill="none" stroke="var(--teal-mid)" stroke-width="7" stroke-linecap="round" stroke-dasharray="90 150"/>
       </svg>
     </div>
-    <div class="analyzing-title">Computing Quotient</div>
-    <p class="analyzing-sub">Synthesizing clinical ratios for barrier permeability, lipid balance, and photo-aging risk.</p>
+    <div class="analyzing-title">Building your Skin Quotient</div>
+    <p class="analyzing-sub">Looking at the patterns in your answers and building a personalized starting point.</p>
     <div class="analyzing-list" id="analyzingList">
-      <div class="analyzing-step" data-i="0"><span class="dot"></span>Mapping sebum production curve</div>
-      <div class="analyzing-step" data-i="1"><span class="dot"></span>Weighing trans-epidermal hydration deficit</div>
-      <div class="analyzing-step" data-i="2"><span class="dot"></span>Matching prescription actives stack</div>
+      <div class="analyzing-step" data-i="0"><span class="dot"></span>Checking oil & hydration</div>
+      <div class="analyzing-step" data-i="1"><span class="dot"></span>Looking at sensitivity & sun exposure</div>
+      <div class="analyzing-step" data-i="2"><span class="dot"></span>Matching your routine priorities</div>
     </div>
   </div>
 
   <!-- SCREEN 5: STRATEGIC LEAD GATE -->
   <div class="screen" id="screen-lead">
-    <div class="q-kicker">Your Ratio is Ready</div>
-    <h2 class="q-title">Where should we deliver your clinical breakdown?</h2>
-    <p class="q-hint">Unlock your live Skin Quotient report and exact active concentrations.</p>
+    <div class="q-kicker">Your Skin Quotient is Ready</div>
+    <h2 class="q-title">See what your skin needs next.</h2>
+    <p class="q-hint">Enter your details to unlock your personalized results and routine.</p>
     
     <div class="lead-card">
       <label class="input-label" for="leadName">Your Name</label>
       <input class="lead-field" id="leadName" type="text" placeholder="Alex / Priya ...">
       <div class="field-error" id="nameError">Please enter your name</div>
 
-      <label class="input-label" for="leadEmail">Email Address (for report delivery)</label>
+      <label class="input-label" for="leadEmail">Email Address</label>
       <input class="lead-field" id="leadEmail" type="email" placeholder="name@domain.com">
       <div class="field-error" id="emailError">Please enter a valid email address</div>
 
-      <label class="input-label" for="leadPhone">WhatsApp / Mobile (Optional)</label>
+      <label class="input-label" for="leadPhone">WhatsApp / Mobile</label>
       <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
     </div>
-    <button class="btn btn-primary" id="submitLeadBtn" onclick="submitLead()">Unlock My Report & Routine <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn btn-primary" id="submitLeadBtn" onclick="submitLead()">Show My Results <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
   <!-- SCREEN 6: RESULTS -->
   <div class="screen" id="screen-result">
-    <div class="result-badge"><svg class="icon" style="width:12px;height:12px;"><use href="#i-check-circle"/></svg><span id="userBadgeGreeting">Your Quotient</span></div>
+    <div class="result-badge"><svg class="icon" style="width:12px;height:12px;"><use href="#i-check-circle"/></svg><span id="userBadgeGreeting">Your Skin Quotient</span></div>
 
     <div class="donut-block">
       <div id="donutWrap"></div>
@@ -601,34 +612,44 @@
 
     <p class="result-desc" id="resultDesc">Analyzing results...</p>
 
+    <div class="result-explainer">
+      <div class="result-explainer-title">In simple terms</div>
+      <div class="result-explainer-copy">Your score highlights the areas worth focusing on first. It is a starting point for a more personalized routine — not a medical diagnosis.</div>
+    </div>
+
+    
+
     <div class="email-status-card">
       <div class="email-status-txt">
         <svg class="icon"><use href="#i-mail"/></svg>
-        <span id="reportDeliveryTarget">Sent to your inbox</span>
+        <span id="reportDeliveryTarget">Your results are ready</span>
       </div>
-      <button onclick="openEmailPreview()" style="background:none; border:none; color:var(--teal-text); font-family:'IBM Plex Mono',monospace; font-size:11px; text-decoration:underline; cursor:pointer; font-weight:700;">View copy</button>
+      <button onclick="openEmailPreview()" style="background:none; border:none; color:var(--teal-text); font-family:'IBM Plex Mono',monospace; font-size:11px; text-decoration:underline; cursor:pointer; font-weight:700;">Preview email</button>
     </div>
 
     <div class="routine-card">
       <div class="routine-head">
-        <span class="lbl">Prescribed AM Protocol</span>
-        <span class="derm-badge"><svg class="icon"><use href="#i-shield-check"/></svg>Reviewed by Dr. Shahima</span>
+        <span class="lbl">Your Recommended Routine</span>
+        <span class="derm-badge"><svg class="icon"><use href="#i-shield-check"/></svg>Team reviewed</span>
       </div>
       <div id="routineList"></div>
     </div>
 
-    <p class="q-hint" style="margin-bottom:12px;">Choose how Dr. Shahima's team fulfills your plan:</p>
+    <p style="font-size:10.5px; line-height:1.4; color:var(--ink-faint); margin:0 0 10px;">
+      Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis. If you have a persistent or severe skin condition, speak with a qualified clinician.
+    </p>
+    <p class="q-hint" style="margin-bottom:12px;">Ready to go further? Choose the level of support that fits you.</p>
     <div class="path-choice">
       <div class="path-card reco" onclick="goTo('screen-confirm-plan')">
-        <div class="path-tag">Recommended for your quotient</div>
-        <div class="path-title-row"><div class="path-title">Full Active Protocol + Products</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
-        <div class="path-desc">Unlocks exact brand names, formula concentrations, night retinol ramping, and WhatsApp check-ins.</div>
+        <div class="path-tag">Most popular</div>
+        <div class="path-title-row"><div class="path-title">Personalized Skin Plan</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
+        <div class="path-desc">Get your personalized product recommendations, routine steps and WhatsApp check-ins.</div>
         <div class="path-price">₹1,499 / month · cancel anytime</div>
       </div>
       <div class="path-card" onclick="goTo('screen-confirm-call')">
-        <div class="path-tag">For complex or active flare-ups</div>
-        <div class="path-title-row"><div class="path-title">1:1 Video Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
-        <div class="path-desc">30 min live with Dr. Shahima's team to address clinical acne, rosacea, or previous allergic reactions.</div>
+        <div class="path-tag">Want expert guidance?</div>
+        <div class="path-title-row"><div class="path-title">1:1 Skin Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
+        <div class="path-desc">30 minutes with Dr. Shahima's team to talk through your concerns and routine.</div>
         <div class="path-price">₹999 · credited to your plan if you join</div>
       </div>
     </div>
@@ -680,8 +701,8 @@
   <!-- SCREEN 10: DIRECT BOOKING -->
   <div class="screen" id="screen-result-direct">
     <div class="confirm-icon"><svg class="icon"><use href="#i-phone"/></svg></div>
-    <h2 class="q-title">Schedule Intake</h2>
-    <p class="q-hint" style="margin-bottom:18px;">Skipping the quiz means our clinical fellow will build your Quotient live on video.</p>
+    <h2 class="q-title">Book a 1:1 Skin Consultation</h2>
+    <p class="q-hint" style="margin-bottom:18px;">Prefer to talk to someone directly? Book a live consultation with Dr. Shahima's team.</p>
     <div class="lead-card">
       <label class="input-label">Full Name</label>
       <input class="lead-field" id="directName" type="text" placeholder="Your name">
@@ -712,92 +733,92 @@ const BACKEND_WEBHOOK_URL = "";
 const ADMIN_PIN = "1234";
 
 const questions = [
-  { id:'skinFeel', kicker:'Skin Barrier State', title:'How does your skin feel around midday?',
-    hint:"Pick the closest match to your unwashed baseline.", multi:false,
+  { id:'skinFeel', kicker:'Your Skin', title:'How does your skin usually feel by midday?',
+    hint:"Pick the option that sounds most like your skin.", multi:false,
     options:[
-      {t1:'Noticeably slick, especially T-zone', t2:'Elevated Sebum', ic:'i-sparkle', w:{oil:3}},
-      {t1:'Tight, parched, or easily flaky', t2:'Depleted Lipids/Moisture', ic:'i-droplet-off', w:{dehydration:3}},
-      {t1:'Shiny T-zone, but cheeks feel tight', t2:'Combination Matrix', ic:'i-half-circle', w:{oil:2,dehydration:1}},
-      {t1:'Comfortable, balanced throughout', t2:'Equilibrium', ic:'i-check-circle', w:{}},
+      {t1:'Oily or shiny, especially around the T-zone', t2:'Often feels oily', ic:'i-sparkle', w:{oil:3}},
+      {t1:'Tight, dry, or flaky', t2:'Feels short on hydration', ic:'i-droplet-off', w:{dehydration:3}},
+      {t1:'Oily in some areas, dry in others', t2:'Mixed / combination', ic:'i-half-circle', w:{oil:2,dehydration:1}},
+      {t1:'Comfortable and balanced', t2:'Generally balanced', ic:'i-check-circle', w:{}},
     ]},
-  { id:'topConcern', kicker:'Primary Concern', title:"What is your #1 skincare goal right now?",
-    hint:'This defines the cornerstone active of your regimen.', multi:false,
+  { id:'topConcern', kicker:'Main Goal', title:"What is your #1 skincare goal right now?",
+    hint:'This helps us understand what matters most to you.', multi:false,
     options:[
-      {t1:'Clogging, blackheads & active breakouts', t2:'', ic:'i-alert-triangle', w:{oil:2,sensitivity:1}},
-      {t1:'Dark spots, acne marks & sun discoloration', t2:'', ic:'i-target', w:{sun:2}},
-      {t1:'Early expression lines & loss of elasticity', t2:'', ic:'i-hourglass', w:{dehydration:1}},
-      {t1:'Dullness, uneven texture & fatigue', t2:'', ic:'i-cloud', w:{dehydration:2}},
-      {t1:'Stinging, facial flushing & persistent redness', t2:'', ic:'i-pulse', w:{sensitivity:3}},
+      {t1:'Breakouts, blackheads & clogged pores', t2:'', ic:'i-alert-triangle', w:{oil:2,sensitivity:1}},
+      {t1:'Dark spots, acne marks & uneven tone', t2:'', ic:'i-target', w:{sun:2}},
+      {t1:'Fine lines & loss of firmness', t2:'', ic:'i-hourglass', w:{dehydration:1}},
+      {t1:'Dullness & uneven texture', t2:'', ic:'i-cloud', w:{dehydration:2}},
+      {t1:'Redness, stinging or easily irritated skin', t2:'', ic:'i-pulse', w:{sensitivity:3}},
     ]},
-  { id:'secondary', kicker:'Secondary Factors', title:'Do any of these apply to you? (Up to 3)',
-    hint:'Multi-select helps calibrate delivery vehicle gentleness.', multi:true, max:3,
+  { id:'secondary', kicker:'Anything Else?', title:'Does anything else sound familiar? (Choose up to 3)',
+    hint:'Choose anything else that sounds like your skin.', multi:true, max:3,
     options:[
-      {t1:'Enlarged or easily congested pores', t2:'', ic:'i-grid', w:{oil:1}},
-      {t1:'Tans rapidly after brief sun exposure', t2:'', ic:'i-sun-high', w:{sun:2}},
-      {t1:'Feels tight & parched despite looking oily', t2:'', ic:'i-droplet', w:{dehydration:2}},
-      {t1:'Skin reacts angrily when testing new products', t2:'', ic:'i-alert-triangle', w:{sensitivity:2}},
-      {t1:'None of these apply to me', t2:'', ic:'i-minus-circle', w:{}},
+      {t1:'My pores clog easily', t2:'', ic:'i-grid', w:{oil:1}},
+      {t1:'I tan quickly in the sun', t2:'', ic:'i-sun-high', w:{sun:2}},
+      {t1:'My skin feels dry even when it looks oily', t2:'', ic:'i-droplet', w:{dehydration:2}},
+      {t1:'New products often irritate my skin', t2:'', ic:'i-alert-triangle', w:{sensitivity:2}},
+      {t1:'None of these', t2:'', ic:'i-minus-circle', w:{}},
     ]},
-  { id:'routine', kicker:'Tolerance Baseline', title:'What is your current active skincare habit?',
-    hint:'Determines whether we prescribe beginner or clinical strengths.', multi:false,
+  { id:'routine', kicker:'Your Current Routine', title:'How much skincare are you currently using?',
+    hint:'This helps us understand your current routine.', multi:false,
     options:[
-      {t1:'Minimalist (Cleanser + Water only)', t2:'Zero active tolerance built', ic:'i-minus-circle', w:{sensitivity:1}},
-      {t1:'Base trio (Cleanser, Moisturizer, Sunscreen)', t2:'Stable baseline', ic:'i-droplet', w:{}},
-      {t1:'Intermediate (Niacinamide, AHA/BHA exfoliants)', t2:'Acid-conditioned', ic:'i-flask', w:{}},
-      {t1:'Advanced (Prescription Retinoids, Pure Vit C)', t2:'High resilience', ic:'i-sparkle', w:{sensitivity:1}},
+      {t1:'Very simple — cleanser / water', t2:'Few or no active products', ic:'i-minus-circle', w:{sensitivity:1}},
+      {t1:'Basics — cleanser, moisturizer & sunscreen', t2:'A simple routine', ic:'i-droplet', w:{}},
+      {t1:'I use serums or exfoliants', t2:'Some active ingredients', ic:'i-flask', w:{}},
+      {t1:'I use stronger active ingredients', t2:'More experienced with actives', ic:'i-sparkle', w:{sensitivity:1}},
     ]},
-  { id:'sun', kicker:'Phototype Exposure', title:'How much direct/ambient sun do you receive?',
-    hint:'Includes office windows and transit commuting.', multi:false,
+  { id:'sun', kicker:'Sun Exposure', title:'How much time do you spend outdoors most days?',
+    hint:'Think about your usual commute, errands and outdoor time.', multi:false,
     options:[
-      {t1:'Mostly indoor climate-controlled environment', t2:'<30 mins daily', ic:'i-home', w:{sun:0}},
-      {t1:'Moderate outdoor errands or daily commute', t2:'30–90 mins daily', ic:'i-sun-low', w:{sun:2}},
-      {t1:'High outdoor lifestyle or direct field work', t2:'2+ hours daily', ic:'i-sun-high', w:{sun:3}},
+      {t1:'Mostly indoors', t2:'<30 minutes a day', ic:'i-home', w:{sun:0}},
+      {t1:'Some outdoor time / daily commute', t2:'30–90 minutes a day', ic:'i-sun-low', w:{sun:2}},
+      {t1:'A lot of outdoor time', t2:'2+ hours a day', ic:'i-sun-high', w:{sun:3}},
     ]},
-  { id:'sensitivity', kicker:'Reactivity Threshold', title:'How reactive is your barrier to active ingredients?',
-    hint:'Decides our buffer carrier and titration schedule.', multi:false,
+  { id:'sensitivity', kicker:'Skin Sensitivity', title:'How does your skin react to new skincare?',
+    hint:'Pick the closest match.', multi:false,
     options:[
-      {t1:'Resilient — rarely stings or turns pink', t2:'', ic:'i-shield-check', w:{sensitivity:0}},
-      {t1:'Occasional warmth or transient redness', t2:'', ic:'i-shield-check', w:{sensitivity:2}},
-      {t1:'Hyper-reactive — easily burns, peels, or rashes', t2:'', ic:'i-alert-triangle', w:{sensitivity:3}},
+      {t1:'Usually fine — rarely stings or turns red', t2:'', ic:'i-shield-check', w:{sensitivity:0}},
+      {t1:'Sometimes stings, feels warm or gets red', t2:'', ic:'i-shield-check', w:{sensitivity:2}},
+      {t1:'Often burns, peels or gets very irritated', t2:'', ic:'i-alert-triangle', w:{sensitivity:3}},
     ]},
-  { id:'budget', kicker:'Investment Preference', title:'Monthly skincare budget preference?',
-    hint:'Allows us to recommend effective pharmacy staples vs specialized actives.', multi:false,
+  { id:'budget', kicker:'Budget', title:'How much would you like to spend on skincare each month?',
+    hint:'This helps us keep recommendations realistic for you.', multi:false,
     options:[
-      {t1:'₹800 – ₹1,500', t2:'Pharmacy clinical staples', ic:'₹', w:{}},
-      {t1:'₹1,500 – ₹3,000', t2:'Targeted active serums & complexes', ic:'₹₹', w:{}},
-      {t1:'₹3,000+', t2:'High-concentration patented bio-actives', ic:'₹₹₹', w:{}},
-      {t1:'Not sure yet', t2:'', ic:'i-sparkle', w:{}},
+      {t1:'₹800 – ₹1,500', t2:'Simple, affordable options', ic:'₹', w:{}},
+      {t1:'₹1,500 – ₹3,000', t2:'Targeted skincare', ic:'₹₹', w:{}},
+      {t1:'₹3,000+', t2:'Premium / advanced skincare', ic:'₹₹₹', w:{}},
+      {t1:'I'm not sure yet', t2:'', ic:'i-sparkle', w:{}},
     ]},
 ];
 
 const ROUTINE_TEMPLATES = {
   oil: {
-    title: "Sebum Dysregulation Profile",
-    desc: "Your Quotient is <strong>sebum-dominant</strong>. The goal isn't to strip your barrier with aggressive foaming washes, but to normalize pore cellular turnover so sebum flows freely without oxidizing into blemishes.",
+    title: "Oil-Balance Focus",
+    desc: "Your answers suggest that <strong>oil control is one of your main priorities</strong>. The goal is to manage shine and clogged pores without making your skin feel stripped or uncomfortable.",
     amCleanser: "Salicylic Acid 1.5% + Zinc Amino Gel",
     activeTitle: "Niacinamide 5% + Zinc PCA 1%",
     activeDesc: "Contracts appearance of pores and reduces sebum lipid output.",
     sunscreen: "Ultra-Lightweight Matte Fluid SPF 50+ PA++++"
   },
   dehydration: {
-    title: "Transepidermal Water Deficit",
-    desc: "Your Quotient reveals a significant <strong>moisture deficit</strong>. Your sebaceous glands are over-firing as a compensation mechanism because the stratum corneum lacks cellular hydration.",
+    title: "Hydration Focus",
+    desc: "Your answers suggest that <strong>hydration is one of your main priorities</strong>. Your routine should focus on keeping skin comfortable and supported rather than piling on more strong actives.",
     amCleanser: "Colloidal Oat & Amino Acid Gentle Foam",
     activeTitle: "Multi-Molecular Hyaluronic Acid + Ectoin 2%",
     activeDesc: "Injects deep hydration and binds water inside epidermal layers.",
     sunscreen: "Hydra-Gel Essence Sunscreen SPF 50 PA++++"
   },
   sensitivity: {
-    title: "Compromised Neuro-Barrier",
-    desc: "Your Quotient reflects a <strong>hyper-reactive barrier</strong>. Conventional exfoliants and potent vitamin C will trigger localized inflammation unless buffered with lipid-repair ceramides.",
+    title: "Sensitivity Focus",
+    desc: "Your answers suggest that <strong>skin comfort and sensitivity are key priorities</strong>. A simpler, gentler routine may be a better starting point than adding lots of strong actives at once.",
     amCleanser: "Centella & Micro-Algae Non-Foaming Cleansing Milk",
     activeTitle: "Madecassoside 0.5% + Bifida Ferment Lysate",
     activeDesc: "Reinforces damaged tight junctions and calms histamine receptors.",
     sunscreen: "100% Non-Nano Mineral Physical Barrier SPF 50"
   },
   sun: {
-    title: "Photo-Oxidative Burden",
-    desc: "Your Quotient highlights high <strong>UV-induced cellular oxidation</strong>. Melanocytes are triggered beneath the surface, driving stubborn post-inflammatory hyperpigmentation.",
+    title: "Tone & Sun-Protection Focus",
+    desc: "Your answers suggest that <strong>uneven tone and sun exposure are important priorities</strong>. Consistent sun protection and a targeted routine can help you work toward a more even-looking complexion.",
     amCleanser: "Antioxidant Green Tea Gentle Clarifier",
     activeTitle: "3-O-Ethyl Ascorbic Acid 10% + Ferulic Acid",
     activeDesc: "Neutralizes reactive oxygen species and blocks tyrosinase darkening.",
@@ -899,10 +920,10 @@ function updateMeter(){
   });
   const parts = dims.filter(k => scores[k] > 0).sort((a,b) => scores[b] - scores[a]).map(k => `${cap(k)} ${scores[k]}`);
   const eq = document.getElementById('equationLine');
-  eq.innerHTML = parts.length ? `<span class="tag">Ratio:</span> ${parts.join(' · ')}` : `<span class="tag">building your ratio…</span>`;
+  eq.innerHTML = parts.length ? `<span class="tag">Looking at:</span> ${parts.join(' · ')}` : `<span class="tag">building your ratio…</span>`;
 }
 
-function cap(s){ return {oil:'Sebum',dehydration:'Hydration Deficit',sensitivity:'Reactivity',sun:'UV Burden'}[s] || s; }
+function cap(s){ return {oil:'Sebum',dehydration:'Hydration',sensitivity:'Reactivity',sun:'Sun Exposure'}[s] || s; }
 
 function nextQuestion(){
   qIndex++;
@@ -1074,7 +1095,7 @@ function handleDirectBooking(){
 function buildDonut(){
   const dims = ['oil','dehydration','sensitivity','sun'];
   const colors = {oil:'#FFB020', dehydration:'#F0347D', sensitivity:'#0FA968', sun:'#B2A2FF'};
-  const names = {oil:'Sebum Level',dehydration:'Hydration Deficit',sensitivity:'Reactivity',sun:'UV Burden'};
+  const names = {oil:'Sebum Level',dehydration:'Hydration',sensitivity:'Reactivity',sun:'Sun Exposure'};
   const active = dims.filter(k => scores[k] > 0).sort((a,b) => scores[b] - scores[a]);
   const list = active.length ? active : ['oil'];
   const total = list.reduce((s,k) => s + (scores[k] || 1), 0) || 1;
@@ -1110,7 +1131,7 @@ function showResult(){
   const template = ROUTINE_TEMPLATES[primary] || ROUTINE_TEMPLATES.oil;
 
   if(leadData.name){
-    document.getElementById('userBadgeGreeting').textContent = `${leadData.name}'s Ratio`;
+    document.getElementById('userBadgeGreeting').textContent = `${leadData.name}'s Skin Quotient`;
   }
   if(leadData.email){
     document.getElementById('reportDeliveryTarget').textContent = `Dispatched to ${leadData.email}`;
@@ -1123,7 +1144,7 @@ function showResult(){
       <div class="routine-num">1</div>
       <div>
         <div class="t1">${template.amCleanser}</div>
-        <div class="t2">Gentle clarification without stripping natural barrier ceramides.</div>
+        <div class="t2">A gentle first step that cleans without leaving skin feeling tight.</div>
       </div>
     </div>
     <div class="routine-step blurred">
@@ -1132,13 +1153,13 @@ function showResult(){
         <div class="t1">${template.activeTitle}</div>
         <div class="t2">${template.activeDesc}</div>
       </div>
-      <span class="blur-tag">Prescription Active</span>
+      <span class="blur-tag">Full plan</span>
     </div>
     <div class="routine-step">
       <div class="routine-num">3</div>
       <div>
         <div class="t1">${template.sunscreen}</div>
-        <div class="t2">Non-comedogenic photo-defense calibrated for your sebum profile.</div>
+        <div class="t2">Daily sun protection chosen to fit your skin profile.</div>
       </div>
     </div>
   `;
@@ -1176,18 +1197,18 @@ function openEmailPreview(){
     <div style="border-bottom:1px solid #ddd; padding-bottom:12px; margin-bottom:14px;">
       <p style="margin:0 0 3px; font-size:11px; color:#777;">To: <b>${leadData.email || 'user@example.com'}</b></p>
       <p style="margin:0; font-size:11px; color:#777;">From: <b>Dr. Shahima &lt;team@skinquotient.com&gt;</b></p>
-      <p style="margin:5px 0 0; font-weight:800; font-size:13px; color:#0E2019;">Subject: Your Skin Quotient Clinical Dossier [Unlocked]</p>
+      <p style="margin:5px 0 0; font-weight:800; font-size:13px; color:#0E2019;">Subject: Your Skin Quotient results are ready</p>
     </div>
     <p>Hi ${leadData.name || 'there'},</p>
-    <p>We've finished computing your Skin Quotient diagnostic algorithm:</p>
+    <p>We've finished reviewing your Skin Quotient answers:</p>
     <div style="background:#F4FBF6; border:2px solid #0E2019; border-radius:12px; padding:12px; margin:14px 0;">
-      <span style="font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px; color:#0A7A4C; text-transform:uppercase;">DIAGNOSTIC: ${primary.toUpperCase()} DOMINANT</span>
+      <span style="font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px; color:#0A7A4C; text-transform:uppercase;">YOUR MAIN FOCUS: ${primary.toUpperCase()}</span>
       <p style="margin:6px 0 0; font-size:12px; color:#333;">${template.desc}</p>
     </div>
-    <h4 style="margin:14px 0 6px; font-size:12.5px;">Your Prescribed Active Stack:</h4>
+    <h4 style="margin:14px 0 6px; font-size:12.5px;">Your starting routine:</h4>
     <ul style="padding-left:18px; margin:0 0 14px; font-size:12px; color:#333;">
       <li><b>AM Cleanse:</b> ${template.amCleanser}</li>
-      <li><b>AM Active:</b> ${template.activeTitle} (${template.activeDesc})</li>
+      <li><b>Treatment:</b> ${template.activeTitle} (${template.activeDesc})</li>
       <li><b>AM Defense:</b> ${template.sunscreen}</li>
     </ul>
     <p style="font-size:12px; color:#555; margin-bottom:0;">Warmly,<br><b>Dr. Shahima & Team</b></p>
