@@ -672,6 +672,90 @@ body.home-mode .home-benefits>div br{
   }
 }
 
+
+/* ===== NATURAL PORTRAIT BLEND =====
+   The source portrait contains a baked-in white/lavender rectangle.
+   Make it read as a soft editorial cutout instead of a placed image.
+*/
+#screen-hero{
+  isolation:isolate;
+}
+
+#screen-hero::before{
+  content:"";
+  position:absolute;
+  top:62px;
+  right:-12px;
+  width:58%;
+  height:390px;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 52% 38%,
+      rgba(216,206,255,.72) 0%,
+      rgba(231,224,255,.52) 42%,
+      rgba(248,246,255,0) 74%);
+  border-radius:58% 42% 48% 52% / 42% 48% 52% 58%;
+}
+
+#screen-hero .hero-portrait{
+  top:78px;
+  right:-12px;
+  width:56%;
+  height:390px;
+  z-index:1;
+  overflow:hidden;
+  background:transparent;
+  border-radius:0;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 9%, #000 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 4%, #000 92%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 9%, #000 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 4%, #000 92%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+#screen-hero .hero-portrait img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:58% 24%;
+  mix-blend-mode:multiply;
+  filter:saturate(.96) contrast(.98);
+}
+
+/* Keep text clearly in front, while the portrait stays visually behind it. */
+#screen-hero .hero-copy-wrap,
+#screen-hero .hero-formula,
+#screen-hero .trust-row,
+#screen-hero .founder-card,
+#screen-hero > .btn,
+#screen-hero > .btn-ghost{
+  position:relative;
+}
+
+#screen-hero .hero-copy-wrap{z-index:3;}
+#screen-hero .hero-formula,
+#screen-hero .trust-row,
+#screen-hero .founder-card,
+#screen-hero > .btn,
+#screen-hero > .btn-ghost{z-index:4;}
+
+@media(max-width:370px){
+  #screen-hero::before{
+    width:60%;
+    height:350px;
+    top:66px;
+  }
+  #screen-hero .hero-portrait{
+    width:57%;
+    height:350px;
+    top:82px;
+  }
+}
+
 </style>
 </head>
 <body>
