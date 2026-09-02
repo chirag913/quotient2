@@ -437,12 +437,119 @@
 
   .confirm-icon{width:56px; height:56px; border-radius:50%; background:var(--teal-text); border:2.5px solid var(--line-strong); display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:18px; box-shadow:var(--shadow-md);}
 
-  .sq-footer{position:relative;z-index:2;margin:0 20px 20px;padding:18px 0 24px;border-top:2px solid var(--line-strong);text-align:center;color:var(--ink-soft);font-size:10.5px;line-height:1.5;}
-  .sq-footer-brand{font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--ink);font-size:13px;margin-bottom:3px;}
-  .sq-footer-copy{margin-bottom:10px;}
-  .sq-footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:7px 12px;margin-bottom:10px;}
-  .sq-footer-links a{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:2px;}
-  .sq-footer-disclaimer{font-size:9.5px;color:var(--ink-faint);max-width:360px;margin:0 auto;}
+  /* ===== SKIN QUOTIENT FINAL BRAND SYSTEM ===== */
+  :root{
+    --paper:#FBFAFF;
+    --paper-deep:#F1EDFF;
+    --card:#FFFFFF;
+    --ink:#17142B;
+    --ink-soft:#565267;
+    --ink-faint:#89859A;
+    --brand-lilac:#B2A2FF;
+    --teal:#5E4BB8;
+    --teal-mid:#241F36;
+    --teal-text:#5C4BB2;
+    --teal-mist:#F0ECFF;
+    --teal-mist-2:#F7F4FF;
+    --rose:#B2A2FF;
+    --rose-deep:#8D77E0;
+    --amber:#B2A2FF;
+    --line:rgba(38,31,62,.10);
+    --line-strong:#242035;
+    --shadow-sm:0 4px 16px rgba(57,44,102,.06);
+    --shadow-md:0 9px 24px rgba(57,44,102,.11);
+    --shadow-lg:0 18px 50px rgba(57,44,102,.14);
+    --radius:20px;
+    --radius-sm:16px;
+  }
+  html,body{background:#F6F3FF;color:var(--ink);}
+  body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  .device-frame{max-width:430px;background:linear-gradient(180deg,#fff 0%,#FBF9FF 55%,#F8F5FF 100%);border:0;box-shadow:0 20px 60px rgba(49,34,93,.12);}
+  .ambient .blob{filter:blur(80px);opacity:.22;}
+  .ambient .b1{background:#EEE9FF;}
+  .ambient .b2{background:#D8CEFF;opacity:.16;}
+
+  .topbar{position:relative;top:auto;padding:18px 20px 16px;background:rgba(255,255,255,.96);border-bottom:1px solid #ECE8F5;backdrop-filter:blur(12px);min-height:100px;}
+  .brand{gap:0;}
+  .brand-logo-svg{width:180px;height:58px;}
+  .top-actions{display:flex;align-items:center;gap:16px;}
+  .by-tag{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;color:#5C4BBA;background:#fff;border:1.7px solid #A892FF;border-radius:22px;padding:7px 14px;}
+  .menu-button{width:28px;height:24px;border:0;background:none;padding:0;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;}
+  .menu-button span{height:2.4px;background:#1B1730;border-radius:2px;width:100%;display:block;}
+
+  .screen{padding:0 20px 28px;animation:none;}
+  #screen-hero{padding:26px 20px 18px;overflow:hidden;}
+  .eyebrow{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:.08em;color:#28233F;background:#fff;border:1.5px solid #B6A6FF;box-shadow:none;padding:8px 13px;border-radius:20px;margin-bottom:20px;}
+  .eyebrow svg{color:#8D77E0!important;}
+  .hero-title{font-family:Georgia,'Times New Roman',serif;font-size:40px;line-height:1.03;font-weight:500;letter-spacing:-.035em;margin:0 0 12px;position:relative;z-index:2;max-width:335px;}
+  .hero-title em{font-family:Georgia,'Times New Roman',serif;color:#8974DF;font-style:italic;font-weight:500;}
+  .hero-sub{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;color:#4C4A5A;margin:0 0 14px;max-width:345px;position:relative;z-index:2;}
+
+  .hero-portrait{display:block;position:absolute;right:-10px;top:84px;width:205px;height:390px;z-index:1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,rgba(246,243,255,0),rgba(246,243,255,.18));}
+  .hero-portrait img{width:100%;height:100%;object-fit:cover;object-position:58% 24%;mix-blend-mode:multiply;filter:saturate(.95) contrast(.98);}
+  .hero-copy-wrap{position:relative;z-index:2;}
+  .hero-formula{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:500;background:rgba(255,255,255,.82);color:#252047;padding:16px 17px;border-radius:18px;line-height:1.55;margin:8px 0 20px;border:1px solid #E4DEF7;box-shadow:0 10px 24px rgba(86,65,150,.06);position:relative;z-index:2;}
+  .hero-formula .eq-result{color:#4D4192;font-weight:500;margin-top:3px;}
+  .hero-formula .eq-result:before{content:'';}
+
+  .trust-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #EEE9F7;border-radius:20px;background:#fff;box-shadow:0 10px 24px rgba(86,65,150,.05);margin-bottom:18px;position:relative;z-index:2;}
+  .trust-item{display:block;text-align:center;font-size:11px;line-height:1.45;color:#363447;padding:18px 10px;}
+  .trust-item+.trust-item{border-left:1px solid #EEE9F7;}
+  .trust-item .ic-wrap{width:48px;height:48px;border-radius:50%;background:#F4F0FF;color:#927BE8;border:0;display:grid;place-items:center;margin:0 auto 10px;}
+  .trust-item .icon{width:23px!important;height:23px!important;}
+  .trust-item b{color:#1D1930;}
+
+  .founder-card{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FAF8FF,#F2EDFF);border:1px solid #E4DEF7;border-radius:20px;padding:16px;margin-bottom:20px;box-shadow:none;position:relative;overflow:hidden;z-index:2;}
+  .founder-card:after{content:'';position:absolute;right:-20px;top:-14px;width:190px;height:150px;background:radial-gradient(circle,#DDD4FF 0,#EFEAFF 38%,transparent 68%);opacity:.75;}
+  .founder-avatar{width:66px;height:66px;border-radius:50%;border:1.5px solid #A892FF;background:#FBF9FF;color:#5D4AB4;font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:400;}
+  .founder-text{position:relative;z-index:1;}
+  .founder-name{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:20px;font-weight:700;color:#17142B;}
+  .founder-cred{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;color:#59566A;margin:3px 0 10px;font-weight:400;}
+  .founder-quote{font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.35;color:#28243B;}
+
+  .btn{border:0;border-radius:30px;min-height:56px;padding:16px 22px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;box-shadow:0 9px 22px rgba(33,29,53,.18);}
+  .btn-primary{background:#211D35;color:#fff;box-shadow:0 9px 22px rgba(33,29,53,.18);}
+  .btn-primary:hover{background:#211D35;}
+  .btn-secondary{background:#fff;color:#17142B;border:1px solid #E4DEF7;box-shadow:none;border-radius:18px;font-size:15px;}
+  .btn-ghost{font-size:14px;color:#393548;padding:15px 0 22px;}
+
+  /* Keep the assessment engine functional, but bring it into the same visual system. */
+  .quotient-meter{padding:10px 20px 14px;background:#fff;position:sticky;top:0;border-bottom:1px solid #ECE8F5;}
+  .qm-bar{background:#F1EDFF;border:1px solid #DCD4F5;}
+  .qm-seg.oil,.qm-seg.dehydration,.qm-seg.sensitivity,.qm-seg.sun{background:#B2A2FF;}
+  .qm-step,.qm-equation .tag,.q-kicker,.path-tag,.email-box-title,.email-status-txt{color:#6A57C3;}
+  .q-kicker{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;}
+  .q-title{font-family:Georgia,'Times New Roman',serif;font-weight:500;color:#17142B;}
+  .q-hint{color:#565267;}
+  .option{border:1px solid #E4DEF7;border-radius:16px;box-shadow:none;}
+  .option.selected{background:#F7F4FF;border-color:#A892FF;box-shadow:none;}
+  .opt-ic-wrap{background:#F4F0FF;color:#7C67D0;border:0;}
+  .option.selected .opt-ic-wrap{background:#B2A2FF;color:#fff;}
+  .option.selected .ck{background:#6A57C3;border-color:#6A57C3;}
+  .lead-card,.donut-block,.routine-card,.path-card,.email-status-card,.result-explainer,.one-last-thing,.metric-box,.lead-entry{border:1px solid #E4DEF7;box-shadow:none;border-radius:18px;}
+  .path-card.reco{background:#F7F4FF;}
+  .result-badge{color:#6A57C3;background:#F7F4FF;border:1px solid #E4DEF7;}
+  .derm-badge{color:#6A57C3;background:#F7F4FF;border:1px solid #E4DEF7;}
+  .routine-num,.confirm-icon{background:#6A57C3;border-color:#6A57C3;box-shadow:none;}
+  .skin-note,.one-last-thing{background:#F7F4FF;border-color:#E4DEF7;box-shadow:none;}
+  .fun-badge{background:#B2A2FF;border:0;box-shadow:none;}
+  .fun-stat{background:#F1EDFF;border:1px solid #DDD5F7;color:#5C4BB2;box-shadow:none;}
+  .analyzing-ring svg circle:nth-child(2){stroke:#B2A2FF!important;}
+  .analyzing-step.done{color:#6A57C3;}
+  .email-preview-modal{background:rgba(23,20,43,.52);}
+
+  .home-benefits{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #EEE9F7;border-radius:18px;background:#fff;margin:0 20px 20px;overflow:hidden;position:relative;z-index:2;}
+  .home-benefits>div{padding:17px 10px;font-size:11px;line-height:1.45;color:#3E3A50;}
+  .home-benefits>div+div{border-left:1px solid #EEE9F7;}
+  .home-benefits .bi{font-size:22px;color:#9B86EF;margin-bottom:8px;}
+  .home-foot{padding:0 24px 26px;text-align:center;color:#7C7888;font-size:10px;line-height:1.5;position:relative;z-index:2;}
+  .home-foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px;margin-top:10px;}
+  .home-foot-links a{color:#3E3A50;font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+
+  @media(min-width:700px){
+    body{background:#F6F3FF;}
+    .device-frame{margin:28px auto;border-radius:28px;min-height:calc(100vh - 56px);overflow:hidden;}
+  }
 
 </style>
 </head>
@@ -504,8 +611,11 @@
   <!-- PERSISTENT TOPBAR: Clean brand focus, 'Private' pill removed -->
   <div class="topbar">
     <div class="brand" onclick="resetProto()">
-      <svg class="brand-logo-svg"><use href="#sq-logo"/></svg>
+      <svg class="brand-logo-svg" aria-label="Skin Quotient"><use href="#sq-logo"/></svg>
+    </div>
+    <div class="top-actions">
       <span class="by-tag">by Shahima</span>
+      <button class="menu-button" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </div>
 
@@ -525,20 +635,23 @@
 
   <!-- SCREEN 1: HERO -->
   <div class="screen active" id="screen-hero">
-    <div class="eyebrow">
-      <svg style="width:14px; height:14px; color:var(--rose-deep);"><use href="#sq-icon"/></svg>
-      <span>90-Second Skin Assessment</span>
+    <div class="hero-portrait" aria-hidden="true"><img src="skin-portrait.png" alt="" loading="eager"></div>
+    <div class="hero-copy-wrap">
+      <div class="eyebrow">
+        <svg style="width:14px; height:14px; color:#8D77E0;"><use href="#sq-icon"/></svg>
+        <span>90-SECOND SKIN ASSESSMENT</span>
+      </div>
+      <h1 class="hero-title">Think you know your skin type?<br><em>Let’s actually find out.</em></h1>
+      <p class="hero-sub">Answer a few simple questions to discover what your skin may need right now — then get a personalized Skin Quotient and routine from Dr. Shahima’s team.</p>
     </div>
-    <h1 class="hero-title">Think you know your skin type?<br><em>Let's actually find out.</em></h1>
-    <p class="hero-sub">Answer a few simple questions to discover what your skin may need right now — then get a personalized Skin Quotient and routine from Dr. Shahima's team.</p>
 
     <div class="hero-formula">
-      <div>Oil Balance × Hydration × Sensitivity × Sun Exposure</div>
+      <b>Oil Balance × Hydration × Sensitivity × Sun Exposure</b><br>
       <span class="eq-result">= a clearer starting point for your routine</span>
     </div>
 
     <div class="trust-row">
-      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-shield-check"/></svg></span><span>Personalized with input from <b>Dr. Shahima's team</b></span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-shield-check"/></svg></span><span>Personalized with input from <b>Dr. Shahima’s team</b></span></div>
       <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-lock"/></svg></span><span>Your responses remain <b>confidential & private</b></span></div>
       <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-leaf"/></svg></span><span>Recommendations focused on <b>your skin goals, not trends</b></span></div>
     </div>
@@ -548,17 +661,25 @@
       <div class="founder-text">
         <div class="founder-name">Dr. Shahima</div>
         <div class="founder-cred">MBBS · Aesthetic Dermatologist</div>
-        <div class="founder-quote">"Your skin can be oily and still need hydration. Let's figure out what it actually needs."</div>
+        <div class="founder-quote">“Your skin can be oily and still need hydration. Let’s figure out what it actually needs.”</div>
       </div>
     </div>
 
-    <!-- Fixed, clean, beautifully proportioned CTA button -->
-    <button class="btn btn-primary" onclick="startQuiz()">
-      <span>Calculate My Quotient</span>
-      <svg class="icon"><use href="#i-arrow-right"/></svg>
-    </button>
+    <button class="btn btn-primary" onclick="startQuiz()"><span>Calculate My Quotient</span><svg class="icon"><use href="#i-arrow-right"/></svg></button>
     <button class="btn-ghost" onclick="goTo('screen-result-direct')">Skip quiz & schedule 1:1 consult instead</button>
   </div>
+
+  <div class="home-benefits" id="homeBenefits">
+    <div><div class="bi">✧</div>Personalized routines<br>that actually fit you</div>
+    <div><div class="bi">✦</div>Realistic, practical &<br>easy to follow</div>
+    <div><div class="bi">♡</div>Backed by dermatology,<br>not trends</div>
+  </div>
+  <footer class="home-foot">
+    Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis.
+    <div class="home-foot-links">
+      <a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/privacy-policy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund-cancellation.html">Refunds & Cancellation</a><a href="/shipping-policy.html">Shipping</a>
+    </div>
+  </footer>
 
   <!-- SCREEN 2: QUESTION RUNNER -->
   <div class="screen" id="screen-question">
@@ -669,13 +790,13 @@
     </div>
     <p class="q-hint" style="margin-bottom:12px;">Your Skin Quotient gives you the starting point. Now choose how much help you want putting it into practice.</p>
     <div class="path-choice">
-      <div class="path-card reco" onclick="goTo('screen-checkout-plan')">
+      <div class="path-card reco" onclick="goTo('screen-confirm-plan')">
         <div class="path-tag">RECOMMENDED</div>
         <div class="path-title-row"><div class="path-title">Personalized Skin Plan</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
         <div class="path-desc">Your Skin Quotient → personalized routine → product recommendations → WhatsApp check-ins → ongoing adjustments.</div>
         <div class="path-price">₹1,499 / month · ongoing support · cancel anytime</div>
       </div>
-      <div class="path-card" onclick="goTo('screen-checkout-call')">
+      <div class="path-card" onclick="goTo('screen-confirm-call')">
         <div class="path-tag">ONE-TIME OPTION</div>
         <div class="path-title-row"><div class="path-title">1:1 Skin Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
         <div class="path-desc">30-minute consultation with Dr. Shahima's team. Talk through your concerns and get expert guidance.</div>
@@ -705,38 +826,6 @@
     <div class="lead-list-wrap" id="leadListContainer">
       <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet.</p>
     </div>
-  </div>
-
-  <!-- SCREEN 8: PLAN CHECKOUT -->
-  <div class="screen" id="screen-checkout-plan">
-    <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
-    <div class="q-kicker">Ready to continue</div>
-    <h2 class="q-title">Personalized Skin Plan</h2>
-    <p class="q-hint">₹1,499/month. Your plan includes a personalized routine, product recommendations, WhatsApp check-ins and ongoing adjustments.</p>
-    <div class="lead-card">
-      <div class="path-tag">PAYMENT SUMMARY</div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;margin:6px 0 4px;">₹1,499 / month</div>
-      <div style="font-size:11.5px;color:var(--ink-soft);line-height:1.45;">Recurring monthly subscription. Cancel anytime. The final billing terms and amount will be shown again before payment.</div>
-    </div>
-    <p style="font-size:10.5px;line-height:1.4;color:var(--ink-faint);margin:0 0 12px;">By continuing, you agree to our Terms and Refund & Cancellation Policy. No payment has been taken on this screen.</p>
-    <button class="btn btn-primary" onclick="alert('Connect the Razorpay subscription checkout here before launch.');">Proceed to Secure Payment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
-    <button class="btn-ghost" onclick="goTo('screen-result')">Back to options</button>
-  </div>
-
-  <!-- SCREEN 9: CONSULTATION CHECKOUT -->
-  <div class="screen" id="screen-checkout-call">
-    <div class="confirm-icon"><svg class="icon"><use href="#i-phone"/></svg></div>
-    <div class="q-kicker">One-time consultation</div>
-    <h2 class="q-title">1:1 Skin Consultation</h2>
-    <p class="q-hint">₹999 one-time for a 30-minute consultation with Dr. Shahima's team. The ₹999 can be credited toward the Skin Plan if you continue.</p>
-    <div class="lead-card">
-      <div class="path-tag">PAYMENT SUMMARY</div>
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;margin:6px 0 4px;">₹999 one-time</div>
-      <div style="font-size:11.5px;color:var(--ink-soft);line-height:1.45;">The final appointment time will be selected after successful payment.</div>
-    </div>
-    <p style="font-size:10.5px;line-height:1.4;color:var(--ink-faint);margin:0 0 12px;">By continuing, you agree to our Terms and Refund & Cancellation Policy. No payment has been taken on this screen.</p>
-    <button class="btn btn-primary" onclick="alert('Connect the Razorpay payment checkout here before launch.');">Proceed to Secure Payment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
-    <button class="btn-ghost" onclick="goTo('screen-result')">Back to options</button>
   </div>
 
   <!-- SCREEN 8: CONFIRM PLAN -->
@@ -776,20 +865,8 @@
     <button class="btn-ghost" onclick="goTo('screen-hero')">← Take the 90-sec quiz instead</button>
   </div>
 
-<footer class="sq-footer" aria-label="Website information">
-  <div class="sq-footer-brand">Skin Quotient by Shahima</div>
-  <div class="sq-footer-copy">Personalized skincare guidance and consultations.</div>
-  <nav class="sq-footer-links">
-    <a href="/about.html">About</a>
-    <a href="/contact.html">Contact</a>
-    <a href="/privacy-policy.html">Privacy</a>
-    <a href="/terms.html">Terms</a>
-    <a href="/refund-cancellation.html">Refunds & Cancellation</a>
-    <a href="/shipping-policy.html">Shipping</a>
-  </nav>
-  <div class="sq-footer-disclaimer">Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis.</div>
-</footer>
 </div>
+
 <!-- TRANSACTIONAL EMAIL MODAL -->
 <div class="email-preview-modal" id="emailModal" onclick="closeEmailPreview(event)">
   <div class="email-box" onclick="event.stopPropagation()">
@@ -1327,5 +1404,24 @@ function resetProto(){
   goTo('screen-hero');
 }
 </script>
+
+<style>
+  body.home-mode .home-benefits, body.home-mode .home-foot{display:block;}
+  body:not(.home-mode) .home-benefits, body:not(.home-mode) .home-foot{display:none;}
+  body.home-mode #screen-hero{display:flex;}
+</style>
+<script>
+(function(){
+  const originalGoTo=window.goTo;
+  if(typeof originalGoTo==='function'){
+    window.goTo=function(id){
+      document.body.classList.toggle('home-mode', id==='screen-hero');
+      return originalGoTo.apply(this, arguments);
+    };
+  }
+  document.body.classList.add('home-mode');
+})();
+</script>
+
 </body>
 </html>
