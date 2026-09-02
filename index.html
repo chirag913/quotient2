@@ -551,6 +551,47 @@
     .device-frame{margin:28px auto;border-radius:28px;min-height:calc(100vh - 56px);overflow:hidden;}
   }
 
+
+/* ===== FINAL MOBILE HERO FIX ===== */
+.top-actions{margin-left:auto;}
+#screen-hero{position:relative;min-height:0;overflow:hidden;}
+.hero-portrait{
+  top:86px;
+  right:-8px;
+  width:188px;
+  height:360px;
+  z-index:1;
+  opacity:.98;
+}
+.hero-copy-wrap{position:relative;z-index:3;}
+.hero-title{
+  max-width:330px;
+  padding-right:26px;
+}
+.hero-sub{
+  max-width:255px;
+  padding-right:4px;
+  position:relative;
+  z-index:3;
+}
+.hero-formula{
+  position:relative;
+  z-index:4;
+  margin-top:24px;
+}
+.trust-row,.founder-card,
+#screen-hero>.btn,#screen-hero>.btn-ghost{
+  position:relative;
+  z-index:4;
+}
+
+/* At very narrow phones, keep the portrait visually separate from body copy. */
+@media(max-width:370px){
+  .hero-title{font-size:36px;max-width:300px;padding-right:10px;}
+  .hero-sub{max-width:230px;font-size:15px;}
+  .hero-portrait{width:165px;height:330px;right:-10px;top:88px;}
+}
+
 </style>
 </head>
 <body>
@@ -615,7 +656,6 @@
     </div>
     <div class="top-actions">
       <span class="by-tag">by Shahima</span>
-      <button class="menu-button" type="button" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </div>
 
