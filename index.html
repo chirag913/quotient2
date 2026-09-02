@@ -747,6 +747,51 @@ body.home-mode .home-benefits>div br{display:none;}
   font-weight:400;
   color:#4C4A5A;
 }
+
+/* ===== CROSS-BROWSER PAGE SCROLL FIX ===== */
+html{
+  min-height:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+
+/* Desktop frame must not clip a page taller than the viewport. */
+.device-frame{
+  min-height:calc(100vh - 56px);
+  height:auto;
+  overflow:visible;
+}
+
+/* Keep the document scrollable even when the frame is taller than the viewport. */
+@media (min-width:481px){
+  body{
+    display:block;
+  }
+  .device-frame{
+    margin:28px auto;
+  }
+}
+
+/* On phones the frame fills the viewport, but page content can still scroll. */
+@media (max-width:480px){
+  body{
+    display:block;
+    min-height:100vh;
+  }
+  .device-frame{
+    min-height:100vh;
+    height:auto;
+    overflow:visible;
+  }
+}
+
 </style>
 </head>
 <body>
