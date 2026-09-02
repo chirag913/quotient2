@@ -474,9 +474,7 @@
   .brand-logo-svg{width:180px;height:58px;}
   .top-actions{display:flex;align-items:center;gap:16px;}
   .by-tag{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;color:#5C4BBA;background:#fff;border:1.7px solid #A892FF;border-radius:22px;padding:7px 14px;}
-  .menu-button{width:28px;height:24px;border:0;background:none;padding:0;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;}
-  .menu-button span{height:2.4px;background:#1B1730;border-radius:2px;width:100%;display:block;}
-
+  
   .screen{padding:0 20px 28px;animation:none;}
   #screen-hero{padding:26px 20px 18px;overflow:hidden;}
   .eyebrow{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:.08em;color:#28233F;background:#fff;border:1.5px solid #B6A6FF;box-shadow:none;padding:8px 13px;border-radius:20px;margin-bottom:20px;}
@@ -552,44 +550,126 @@
   }
 
 
-/* ===== FINAL MOBILE HERO FIX ===== */
+/* ===== APPROVED MOBILE LANDING LAYOUT FIX ===== */
 .top-actions{margin-left:auto;}
-#screen-hero{position:relative;min-height:0;overflow:hidden;}
-.hero-portrait{
-  top:86px;
-  right:-8px;
-  width:188px;
-  height:360px;
-  z-index:1;
-  opacity:.98;
+#screen-hero{
+  padding:26px 20px 18px;
+  overflow:visible;
 }
-.hero-copy-wrap{position:relative;z-index:3;}
-.hero-title{
-  max-width:330px;
-  padding-right:26px;
-}
-.hero-sub{
+
+/* The hero's first block is intentionally a two-column composition. */
+#screen-hero .hero-copy-wrap{
+  width:58%;
   max-width:255px;
-  padding-right:4px;
   position:relative;
   z-index:3;
 }
-.hero-formula{
-  position:relative;
-  z-index:4;
-  margin-top:24px;
+
+#screen-hero .hero-title{
+  max-width:255px;
+  padding:0;
+  margin-bottom:12px;
+  font-size:39px;
+  line-height:1.02;
 }
-.trust-row,.founder-card,
-#screen-hero>.btn,#screen-hero>.btn-ghost{
+
+#screen-hero .hero-sub{
+  max-width:255px;
+  font-size:15.5px;
+  line-height:1.52;
+  margin-bottom:0;
+}
+
+#screen-hero .hero-portrait{
+  top:86px;
+  right:-1px;
+  width:48%;
+  height:365px;
+  z-index:1;
+  overflow:hidden;
+  border-radius:0;
+}
+
+#screen-hero .hero-portrait img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:58% 24%;
+}
+
+/* Full-width elements begin after the hero visual/copy area. */
+#screen-hero .hero-formula{
+  width:100%;
+  margin-top:24px;
+  margin-bottom:20px;
   position:relative;
   z-index:4;
 }
 
-/* At very narrow phones, keep the portrait visually separate from body copy. */
+#screen-hero .trust-row,
+#screen-hero .founder-card,
+#screen-hero > .btn,
+#screen-hero > .btn-ghost{
+  position:relative;
+  z-index:4;
+}
+
+#screen-hero .trust-row{
+  width:100%;
+}
+
+/* Benefits must remain three aligned columns on mobile. */
+body.home-mode .home-benefits{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  width:calc(100% - 40px);
+  margin:0 20px 20px;
+}
+
+body.home-mode .home-benefits>div{
+  min-width:0;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  padding:17px 9px 16px;
+}
+
+body.home-mode .home-benefits .bi{
+  line-height:1;
+  min-height:24px;
+  margin-bottom:9px;
+}
+
+/* Prevent text in the three cards from becoming unevenly positioned. */
+body.home-mode .home-benefits>div br{
+  display:none;
+}
+
+/* Keep very narrow phones readable without allowing overlap. */
 @media(max-width:370px){
-  .hero-title{font-size:36px;max-width:300px;padding-right:10px;}
-  .hero-sub{max-width:230px;font-size:15px;}
-  .hero-portrait{width:165px;height:330px;right:-10px;top:88px;}
+  #screen-hero .hero-copy-wrap{
+    width:60%;
+    max-width:225px;
+  }
+  #screen-hero .hero-title{
+    max-width:225px;
+    font-size:35px;
+  }
+  #screen-hero .hero-sub{
+    max-width:220px;
+    font-size:14.5px;
+  }
+  #screen-hero .hero-portrait{
+    width:47%;
+    height:340px;
+  }
+  body.home-mode .home-benefits>div{
+    padding-left:6px;
+    padding-right:6px;
+    font-size:10px;
+  }
 }
 
 </style>
@@ -1446,7 +1526,7 @@ function resetProto(){
 </script>
 
 <style>
-  body.home-mode .home-benefits, body.home-mode .home-foot{display:block;}
+  body.home-mode .home-benefits{display:grid;} body.home-mode .home-foot{display:block;}
   body:not(.home-mode) .home-benefits, body:not(.home-mode) .home-foot{display:none;}
   body.home-mode #screen-hero{display:flex;}
 </style>
