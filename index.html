@@ -756,6 +756,73 @@ body.home-mode .home-benefits>div br{
   }
 }
 
+
+/* ===== FINAL PORTRAIT / HEADLINE SEPARATION =====
+   Keep the model visually on the right. The previous crop allowed the
+   face itself to enter the headline column on narrow phones.
+*/
+#screen-hero .hero-copy-wrap{
+  width:56%;
+  max-width:238px;
+  z-index:5;
+}
+
+#screen-hero .hero-title{
+  max-width:238px;
+  font-size:38px;
+  line-height:1.03;
+  letter-spacing:-.035em;
+  padding-right:0;
+}
+
+#screen-hero .hero-title em{
+  display:inline;
+}
+
+#screen-hero .hero-sub{
+  max-width:232px;
+  font-size:15px;
+  line-height:1.52;
+}
+
+/* Push the subject right without moving the overall composition down. */
+#screen-hero .hero-portrait{
+  top:88px;
+  right:-28px;
+  width:55%;
+  height:390px;
+  z-index:1;
+  overflow:visible;
+}
+
+#screen-hero .hero-portrait img{
+  width:112%;
+  height:100%;
+  margin-left:8%;
+  object-fit:cover;
+  object-position:72% 24%;
+}
+
+/* Fade the left edge so the image reads as part of the background. */
+#screen-hero .hero-portrait{
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.45) 14%, #000 30%, #000 88%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0,0,0,.45) 14%, #000 30%, #000 88%, transparent 100%);
+}
+
+@media(max-width:370px){
+  #screen-hero .hero-copy-wrap{width:57%;max-width:218px;}
+  #screen-hero .hero-title{max-width:218px;font-size:35px;}
+  #screen-hero .hero-sub{max-width:212px;font-size:14.5px;}
+  #screen-hero .hero-portrait{
+    top:86px;
+    right:-30px;
+    width:56%;
+    height:350px;
+  }
+}
+
 </style>
 </head>
 <body>
