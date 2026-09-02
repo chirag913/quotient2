@@ -275,10 +275,20 @@
   @keyframes spin{to{transform:rotate(360deg);}}
   .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; margin-bottom:6px;}
   .analyzing-sub{font-size:13px; color:var(--ink-soft); line-height:1.45; max-width:270px;}
-  .analyzing-list{margin-top:20px; display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
+  .analyzing-list{margin-top:18px; display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
   .analyzing-step{display:flex; align-items:center; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint); opacity:0.4; font-weight:600;}
   .analyzing-step.done{opacity:1; color:var(--teal-text);}
   .analyzing-step .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .skin-note{width:100%; max-width:340px; margin-top:20px; padding:14px 15px; background:var(--card); border:2px solid var(--line-strong); border-radius:16px; box-shadow:3px 4px 0 var(--line-strong); text-align:left; transition:opacity .25s ease, transform .25s ease;}
+  .skin-note.fade{opacity:0; transform:translateY(4px);}
+  .skin-note-kicker{font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.12em; font-weight:800; color:var(--teal-text); margin-bottom:5px;}
+  .skin-note-title{font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.25; font-weight:800; margin-bottom:5px;}
+  .skin-note-copy{font-size:11.5px; line-height:1.45; color:var(--ink-soft);}
+  .skin-note-source{font-size:9px; line-height:1.3; color:var(--ink-faint); margin-top:7px;}
+  .one-last-thing{margin:4px 0 14px; padding:15px; background:var(--teal-mist-2); border:1.5px solid rgba(10,122,76,.25); border-radius:16px;}
+  .one-last-thing .olt-kicker{font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.12em; font-weight:800; color:var(--teal-text); margin-bottom:5px;}
+  .one-last-thing .olt-title{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:800; line-height:1.25; margin-bottom:5px;}
+  .one-last-thing .olt-copy{font-size:11.5px; line-height:1.45; color:var(--ink-soft);}
 
   /* Strategic Lead Gate */
   .lead-card{
@@ -578,6 +588,12 @@
       <div class="analyzing-step" data-i="1"><span class="dot"></span>Looking at sensitivity & sun exposure</div>
       <div class="analyzing-step" data-i="2"><span class="dot"></span>Matching your routine priorities</div>
     </div>
+    <div class="skin-note" id="skinNote">
+      <div class="skin-note-kicker">SKIN NOTE</div>
+      <div class="skin-note-title" id="skinNoteTitle">Your skin has a few things to say.</div>
+      <div class="skin-note-copy" id="skinNoteCopy">While we calculate your result, here's something worth knowing.</div>
+      <div class="skin-note-source" id="skinNoteSource">Evidence-informed skincare note</div>
+    </div>
   </div>
 
   <!-- SCREEN 5: STRATEGIC LEAD GATE -->
@@ -638,6 +654,11 @@
     <p style="font-size:10.5px; line-height:1.4; color:var(--ink-faint); margin:0 0 10px;">
       Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis. If you have a persistent or severe skin condition, speak with a qualified clinician.
     </p>
+    <div class="one-last-thing">
+      <div class="olt-kicker">ONE LAST THING</div>
+      <div class="olt-title">Your skin isn't a fixed category.</div>
+      <div class="olt-copy">“Oily.” “Dry.” “Combination.” Those labels are only part of the picture. Your skin can change with your environment, routine, products and other factors — which is why your Skin Quotient looks beyond a single label.</div>
+    </div>
     <p class="q-hint" style="margin-bottom:12px;">Your Skin Quotient gives you the starting point. Now choose how much help you want putting it into practice.</p>
     <div class="path-choice">
       <div class="path-card reco" onclick="goTo('screen-confirm-plan')">
@@ -954,16 +975,34 @@ function prevQuestion(){
 function runAnalyzing(){
   goTo('screen-analyzing');
   const steps = document.querySelectorAll('.analyzing-step');
+  const note = document.getElementById('skinNote');
+  const noteTitle = document.getElementById('skinNoteTitle');
+  const noteCopy = document.getElementById('skinNoteCopy');
+  const noteSource = document.getElementById('skinNoteSource');
   steps.forEach(s => s.classList.remove('done'));
+
+  const notes = [
+    {title:'UV Index 3+? Protect your skin.', copy:'It is the UV Index — not just the temperature — that tells you when sun protection matters. WHO recommends protection when the UV Index reaches 3 or above.', source:'WHO · UV Index guidance'},
+    {title:'“More skincare” is not always better.', copy:'Gentle, consistent routines often beat constantly adding products. Dermatologists warn that too much cleansing, scrubbing or switching treatments can irritate skin.', source:'American Academy of Dermatology'},
+    {title:'Drinking more water is not a magic skin fix.', copy:'Staying hydrated is important, but evidence that simply increasing water intake dramatically improves skin is limited. Your skin barrier and routine matter too.', source:'PubMed systematic review'},
+    {title:'Hot water can be rough on dry skin.', copy:'If your skin is dry or irritated, dermatologists recommend warm rather than hot water and moisturizing after washing.', source:'American Academy of Dermatology'}
+  ];
+  /* One Skin Note stays visible for the full analysis so it can be read. */
+  if(note && notes.length){
+    const n = notes[0];
+    noteTitle.textContent = n.title;
+    noteCopy.textContent = n.copy;
+    noteSource.textContent = n.source;
+  }
   let i = 0;
   const iv = setInterval(()=>{
     if(steps[i]) steps[i].classList.add('done');
     i++;
-    if(i >= steps.length){ 
-      clearInterval(iv); 
-      setTimeout(() => goTo('screen-lead'), 350); 
+    if(i >= steps.length){
+      clearInterval(iv);
+      setTimeout(() => { goTo('screen-lead'); }, 850);
     }
-  }, 420);
+  }, 1200);
 }
 
 function validateEmail(email){
