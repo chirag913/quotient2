@@ -436,6 +436,14 @@
   .email-body{padding:18px 16px; font-size:13px; line-height:1.6; color:#222;}
 
   .confirm-icon{width:56px; height:56px; border-radius:50%; background:var(--teal-text); border:2.5px solid var(--line-strong); display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:18px; box-shadow:var(--shadow-md);}
+
+  .sq-footer{position:relative;z-index:2;margin:0 20px 24px;padding:16px 0 28px;border-top:2px solid var(--line-strong);text-align:center;color:var(--ink-soft);font-size:10.5px;line-height:1.5;}
+  .sq-footer-brand{font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--ink);font-size:13px;margin-bottom:3px;}
+  .sq-footer-copy{margin-bottom:10px;}
+  .sq-footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:7px 12px;margin-bottom:10px;}
+  .sq-footer-links a{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+  .sq-footer-disclaimer{font-size:9.5px;color:var(--ink-faint);max-width:360px;margin:0 auto;}
+
 </style>
 </head>
 <body>
@@ -661,13 +669,13 @@
     </div>
     <p class="q-hint" style="margin-bottom:12px;">Your Skin Quotient gives you the starting point. Now choose how much help you want putting it into practice.</p>
     <div class="path-choice">
-      <div class="path-card reco" onclick="goTo('screen-confirm-plan')">
+      <div class="path-card reco" onclick="goTo('screen-checkout-plan')">
         <div class="path-tag">RECOMMENDED</div>
         <div class="path-title-row"><div class="path-title">Personalized Skin Plan</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
         <div class="path-desc">Your Skin Quotient → personalized routine → product recommendations → WhatsApp check-ins → ongoing adjustments.</div>
         <div class="path-price">₹1,499 / month · ongoing support · cancel anytime</div>
       </div>
-      <div class="path-card" onclick="goTo('screen-confirm-call')">
+      <div class="path-card" onclick="goTo('screen-checkout-call')">
         <div class="path-tag">ONE-TIME OPTION</div>
         <div class="path-title-row"><div class="path-title">1:1 Skin Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
         <div class="path-desc">30-minute consultation with Dr. Shahima's team. Talk through your concerns and get expert guidance.</div>
@@ -697,6 +705,38 @@
     <div class="lead-list-wrap" id="leadListContainer">
       <p style="text-align:center; font-size:12px; color:var(--ink-soft); margin-top:20px;">No leads collected yet.</p>
     </div>
+  </div>
+
+  <!-- SCREEN 8: PLAN CHECKOUT -->
+  <div class="screen" id="screen-checkout-plan">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
+    <div class="q-kicker">Ready to continue</div>
+    <h2 class="q-title">Personalized Skin Plan</h2>
+    <p class="q-hint">₹1,499/month. Your plan includes a personalized routine, product recommendations, WhatsApp check-ins and ongoing adjustments.</p>
+    <div class="lead-card">
+      <div class="path-tag">PAYMENT SUMMARY</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;margin:6px 0 4px;">₹1,499 / month</div>
+      <div style="font-size:11.5px;color:var(--ink-soft);line-height:1.45;">Recurring monthly subscription. Cancel anytime. The final billing terms and amount will be shown again before payment.</div>
+    </div>
+    <p style="font-size:10.5px;line-height:1.4;color:var(--ink-faint);margin:0 0 12px;">By continuing, you agree to our Terms and Refund & Cancellation Policy. No payment has been taken on this screen.</p>
+    <button class="btn btn-primary" onclick="alert('Connect the Razorpay subscription checkout here before launch.');">Proceed to Secure Payment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="goTo('screen-result')">Back to options</button>
+  </div>
+
+  <!-- SCREEN 9: CONSULTATION CHECKOUT -->
+  <div class="screen" id="screen-checkout-call">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-phone"/></svg></div>
+    <div class="q-kicker">One-time consultation</div>
+    <h2 class="q-title">1:1 Skin Consultation</h2>
+    <p class="q-hint">₹999 one-time for a 30-minute consultation with Dr. Shahima's team. The ₹999 can be credited toward the Skin Plan if you continue.</p>
+    <div class="lead-card">
+      <div class="path-tag">PAYMENT SUMMARY</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;margin:6px 0 4px;">₹999 one-time</div>
+      <div style="font-size:11.5px;color:var(--ink-soft);line-height:1.45;">The final appointment time will be selected after successful payment.</div>
+    </div>
+    <p style="font-size:10.5px;line-height:1.4;color:var(--ink-faint);margin:0 0 12px;">By continuing, you agree to our Terms and Refund & Cancellation Policy. No payment has been taken on this screen.</p>
+    <button class="btn btn-primary" onclick="alert('Connect the Razorpay payment checkout here before launch.');">Proceed to Secure Payment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" onclick="goTo('screen-result')">Back to options</button>
   </div>
 
   <!-- SCREEN 8: CONFIRM PLAN -->
@@ -737,6 +777,19 @@
   </div>
 
 </div>
+<footer class="sq-footer" aria-label="Website information">
+  <div class="sq-footer-brand">Skin Quotient by Shahima</div>
+  <div class="sq-footer-copy">Personalized skincare guidance and consultations.</div>
+  <nav class="sq-footer-links">
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+    <a href="/privacy-policy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/refund-cancellation.html">Refunds & Cancellation</a>
+    <a href="/shipping-policy.html">Shipping</a>
+  </nav>
+  <div class="sq-footer-disclaimer">Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis.</div>
+</footer>
 
 <!-- TRANSACTIONAL EMAIL MODAL -->
 <div class="email-preview-modal" id="emailModal" onclick="closeEmailPreview(event)">
