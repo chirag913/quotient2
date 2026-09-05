@@ -242,6 +242,8 @@
   .option .tx .t2{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
   .option .ck{width:20px; height:20px; border-radius:50%; border:2px solid var(--line-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
   .option.multi .ck{border-radius:6px;}
+  .option.multi .ck::before{content:''; width:7px; height:4px; opacity:0;}
+  .option.multi.selected .ck::before{opacity:0;}
   .option.selected .opt-ic-wrap{background:var(--teal); color:#fff;}
   .option.selected .ck{background:var(--teal-text); border-color:var(--line-strong);}
   .option.selected .ck::after{content:''; width:8px; height:5px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(1px,-1px);}
@@ -1131,7 +1133,7 @@ const ADMIN_PIN = "1234";
 
 const questions = [
   { id:'skinFeel', kicker:'Your Skin', title:'How does your skin usually feel by midday?',
-    hint:"Pick the option that sounds most like your skin.", multi:false,
+    hint:"Select all that apply. Choose what sounds like your skin.", multi:true, max:3,
     options:[
       {t1:'Oily or shiny, especially around the T-zone', t2:'Often feels oily', ic:'i-sparkle', w:{oil:3}},
       {t1:'Tight, dry, or flaky', t2:'Feels short on hydration', ic:'i-droplet-off', w:{dehydration:3}},
@@ -1139,7 +1141,7 @@ const questions = [
       {t1:'Comfortable and balanced', t2:'Generally balanced', ic:'i-check-circle', w:{}},
     ]},
   { id:'topConcern', kicker:'Main Goal', title:"What are your primary skin concerts right now?",
-    hint:'This helps us understand what matters most to you.', multi:false,
+    hint:'Select all that apply. Choose up to 3 concerns.', multi:true, max:3,
     options:[
       {t1:'Active Acne, blackheads & clogged pores', t2:'', ic:'i-alert-triangle', w:{oil:2,sensitivity:1}},
       {t1:'Dark spots, acne marks & uneven tone', t2:'', ic:'i-target', w:{sun:2}},
@@ -1157,7 +1159,7 @@ const questions = [
       {t1:'None of these', t2:'', ic:'i-minus-circle', w:{}},
     ]},
   { id:'routine', kicker:'Your Current Routine', title:'How much skincare are you currently using?',
-    hint:'This helps us understand your current routine.', multi:false,
+    hint:'Select all that apply. Choose up to 3 options.', multi:true, max:3,
     options:[
       {t1:'Very simple — cleanser / water', t2:'Few or no active products', ic:'i-minus-circle', w:{sensitivity:1}},
       {t1:'Basics — cleanser, moisturizer & sunscreen', t2:'A simple routine', ic:'i-droplet', w:{}},
@@ -1179,7 +1181,7 @@ const questions = [
       {t1:'Often burns, peels or gets very irritated', t2:'', ic:'i-alert-triangle', w:{sensitivity:3}},
     ]},
   { id:'budget', kicker:'Budget', title:'How much would you like to spend on skincare each month?',
-    hint:'This helps us keep recommendations realistic for you.', multi:false,
+    hint:'Select all that apply. Choose up to 3 options.', multi:true, max:3,
     options:[
       {t1:'₹800 – ₹1,500', t2:'Simple, affordable options', ic:'₹', w:{}},
       {t1:'₹1,500 – ₹3,000', t2:'Targeted skincare', ic:'₹₹', w:{}},
