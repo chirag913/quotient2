@@ -945,9 +945,9 @@ body{
   <!-- SCREEN 3: FUN INTERSTITIAL BREAK -->
   <div class="screen" id="screen-fun">
     <div class="fun-badge"><svg class="icon"><use href="#i-sparkle"/></svg></div>
-    <div class="fun-title">You're halfway there.</div>
-    <p class="fun-sub">A couple more questions and we'll have enough information to build your Skin Quotient.</p>
-    <div class="fun-stat"><svg class="icon" style="width:14px;height:14px;"><use href="#i-target"/></svg> Just 2 quick questions left</div>
+    <div class="fun-title">Only 3 questions left.</div>
+    <p class="fun-sub">Just three more quick questions and we'll have enough information to build your Skin Quotient.</p>
+    <div class="fun-stat"><svg class="icon" style="width:14px;height:14px;"><use href="#i-target"/></svg> 3 quick questions to go</div>
     <button class="btn btn-primary" style="max-width:260px;" onclick="afterFun()">Finish my assessment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
@@ -1140,7 +1140,7 @@ const questions = [
       {t1:'Oily in some areas, dry in others', t2:'Mixed / combination', ic:'i-half-circle', w:{oil:2,dehydration:1}},
       {t1:'Comfortable and balanced', t2:'Generally balanced', ic:'i-check-circle', w:{}},
     ]},
-  { id:'topConcern', kicker:'Main Goal', title:"What are your primary skin concerts right now?",
+  { id:'topConcern', kicker:'Main Goal', title:"What are your main skin concerns right now?",
     hint:'Select all that apply. Choose up to 3 concerns.', multi:true, max:3,
     options:[
       {t1:'Active Acne, blackheads & clogged pores', t2:'', ic:'i-alert-triangle', w:{oil:2,sensitivity:1}},
@@ -1150,7 +1150,7 @@ const questions = [
       {t1:'Redness, stinging or easily irritated skin', t2:'', ic:'i-pulse', w:{sensitivity:3}},
     ]},
   { id:'secondary', kicker:'Anything Else?', title:'Does anything else sound familiar? (Choose up to 3)',
-    hint:'Choose anything else that sounds like your skin.', multi:true, max:3,
+    hint:'Select all that apply · Up to 3. Choose anything else that sounds like your skin.', multi:true, max:3,
     options:[
       {t1:'My pores clog easily', t2:'', ic:'i-grid', w:{oil:1}},
       {t1:'I tan quickly in the sun', t2:'', ic:'i-sun-high', w:{sun:2}},
@@ -1159,12 +1159,12 @@ const questions = [
       {t1:'None of these', t2:'', ic:'i-minus-circle', w:{}},
     ]},
   { id:'routine', kicker:'Your Current Routine', title:'How much skincare are you currently using?',
-    hint:'Select all that apply. Choose up to 3 options.', multi:true, max:3,
+    hint:'Select all that apply. Choose the routine levels that describe you.', multi:true, max:3,
     options:[
-      {t1:'Very simple — cleanser / water', t2:'Few or no active products', ic:'i-minus-circle', w:{sensitivity:1}},
-      {t1:'Basics — cleanser, moisturizer & sunscreen', t2:'A simple routine', ic:'i-droplet', w:{}},
-      {t1:'I use serums or exfoliants', t2:'Some active ingredients', ic:'i-flask', w:{}},
-      {t1:'I use stronger active ingredients', t2:'More experienced with actives', ic:'i-sparkle', w:{sensitivity:1}},
+      {t1:'Minimal: Water or basic cleanser only', t2:'', ic:'i-minus-circle', w:{sensitivity:1}},
+      {t1:'Basics: Cleanser, moisturiser and sunscreen', t2:'', ic:'i-droplet', w:{}},
+      {t1:'Intermediate: Basics + mild serums or gentle exfoliants', t2:'', ic:'i-flask', w:{}},
+      {t1:'Advanced: Multi step routine with strong actives', t2:'', ic:'i-sparkle', w:{sensitivity:1}},
     ]},
   { id:'sun', kicker:'Sun Exposure', title:'How much time do you spend outdoors most days?',
     hint:'Think about your usual commute, errands and outdoor time.', multi:false,
@@ -1177,8 +1177,8 @@ const questions = [
     hint:'Pick the closest match.', multi:false,
     options:[
       {t1:'Usually fine — rarely stings or turns red', t2:'', ic:'i-shield-check', w:{sensitivity:0}},
-      {t1:'Sometimes stings, feels warm or gets red', t2:'', ic:'i-shield-check', w:{sensitivity:2}},
-      {t1:'Often burns, peels or gets very irritated', t2:'', ic:'i-alert-triangle', w:{sensitivity:3}},
+      {t1:'Mildly Sensitive - Sometimes stings feels warm or gets red', t2:'', ic:'i-shield-check', w:{sensitivity:2}},
+      {t1:'Highly Sensitive — Often burns, stings, or becomes red and irritated when trying new products.', t2:'', ic:'i-alert-triangle', w:{sensitivity:3}},
     ]},
   { id:'budget', kicker:'Budget', title:'How much would you like to spend on skincare each month?',
     hint:'Select all that apply. Choose up to 3 options.', multi:true, max:3,
@@ -1282,10 +1282,17 @@ function renderQuestion(){
 function selectOption(q, i){
   let sel = answers[q.id] || [];
   if(q.multi){
-    if(sel.includes(i)){ sel = sel.filter(x => x !== i); }
-    else{ 
-      if(sel.length >= (q.max || 99)) return; 
-      sel.push(i); 
+    // Q3 has a mutually-exclusive "None of these" option.
+    const noneIndex = q.id === 'secondary' ? q.options.findIndex(o => o.t1 === 'None of these') : -1;
+    if(i === noneIndex){
+      sel = sel.includes(i) ? [] : [i];
+    } else {
+      if(noneIndex >= 0) sel = sel.filter(x => x !== noneIndex);
+      if(sel.includes(i)){ sel = sel.filter(x => x !== i); }
+      else{
+        if(sel.length >= (q.max || 99)) return;
+        sel.push(i);
+      }
     }
   } else { 
     sel = [i]; 
