@@ -1,0 +1,1071 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skin Quotient by Shahima — Find your Skin Quotient</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4FBF6;
+    --paper-deep:#E4F5E9;
+    --card:#FFFFFF;
+    --ink:#0E2019;
+    --ink-soft:#4B6158;
+    --ink-faint:#8AA298;
+
+    --brand-lilac:#B2A2FF; /*[cite: 3] */
+    --teal:#0FA968;
+    --teal-mid:#17C77D;
+    --teal-text:#0A7A4C;
+    --teal-mist:#D2F5E2;
+    --teal-mist-2:#E9FBF0;
+
+    --rose:#FF6FA5;
+    --rose-deep:#F0347D;
+    --amber:#FFB020;
+    --error:#E02828;
+
+    --line:rgba(14,32,25,0.14);
+    --line-strong:#0E2019;
+    --shadow-sm:0 2px 0 var(--line-strong);
+    --shadow-md:4px 5px 0 var(--line-strong);
+    --shadow-lg:6px 8px 0 var(--line-strong);
+    --radius:22px;
+    --radius-sm:14px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  
+  html{
+    margin:0; padding:0; background:var(--teal-mist);
+  }
+  body{
+    margin:0; padding:0;
+    background:var(--teal-mist);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    display:flex; justify-content:center;
+    min-height:100vh;
+  }
+  ::selection{background:var(--rose); color:#fff;}
+  :focus-visible{outline:3px solid var(--rose-deep); outline-offset:2px; border-radius:8px;}
+
+  /* Main wrapper */
+  .device-frame{
+    width:100%;
+    max-width:440px;
+    min-height:100vh;
+    background:var(--paper);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    border-left:3px solid var(--line-strong);
+    border-right:3px solid var(--line-strong);
+    box-shadow:8px 0 0 rgba(14,32,25,0.08);
+  }
+
+  @media (max-width: 480px){
+    .device-frame{
+      border-left:none;
+      border-right:none;
+      box-shadow:none;
+    }
+  }
+
+  .ambient{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .ambient .blob{position:absolute; border-radius:50%; filter:blur(65px); opacity:0.38;}
+  .ambient .b1{width:280px; height:280px; background:var(--teal-mist); top:-90px; right:-90px;}
+  .ambient .b2{width:240px; height:240px; background:var(--brand-lilac); opacity:0.28; bottom:10%; left:-90px;}
+
+  /* Global Icon Dimensions */
+  .icon{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px;
+    min-height:18px;
+    max-width:18px;
+    max-height:18px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    display:inline-block;
+    flex-shrink:0;
+  }
+
+  /* Clean Topbar */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px;
+    background:linear-gradient(var(--paper) 86%, rgba(244,251,246,0.7));
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    display:flex; align-items:center; gap:8px; cursor:pointer; text-decoration:none;
+  }
+  .brand-logo-svg{
+    width:142px; height:34px; display:block;
+  }
+  .by-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700;
+    color:var(--ink-soft); background:var(--paper-deep); padding:2px 7px;
+    border-radius:6px; border:1.5px solid var(--line-strong); white-space:nowrap;
+  }
+
+  /* Progress Meter */
+  .quotient-meter{
+    padding:8px 20px 14px;
+    background:var(--paper);
+    position:sticky; top:67px; z-index:35;
+    border-bottom:2.5px solid var(--line-strong);
+  }
+  .qm-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .qm-label{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); font-weight:700;}
+  .qm-step{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; color:var(--teal-text);}
+  .qm-bar{height:10px; width:100%; border-radius:8px; overflow:hidden; display:flex; gap:2px; background:var(--paper-deep); border:2px solid var(--line-strong);}
+  .qm-seg{height:100%; width:0%; border-radius:3px; transition:width 0.5s cubic-bezier(.34,1.56,.64,1);}
+  .qm-seg.oil{background:var(--amber);}
+  .qm-seg.dehydration{background:var(--rose-deep);}
+  .qm-seg.sensitivity{background:var(--teal);}
+  .qm-seg.sun{background:var(--brand-lilac);}
+  .qm-equation{margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; color:var(--ink); min-height:16px;}
+  .qm-equation .tag{color:var(--ink-faint); font-weight:500;}
+
+  /* Screen Layout */
+  .screen{
+    position:relative; z-index:1;
+    display:none; flex-direction:column;
+    padding:20px 20px 80px;
+    animation:rise 0.3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .screen.active{display:flex;}
+  @keyframes rise{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);} }
+
+  /* Hero Typography & Cards */
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ink); background:var(--teal-mist); border:2px solid var(--line-strong);
+    padding:5px 12px; border-radius:20px; margin-bottom:14px; width:fit-content;
+    box-shadow:var(--shadow-sm);
+  }
+  .hero-title{
+    font-family:'Space Grotesk',sans-serif; font-weight:700;
+    font-size:32px; line-height:1.1; letter-spacing:-0.02em; margin:0 0 14px;
+  }
+  .hero-title em{font-style:italic; font-weight:800; color:var(--teal-text);}
+  .hero-sub{font-size:14.5px; line-height:1.55; color:var(--ink-soft); margin:0 0 18px;}
+  .hero-sub strong{color:var(--ink); font-weight:700;}
+
+  .hero-formula{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600;
+    background:var(--rose-deep); color:#FFE5EF;
+    padding:13px 15px; border-radius:15px; line-height:1.6; margin-bottom:18px;
+    border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
+  }
+  .hero-formula .eq-result{color:#fff; font-weight:800; display:block; margin-top:4px;}
+
+  .trust-row{display:flex; flex-direction:column; gap:9px; margin-bottom:18px;}
+  .trust-item{display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-soft);}
+  .trust-item .ic-wrap{
+    width:30px; height:30px; border-radius:8px; flex-shrink:0;
+    background:var(--teal-mist-2); color:var(--teal-text); border:1.5px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .trust-item b{color:var(--ink); font-weight:700;}
+
+  .founder-card{
+    display:flex; align-items:center; gap:12px;
+    background:var(--teal-mid); border:2.5px solid var(--line-strong); border-radius:var(--radius);
+    padding:14px; margin-bottom:20px; box-shadow:var(--shadow-md);
+  }
+  .founder-avatar{
+    width:46px; height:46px; border-radius:50%; flex-shrink:0;
+    background:var(--teal-mist); color:var(--teal-text);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:18px;
+    border:2px solid var(--line-strong);
+  }
+  .founder-text{flex:1;}
+  .founder-name{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14.5px; color:#fff;}
+  .founder-cred{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--paper-deep); margin-bottom:3px; font-weight:600;}
+  .founder-quote{font-size:12px; line-height:1.4; color:rgba(255,255,255,0.95);}
+
+  /* Normal, Proportional Button */
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; min-height:52px; padding:14px 20px; border-radius:14px; border:2.5px solid var(--line-strong);
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:800; cursor:pointer;
+    transition:transform 0.12s cubic-bezier(.34,1.56,.64,1), box-shadow 0.1s ease;
+  }
+  .btn:active{transform:translate(3px, 4px) !important; box-shadow:0 0 0 var(--line-strong) !important;}
+  .btn-primary{background:var(--teal-mid); color:#fff; box-shadow:var(--shadow-md);}
+  .btn-primary:hover{background:var(--teal);}
+  .btn-secondary{background:var(--card); color:var(--ink); border:2.5px solid var(--line-strong); box-shadow:var(--shadow-sm);}
+  .btn-ghost{
+    background:none; border:none; color:var(--ink-soft);
+    font-size:13px; text-decoration:underline; text-underline-offset:3px;
+    padding:12px; cursor:pointer; font-family:'Inter',sans-serif; width:100%; font-weight:600; text-align:center;
+  }
+
+  /* Question Engine */
+  .q-kicker{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--rose-deep); margin-bottom:8px;
+  }
+  .q-title{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:22px; line-height:1.2; margin:0 0 6px;}
+  .q-hint{font-size:13px; color:var(--ink-soft); margin:0 0 16px; line-height:1.45;}
+
+  .options{display:flex; flex-direction:column; gap:9px; margin-bottom:20px;}
+  .option{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 14px; border:2.5px solid var(--line-strong); border-radius:var(--radius-sm);
+    background:var(--card); cursor:pointer; text-align:left;
+    transition:border-color 0.12s ease, background 0.12s ease, transform 0.16s cubic-bezier(.34,1.56,.64,1), box-shadow 0.12s ease;
+  }
+  .option:active{transform:scale(0.97);}
+  .option.selected{border-color:var(--line-strong); background:var(--teal-mist-2); box-shadow:var(--shadow-sm); animation:pop 0.28s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{ 0%{transform:scale(1);} 50%{transform:scale(1.03) rotate(0.4deg);} 100%{transform:scale(1);} }
+  .opt-ic-wrap{
+    width:34px; height:34px; border-radius:9px; flex-shrink:0;
+    background:var(--paper-deep); color:var(--ink-soft); border:1.5px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt-text-chip{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:800;}
+  .option .tx{flex:1;}
+  .option .tx .t1{font-size:13.5px; font-weight:700; line-height:1.3;}
+  .option .tx .t2{font-size:11.5px; color:var(--ink-soft); margin-top:2px;}
+  .option .ck{width:20px; height:20px; border-radius:50%; border:2px solid var(--line-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center; position:relative;}
+  .option.multi .ck{border-radius:6px;}
+  .option.multi .ck::before{content:''; width:7px; height:4px; opacity:0;}
+  .option.multi.selected .ck::before{opacity:0;}
+  .option.selected .opt-ic-wrap{background:var(--teal); color:#fff;}
+  .option.selected .ck{background:var(--teal-text); border-color:var(--line-strong);}
+  .option.selected .ck::after{content:''; position:absolute; width:6px; height:10px; border-right:2px solid #fff; border-bottom:2px solid #fff; left:50%; top:50%; transform:translate(-50%,-58%) rotate(45deg);}
+
+  .q-nav{display:flex; gap:10px; margin-top:8px;}
+  .q-nav .btn-secondary{flex:0 0 52px; padding:14px;}
+  .q-nav .btn-primary{flex:1;}
+  .btn-primary:disabled{opacity:0.4; pointer-events:none; box-shadow:none;}
+
+  /* Interstitial */
+  #screen-fun{align-items:center; text-align:center; justify-content:center;}
+  .fun-badge{
+    width:68px; height:68px; border-radius:50%;
+    background:var(--rose); border:2.5px solid var(--line-strong); box-shadow:var(--shadow-md);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+  }
+  .fun-badge .icon{width:30px; height:30px; color:#fff; stroke-width:2.4;}
+  .fun-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; line-height:1.25; margin-bottom:8px;}
+  .fun-sub{font-size:13px; color:var(--ink-soft); line-height:1.5; margin-bottom:18px; max-width:280px;}
+  .fun-stat{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--amber); border:2.5px solid var(--line-strong); border-radius:20px;
+    padding:7px 14px; font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:11px;
+    box-shadow:var(--shadow-sm); margin-bottom:24px;
+  }
+
+  /* Analyzing Simulator */
+  #screen-analyzing{align-items:center; justify-content:center; text-align:center; padding-top:40px;}
+  .analyzing-ring{width:84px; height:84px; margin-bottom:20px; position:relative;}
+  .analyzing-ring svg{animation:spin 1.4s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .analyzing-title{font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:21px; margin-bottom:6px;}
+  .analyzing-sub{font-size:13px; color:var(--ink-soft); line-height:1.45; max-width:270px;}
+  .analyzing-list{margin-top:18px; display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
+  .analyzing-step{display:flex; align-items:center; gap:9px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint); opacity:0.4; font-weight:600;}
+  .analyzing-step.done{opacity:1; color:var(--teal-text);}
+  .analyzing-step .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
+  .skin-note{width:100%; max-width:340px; margin-top:20px; padding:14px 15px; background:var(--card); border:2px solid var(--line-strong); border-radius:16px; box-shadow:3px 4px 0 var(--line-strong); text-align:left; transition:opacity .25s ease, transform .25s ease;}
+  .skin-note.fade{opacity:0; transform:translateY(4px);}
+  .skin-note-kicker{font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.12em; font-weight:800; color:var(--teal-text); margin-bottom:5px;}
+  .skin-note-title{font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.25; font-weight:800; margin-bottom:5px;}
+  .skin-note-copy{font-size:11.5px; line-height:1.45; color:var(--ink-soft);}
+  .skin-note-source{font-size:9px; line-height:1.3; color:var(--ink-faint); margin-top:7px;}
+  .one-last-thing{margin:4px 0 14px; padding:15px; background:var(--teal-mist-2); border:1.5px solid rgba(10,122,76,.25); border-radius:16px;}
+  .one-last-thing .olt-kicker{font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.12em; font-weight:800; color:var(--teal-text); margin-bottom:5px;}
+  .one-last-thing .olt-title{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:800; line-height:1.25; margin-bottom:5px;}
+  .one-last-thing .olt-copy{font-size:11.5px; line-height:1.45; color:var(--ink-soft);}
+
+  /* Strategic Lead Gate */
+  .lead-card{
+    background:var(--card); border:2.5px solid var(--line-strong);
+    border-radius:var(--radius); padding:18px; margin-bottom:14px; box-shadow:var(--shadow-sm);
+  }
+  .input-label{display:block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:6px; color:var(--ink);}
+  .lead-field{
+    width:100%; padding:13px 14px; border-radius:12px; border:2px solid var(--line-strong);
+    font-family:'Inter',sans-serif; font-size:14.5px; background:var(--paper); color:var(--ink);
+    margin-bottom:12px; transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .lead-field:focus{outline:none; border-color:var(--teal-text); background:#fff;}
+  .lead-field.is-invalid{border-color:var(--error); background:rgba(224,40,40,0.06);}
+  .field-error{font-size:11px; color:var(--error); font-weight:600; margin-top:-8px; margin-bottom:10px; display:none;}
+  .lead-field.is-invalid + .field-error{display:block;}
+
+  /* Results */
+  .result-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--teal-text); background:var(--teal-mist-2); border:2px solid var(--line-strong);
+    padding:5px 11px; border-radius:20px; margin-bottom:14px; width:fit-content; font-weight:700;
+  }
+  .donut-block{
+    display:flex; align-items:center; gap:16px;
+    background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
+    padding:16px; margin-bottom:14px; box-shadow:var(--shadow-sm);
+  }
+  #donutWrap{flex-shrink:0; width:100px; height:100px;}
+  .legend{display:flex; flex-direction:column; gap:6px; flex:1;}
+  .legend-row{display:flex; align-items:center; gap:8px; font-size:12px;}
+  .legend-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0; border:1px solid var(--line-strong);}
+  .legend-label{flex:1; color:var(--ink); font-weight:600;}
+  .legend-pct{font-family:'IBM Plex Mono',monospace; font-weight:800; color:var(--ink-soft);}
+
+  .result-desc{font-size:13.5px; line-height:1.55; color:var(--ink-soft); margin-bottom:14px;}
+  .result-desc strong{color:var(--ink);}
+  .result-explainer{
+    background:var(--teal-mist-2); border:2px solid var(--line-strong);
+    border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:14px;
+    box-shadow:var(--shadow-sm);
+  }
+  .result-explainer-title{
+    font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:800; margin-bottom:3px;
+  }
+  .result-explainer-copy{
+    font-size:12px; line-height:1.45; color:var(--ink-soft);
+  }
+
+  .routine-card{
+    background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
+    padding:16px; margin-bottom:14px; box-shadow:var(--shadow-sm);
+  }
+  .routine-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .routine-head .lbl{font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); font-weight:700;}
+  .derm-badge{display:flex; align-items:center; gap:5px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--teal-text); background:var(--teal-mist-2); padding:4px 8px; border-radius:20px; border:1.5px solid var(--line-strong); font-weight:700;}
+  
+  .routine-step{display:flex; gap:11px; padding-bottom:12px; margin-bottom:12px; border-bottom:2px dashed var(--line-strong); position:relative;}
+  .routine-step:last-child{border-bottom:none; margin-bottom:0; padding-bottom:0;}
+  .routine-num{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:800; color:#fff;
+    background:var(--teal-text); width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1.5px solid var(--line-strong);
+  }
+  .routine-step .t1{font-size:13.5px; font-weight:700;}
+  .routine-step .t2{font-size:12px; color:var(--ink-soft); margin-top:2px; line-height:1.4;}
+  .routine-step.blurred .t1, .routine-step.blurred .t2{filter:blur(4.5px); user-select:none; opacity:0.65;}
+  .blur-tag{
+    position:absolute; right:0; top:0; font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px; font-weight:700; background:var(--paper-deep); color:var(--ink-soft);
+    padding:3px 7px; border-radius:6px; border:1.5px solid var(--line-strong);
+  }
+
+  .email-status-card{
+    background:var(--teal-mist-2); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:10px 12px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between;
+    box-shadow:var(--shadow-sm);
+  }
+  .email-status-txt{display:flex; align-items:center; gap:8px; font-size:11.5px; font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--teal-text);}
+
+  .path-choice{display:flex; flex-direction:column; gap:10px; margin-top:2px;}
+  .path-card{
+    background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
+    padding:16px; cursor:pointer; transition:transform 0.1s ease, box-shadow 0.1s ease;
+  }
+  .path-card:hover{box-shadow:var(--shadow-md);}
+  .path-card:active{transform:scale(0.985);}
+  .path-card.reco{background:var(--teal-mist-2);}
+  .path-tag{font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--teal-text); margin-bottom:6px;}
+  .path-title-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
+  .path-title{font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800;}
+  .path-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-bottom:8px;}
+  .path-price{font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:800;}
+
+  /* Confetti */
+  #confettiLayer{position:fixed; inset:0; pointer-events:none; z-index:99; overflow:hidden;}
+  .confetti-piece{position:absolute; top:-20px; border-radius:2px; animation:confetti-fall linear forwards; border:1px solid rgba(14,32,25,0.4);}
+  @keyframes confetti-fall{
+    0%{transform:translateY(0) rotate(0deg); opacity:1;}
+    100%{transform:translateY(110vh) rotate(540deg); opacity:0.9;}
+  }
+
+  /* Admin CRM Screen */
+  .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .admin-metrics{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
+  .metric-box{
+    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:12px; box-shadow:var(--shadow-sm);
+  }
+  .metric-val{font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:var(--teal-text);}
+  .metric-label{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); text-transform:uppercase;}
+  .lead-list-wrap{display:flex; flex-direction:column; gap:10px;}
+  .lead-entry{
+    background:var(--card); border:2px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:12px 14px; box-shadow:var(--shadow-sm);
+  }
+  .lead-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;}
+  .lead-name{font-weight:700; font-size:14px;}
+  .lead-pill{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; padding:2px 6px; border-radius:12px; border:1px solid var(--line-strong);}
+  .lead-pill.oil{background:var(--amber); color:#000;}
+  .lead-pill.dehydration{background:var(--rose-deep); color:#fff;}
+  .lead-pill.sensitivity{background:var(--teal); color:#fff;}
+  .lead-pill.sun{background:var(--brand-lilac); color:#000;}
+  .lead-meta{font-size:11.5px; color:var(--ink-soft); margin-bottom:2px;}
+  .lead-date{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--ink-faint); margin-top:4px;}
+
+  /* Modal */
+  .email-preview-modal{
+    position:fixed; inset:0; z-index:100; background:rgba(14,32,25,0.6);
+    backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:16px;
+  }
+  .email-preview-modal.open{display:flex;}
+  .email-box{
+    background:#FFFFFF; width:100%; max-width:400px; max-height:85vh;
+    border-radius:18px; border:3px solid var(--line-strong); box-shadow:var(--shadow-lg);
+    overflow-y:auto; display:flex; flex-direction:column;
+  }
+  .email-box-header{
+    padding:12px 16px; background:var(--paper); border-bottom:2.5px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .email-box-title{font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:800; color:var(--teal-text);}
+  .email-close-btn{background:none; border:none; cursor:pointer; font-size:22px; font-weight:700; color:var(--ink);}
+  .email-body{padding:18px 16px; font-size:13px; line-height:1.6; color:#222;}
+
+  .confirm-icon{width:56px; height:56px; border-radius:50%; background:var(--teal-text); border:2.5px solid var(--line-strong); display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:18px; box-shadow:var(--shadow-md);}
+
+  /* ===== SKIN QUOTIENT FINAL BRAND SYSTEM ===== */
+  :root{
+    --paper:#FBFAFF;
+    --paper-deep:#F1EDFF;
+    --card:#FFFFFF;
+    --ink:#17142B;
+    --ink-soft:#565267;
+    --ink-faint:#89859A;
+    --brand-lilac:#B2A2FF;
+    --teal:#5E4BB8;
+    --teal-mid:#241F36;
+    --teal-text:#5C4BB2;
+    --teal-mist:#F0ECFF;
+    --teal-mist-2:#F7F4FF;
+    --rose:#B2A2FF;
+    --rose-deep:#8D77E0;
+    --amber:#B2A2FF;
+    --line:rgba(38,31,62,.10);
+    --line-strong:#242035;
+    --shadow-sm:0 4px 16px rgba(57,44,102,.06);
+    --shadow-md:0 9px 24px rgba(57,44,102,.11);
+    --shadow-lg:0 18px 50px rgba(57,44,102,.14);
+    --radius:20px;
+    --radius-sm:16px;
+  }
+  html,body{background:#F6F3FF;color:var(--ink);}
+  body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+  .device-frame{max-width:430px;background:linear-gradient(180deg,#fff 0%,#FBF9FF 55%,#F8F5FF 100%);border:0;box-shadow:0 20px 60px rgba(49,34,93,.12);}
+  .ambient .blob{filter:blur(80px);opacity:.22;}
+  .ambient .b1{background:#EEE9FF;}
+  .ambient .b2{background:#D8CEFF;opacity:.16;}
+
+  .topbar{position:relative;top:auto;padding:18px 20px 16px;background:rgba(255,255,255,.96);border-bottom:1px solid #ECE8F5;backdrop-filter:blur(12px);min-height:100px;}
+  .brand{gap:0;}
+  .brand-logo-svg{width:180px;height:58px;}
+  .top-actions{display:flex;align-items:center;gap:16px;}
+  .by-tag{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;color:#5C4BBA;background:#fff;border:1.7px solid #A892FF;border-radius:22px;padding:7px 14px;}
+  
+  .screen{padding:0 20px 28px;animation:none;}
+  #screen-hero{padding:26px 20px 18px;overflow:hidden;}
+  .eyebrow{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:.08em;color:#28233F;background:#fff;border:1.5px solid #B6A6FF;box-shadow:none;padding:8px 13px;border-radius:20px;margin-bottom:20px;}
+  .eyebrow svg{color:#8D77E0!important;}
+  .hero-title{font-family:Georgia,'Times New Roman',serif;font-size:40px;line-height:1.03;font-weight:500;letter-spacing:-.035em;margin:0 0 12px;position:relative;z-index:2;max-width:335px;}
+  .hero-title em{font-family:Georgia,'Times New Roman',serif;color:#8974DF;font-style:italic;font-weight:500;}
+  .hero-sub{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55;color:#4C4A5A;margin:0 0 14px;max-width:345px;position:relative;z-index:2;}
+
+  .hero-portrait{display:block;position:absolute;right:-10px;top:84px;width:205px;height:390px;z-index:1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,rgba(246,243,255,0),rgba(246,243,255,.18));}
+  .hero-portrait img{width:100%;height:100%;object-fit:cover;object-position:58% 24%;mix-blend-mode:multiply;filter:saturate(.95) contrast(.98);}
+  .hero-copy-wrap{position:relative;z-index:2;}
+  .hero-formula{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:500;background:rgba(255,255,255,.82);color:#252047;padding:16px 17px;border-radius:18px;line-height:1.55;margin:8px 0 20px;border:1px solid #E4DEF7;box-shadow:0 10px 24px rgba(86,65,150,.06);position:relative;z-index:2;}
+  .hero-formula .eq-result{color:#4D4192;font-weight:500;margin-top:3px;}
+  .hero-formula .eq-result:before{content:'';}
+
+  .trust-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #EEE9F7;border-radius:20px;background:#fff;box-shadow:0 10px 24px rgba(86,65,150,.05);margin-bottom:18px;position:relative;z-index:2;}
+  .trust-item{display:block;text-align:center;font-size:11px;line-height:1.45;color:#363447;padding:18px 10px;}
+  .trust-item+.trust-item{border-left:1px solid #EEE9F7;}
+  .trust-item .ic-wrap{width:48px;height:48px;border-radius:50%;background:#F4F0FF;color:#927BE8;border:0;display:grid;place-items:center;margin:0 auto 10px;}
+  .trust-item .icon{width:23px!important;height:23px!important;}
+  .trust-item b{color:#1D1930;}
+
+  .founder-card{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FAF8FF,#F2EDFF);border:1px solid #E4DEF7;border-radius:20px;padding:16px;margin-bottom:20px;box-shadow:none;position:relative;overflow:hidden;z-index:2;}
+  .founder-card:after{content:'';position:absolute;right:-20px;top:-14px;width:190px;height:150px;background:radial-gradient(circle,#DDD4FF 0,#EFEAFF 38%,transparent 68%);opacity:.75;}
+  .founder-avatar{width:66px;height:66px;border-radius:50%;border:1.5px solid #A892FF;background:#FBF9FF;color:#5D4AB4;font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:400;}
+  .founder-text{position:relative;z-index:1;}
+  .founder-name{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:20px;font-weight:700;color:#17142B;}
+  .founder-cred{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;color:#59566A;margin:3px 0 10px;font-weight:400;}
+  .founder-quote{font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.35;color:#28243B;}
+
+  .btn{border:0;border-radius:30px;min-height:56px;padding:16px 22px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;box-shadow:0 9px 22px rgba(33,29,53,.18);}
+  .btn-primary{background:#211D35;color:#fff;box-shadow:0 9px 22px rgba(33,29,53,.18);}
+  .btn-primary:hover{background:#211D35;}
+  .btn-secondary{background:#fff;color:#17142B;border:1px solid #E4DEF7;box-shadow:none;border-radius:18px;font-size:15px;}
+  .btn-ghost{font-size:14px;color:#393548;padding:15px 0 22px;}
+
+  /* Keep the assessment engine functional, but bring it into the same visual system. */
+  .quotient-meter{padding:10px 20px 14px;background:#fff;position:sticky;top:0;border-bottom:1px solid #ECE8F5;}
+  .qm-bar{background:#F1EDFF;border:1px solid #DCD4F5;}
+  .qm-seg.oil,.qm-seg.dehydration,.qm-seg.sensitivity,.qm-seg.sun{background:#B2A2FF;}
+  .qm-step,.qm-equation .tag,.q-kicker,.path-tag,.email-box-title,.email-status-txt{color:#6A57C3;}
+  .q-kicker{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;}
+  .q-title{font-family:Georgia,'Times New Roman',serif;font-weight:500;color:#17142B;}
+  .q-hint{color:#565267;}
+  .option{border:1px solid #E4DEF7;border-radius:16px;box-shadow:none;}
+  .option.selected{background:#F7F4FF;border-color:#A892FF;box-shadow:none;}
+  .opt-ic-wrap{background:#F4F0FF;color:#7C67D0;border:0;}
+  .option.selected .opt-ic-wrap{background:#B2A2FF;color:#fff;}
+  .option.selected .ck{background:#6A57C3;border-color:#6A57C3;}
+  .lead-card,.donut-block,.routine-card,.path-card,.email-status-card,.result-explainer,.one-last-thing,.metric-box,.lead-entry{border:1px solid #E4DEF7;box-shadow:none;border-radius:18px;}
+  .path-card.reco{background:#F7F4FF;}
+  .result-badge{color:#6A57C3;background:#F7F4FF;border:1px solid #E4DEF7;}
+  .derm-badge{color:#6A57C3;background:#F7F4FF;border:1px solid #E4DEF7;}
+  .routine-num,.confirm-icon{background:#6A57C3;border-color:#6A57C3;box-shadow:none;}
+  .skin-note,.one-last-thing{background:#F7F4FF;border-color:#E4DEF7;box-shadow:none;}
+  .fun-badge{background:#B2A2FF;border:0;box-shadow:none;}
+  .fun-stat{background:#F1EDFF;border:1px solid #DDD5F7;color:#5C4BB2;box-shadow:none;}
+  .analyzing-ring svg circle:nth-child(2){stroke:#B2A2FF!important;}
+  .analyzing-step.done{color:#6A57C3;}
+  .email-preview-modal{background:rgba(23,20,43,.52);}
+
+  .home-benefits{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #EEE9F7;border-radius:18px;background:#fff;margin:0 20px 20px;overflow:hidden;position:relative;z-index:2;}
+  .home-benefits>div{padding:17px 10px;font-size:11px;line-height:1.45;color:#3E3A50;}
+  .home-benefits>div+div{border-left:1px solid #EEE9F7;}
+  .home-benefits .bi{font-size:22px;color:#9B86EF;margin-bottom:8px;}
+  .home-foot{padding:0 24px 26px;text-align:center;color:#7C7888;font-size:10px;line-height:1.5;position:relative;z-index:2;}
+  .home-foot-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 12px;margin-top:10px;}
+  .home-foot-links a{color:#3E3A50;font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+
+  @media(min-width:700px){
+    body{background:#F6F3FF;}
+    .device-frame{margin:28px auto;border-radius:28px;min-height:calc(100vh - 56px);overflow:hidden;}
+  }
+
+
+
+/* ===== SKIN QUOTIENT — FINAL PREMIUM MOBILE HERO ===== */
+#screen-hero{
+  position:relative;
+  isolation:isolate;
+  overflow:visible;
+  padding:24px 20px 20px;
+  background:linear-gradient(180deg,#FBFAFF 0%,#F8F6FF 100%);
+}
+
+/* One intentional hero stage. The copy and portrait are separate columns. */
+#screen-hero .hero-copy-wrap{
+  position:relative;
+  z-index:3;
+  width:55%;
+  max-width:242px;
+  min-height:390px;
+}
+
+#screen-hero .eyebrow{
+  margin-bottom:18px;
+  white-space:nowrap;
+  font-size:9.5px;
+  letter-spacing:.075em;
+  padding:8px 12px;
+}
+
+#screen-hero .hero-title{
+  max-width:242px;
+  margin:0 0 13px;
+  padding:0;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:38px;
+  line-height:1.02;
+  font-weight:500;
+  letter-spacing:-.035em;
+}
+
+#screen-hero .hero-title em{
+  color:#8974DF;
+  font-style:italic;
+  font-weight:500;
+}
+
+#screen-hero .hero-sub{
+  max-width:224px;
+  margin:0;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size:14.5px;
+  line-height:1.53;
+  color:#4C4A5A;
+}
+
+/* The portrait is an actual transparent subject, so there is no rectangular image field. */
+#screen-hero .hero-portrait{
+  position:absolute;
+  top:92px;
+  right:-4px;
+  width:47%;
+  height:350px;
+  z-index:1;
+  overflow:visible;
+  background:none;
+  border-radius:0;
+  pointer-events:none;
+  -webkit-mask:none;
+  mask:none;
+}
+
+/* Soft atmospheric glow behind the subject, independent of the asset. */
+#screen-hero .hero-portrait::before{
+  content:"";
+  position:absolute;
+  top:-20px;
+  right:-24px;
+  width:190px;
+  height:310px;
+  z-index:-1;
+  background:radial-gradient(ellipse at 55% 45%,
+    rgba(210,198,255,.68) 0%,
+    rgba(229,223,255,.46) 44%,
+    rgba(248,246,255,0) 76%);
+  border-radius:50%;
+}
+
+#screen-hero .hero-portrait img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center bottom;
+  mix-blend-mode:normal;
+  filter:none;
+}
+
+/* Full-width content begins after the hero stage. */
+#screen-hero .hero-formula{
+  position:relative;
+  z-index:4;
+  width:100%;
+  margin:0 0 20px;
+  background:rgba(255,255,255,.88);
+  border:1px solid #E1D9FA;
+  box-shadow:0 8px 24px rgba(84,65,150,.06);
+}
+
+/* Equal three-column trust strip. */
+#screen-hero .trust-row{
+  position:relative;
+  z-index:4;
+  width:100%;
+}
+
+body.home-mode .home-benefits{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  width:calc(100% - 40px);
+  margin:0 20px 20px;
+}
+
+body.home-mode .home-benefits>div{
+  min-width:0;
+  min-height:112px;
+  padding:16px 8px 15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:center;
+}
+
+body.home-mode .home-benefits .bi{
+  min-height:24px;
+  margin-bottom:9px;
+  line-height:1;
+}
+
+body.home-mode .home-benefits>div br{display:none;}
+
+/* Founder card and CTA retain clean separation from the hero visual. */
+#screen-hero .founder-card,
+#screen-hero > .btn,
+#screen-hero > .btn-ghost{
+  position:relative;
+  z-index:4;
+}
+
+@media(max-width:370px){
+  #screen-hero .hero-copy-wrap{
+    width:56%;
+    max-width:214px;
+    min-height:365px;
+  }
+
+  #screen-hero .hero-title{
+    max-width:214px;
+    font-size:35px;
+  }
+
+  #screen-hero .hero-sub{
+    max-width:200px;
+    font-size:14px;
+  }
+
+  #screen-hero .hero-portrait{
+    width:46%;
+    height:325px;
+    top:91px;
+    right:-2px;
+  }
+
+  #screen-hero .hero-portrait::before{
+    width:165px;
+    height:285px;
+  }
+
+  body.home-mode .home-benefits>div{
+    padding-left:5px;
+    padding-right:5px;
+    font-size:10px;
+  }
+}
+
+
+/* Dr. Shahima credentials */
+.founder-credentials{
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  color:#4C4A5A;
+  line-height:1.38;
+  margin-top:5px;
+}
+.founder-credentials>div{
+  margin:3px 0;
+  font-size:11px;
+  font-weight:400;
+  color:#4C4A5A;
+}
+
+/* ===== CROSS-BROWSER PAGE SCROLL FIX ===== */
+html{
+  min-height:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+
+/* Desktop frame must not clip a page taller than the viewport. */
+.device-frame{
+  min-height:calc(100vh - 56px);
+  height:auto;
+  overflow:visible;
+}
+
+/* Keep the document scrollable even when the frame is taller than the viewport. */
+@media (min-width:481px){
+  body{
+    display:block;
+  }
+  .device-frame{
+    margin:28px auto;
+  }
+}
+
+/* On phones the frame fills the viewport, but page content can still scroll. */
+@media (max-width:480px){
+  body{
+    display:block;
+    min-height:100vh;
+  }
+  .device-frame{
+    min-height:100vh;
+    height:auto;
+    overflow:visible;
+  }
+}
+
+</style>
+<style>@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}} .option:focus-visible{outline:3px solid #0A7A4C;outline-offset:3px}.field-error{font-size:14px}#saveNotice{color:#942d42;line-height:1.5}</style></head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <!-- Exact Geometric Wordmark from Skin Quotient Brand Guidelines[cite: 2, 3] -->
+  <symbol id="sq-logo" viewBox="0 0 200 48">
+    <text x="0" y="27" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="28px" letter-spacing="-0.03em" fill="var(--ink)">sk</text>
+    <g transform="translate(36, 6)">
+      <circle cx="9" cy="4" r="3.2" fill="var(--brand-lilac)" />
+      <rect x="0" y="10" width="18" height="6.4" rx="3.2" fill="var(--brand-lilac)" />
+      <circle cx="9" cy="22.4" r="3.2" fill="var(--brand-lilac)" />
+    </g>
+    <text x="59" y="27" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="28px" letter-spacing="-0.03em" fill="var(--ink)">n</text>
+    <text x="1" y="44" font-family="'Inter', 'Helvetica', sans-serif" font-weight="800" font-size="10.5px" letter-spacing="0.32em" fill="var(--ink)">QUOTIENT</text>
+  </symbol>
+
+  <!-- Skin Quotient Division Glyph Icon[cite: 1, 3] -->
+  <symbol id="sq-icon" viewBox="0 0 24 24">
+    <circle cx="12" cy="5" r="2.8" fill="currentColor"/>
+    <rect x="3" y="10.5" width="18" height="3" rx="1.5" fill="currentColor"/>
+    <circle cx="12" cy="19" r="2.8" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 2.5 19 6v5.2c0 5-3.4 8.7-7 9.8-3.6-1.1-7-4.8-7-9.8V6l7-3.5Z"/><path d="M9 12.2l2 2 4-4.4"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 3.5 21 19H3L12 3.5Z"/><path d="M12 9.5v4.2"/><circle cx="12" cy="16.6" r="0.6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 2.8s6.5 7.6 6.5 12A6.5 6.5 0 0 1 5.5 14.8C5.5 10.4 12 2.8 12 2.8Z"/></symbol>
+  <symbol id="i-droplet-off" viewBox="0 0 24 24"><path d="M12 2.8s6.5 7.6 6.5 12A6.5 6.5 0 0 1 5.5 14.8C5.5 10.4 12 2.8 12 2.8Z"/><path d="M8.3 13.6h7.4"/></symbol>
+  <symbol id="i-half-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.4 2.4 5-5.4"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 4.5 4 5.5 5 6.5 1-1 5-2 5-6.5M7 21c0-4.5 4-5.5 5-6.5 1 1 5 2 5 6.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 17 8.5 3.8 3.8 0 0 1 16.5 17H7Z"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h3.5l1.8-5 3 10 1.8-5H21"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/><circle cx="17" cy="17" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5.5L5.5 18a2 2 0 0 0 1.8 3h9.4a2 2 0 0 0 1.8-3L14 8.5V3"/><path d="M8 14h8"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></symbol>
+  <symbol id="i-sun-low" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 4v1.6M12 18.4V20M4 12h1.6M18.4 12H20"/></symbol>
+  <symbol id="i-sun-high" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"/></symbol>
+  <symbol id="i-minus-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5.5" y="10.5" width="13" height="9" rx="2"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6L12 3Z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8 3.5v3M16 3.5v3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3.5h3.2l1.3 4-2 1.6a12 12 0 0 0 5.4 5.4l1.6-2 4 1.3V17a2 2 0 0 1-2.2 2A16 16 0 0 1 4 5.7 2 2 0 0 1 6 3.5Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.3l3.5 2"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C11 4 5 10 5 17c0 1 .1 1.7.2 2 4-1 9-3.5 12-7.3M6 20c1-3 3-6.5 6-9"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></symbol>
+</svg>
+
+<div id="confettiLayer"></div>
+
+<div class="device-frame">
+  <div class="ambient"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+  <!-- PERSISTENT TOPBAR: Clean brand focus, 'Private' pill removed -->
+  <div class="topbar">
+    <a href="/account" style="margin-right:16px">My account</a><div class="brand" data-action="0">
+      <svg class="brand-logo-svg" aria-label="Skin Quotient"><use href="#sq-logo"/></svg>
+    </div>
+    <div class="top-actions">
+      <span class="by-tag">by Shahima</span>
+    </div>
+  </div>
+
+  <div class="quotient-meter" id="meterWrap" style="display:none;">
+    <div class="qm-top">
+      <span class="qm-label">Your Skin Progress</span>
+      <span class="qm-step" id="stepLabel">Q1 / 7</span>
+    </div>
+    <div class="qm-bar">
+      <div class="qm-seg oil" id="seg-oil"></div>
+      <div class="qm-seg dehydration" id="seg-dehydration"></div>
+      <div class="qm-seg sensitivity" id="seg-sensitivity"></div>
+      <div class="qm-seg sun" id="seg-sun"></div>
+    </div>
+    <div class="qm-equation" id="equationLine"><span class="tag">building your ratio…</span></div>
+  </div>
+
+  <!-- SCREEN 1: HERO -->
+  <div class="screen active" id="screen-hero">
+    <div class="hero-portrait" aria-hidden="true"><img src="/skin-portrait.png" alt="" loading="eager"></div>
+    <div class="hero-copy-wrap">
+      <div class="eyebrow">
+        <svg style="width:14px; height:14px; color:#8D77E0;"><use href="#sq-icon"/></svg>
+        <span>90-SECOND SKIN ASSESSMENT</span>
+      </div>
+      <h1 class="hero-title">Think you know your skin type?<br><em>Let’s actually find out.</em></h1>
+      <p class="hero-sub">Answer a few simple questions to discover what your skin may need right now — then get a personalized Skin Quotient and routine from Dr. Shahima’s team.</p>
+    </div>
+
+    <div class="hero-formula">
+      <b>Oil Balance × Hydration × Sensitivity × Sun Exposure</b><br>
+      <span class="eq-result">= a clearer starting point for your routine</span>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-shield-check"/></svg></span><span>Personalized with input from <b>Dr. Shahima’s team</b></span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-lock"/></svg></span><span>Your responses remain <b>confidential & private</b></span></div>
+      <div class="trust-item"><span class="ic-wrap"><svg class="icon"><use href="#i-leaf"/></svg></span><span>Recommendations focused on <b>your skin goals, not trends</b></span></div>
+    </div>
+
+  <div class="founder-card">
+  <div class="founder-avatar">S</div>
+
+  <div class="founder-text">
+    <div class="founder-name">Dr. Shahima</div>
+    <div class="founder-cred">Aesthetic Dermatologist</div>
+    <div class="founder-exp">5+ Years of Experience</div>
+
+    <div class="founder-credentials">
+      <div>Facial &amp; Medical Aesthetics</div>
+      <div>Medical Trichology</div>
+      <div>Anti-Aging Specialist</div>
+    </div>
+  </div>
+</div>
+
+    <button class="btn btn-primary" data-action="1"><span>Calculate My Quotient</span><svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <button class="btn-ghost" data-action="2">Skip quiz & schedule 1:1 consult instead</button>
+  </div>
+
+  <div class="home-benefits" id="homeBenefits">
+    <div><div class="bi">✧</div>Personalized routines<br>that actually fit you</div>
+    <div><div class="bi">✦</div>Realistic, practical &<br> easy to follow</div>
+    <div><div class="bi">♡</div>Backed by dermatology,<br>not trends</div>
+  </div>
+  <footer class="home-foot">
+    Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis.
+    <div class="home-foot-links">
+      <a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/privacy-policy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund-cancellation.html">Refunds & Cancellation</a><a href="/shipping-policy.html">Shipping</a>
+    </div>
+  </footer>
+
+  <!-- SCREEN 2: QUESTION RUNNER -->
+  <div class="screen" id="screen-question">
+    <div class="q-kicker" id="qKicker">Skin Metric</div>
+    <h2 class="q-title" id="qTitle">Midday Barrier Check</h2>
+    <p class="q-hint" id="qHint">Pick the closest match to your baseline skin.</p>
+    <div class="options" id="qOptions"></div>
+    <div class="q-nav">
+      <button class="btn btn-secondary" data-action="3" aria-label="Back"><svg class="icon"><use href="#i-arrow-left"/></svg></button>
+      <button class="btn btn-primary" id="qNextBtn" data-action="4" disabled>Continue <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: FUN INTERSTITIAL BREAK -->
+  <div class="screen" id="screen-fun">
+    <div class="fun-badge"><svg class="icon"><use href="#i-sparkle"/></svg></div>
+    <div class="fun-title">Only 3 questions left.</div>
+    <p class="fun-sub">Just three more quick questions and we'll have enough information to build your Skin Quotient.</p>
+    <div class="fun-stat"><svg class="icon" style="width:14px;height:14px;"><use href="#i-target"/></svg> 3 quick questions to go</div>
+    <button class="btn btn-primary" style="max-width:260px;" data-action="5">Finish my assessment <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <!-- SCREEN 4: ANALYZING SIMULATION -->
+  <div class="screen" id="screen-analyzing">
+    <div class="analyzing-ring">
+      <svg width="84" height="84" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="38" fill="none" stroke="var(--paper-deep)" stroke-width="7"/>
+        <circle cx="44" cy="44" r="38" fill="none" stroke="var(--teal-mid)" stroke-width="7" stroke-linecap="round" stroke-dasharray="90 150"/>
+      </svg>
+    </div>
+    <div class="analyzing-title">Building your Skin Quotient</div>
+    <p class="analyzing-sub">Looking at the patterns in your answers and building a personalized starting point.</p>
+    <div class="analyzing-list" id="analyzingList">
+      <div class="analyzing-step" data-i="0"><span class="dot"></span>Checking oil & hydration</div>
+      <div class="analyzing-step" data-i="1"><span class="dot"></span>Looking at sensitivity & sun exposure</div>
+      <div class="analyzing-step" data-i="2"><span class="dot"></span>Matching your routine priorities</div>
+    </div>
+    <div class="skin-note" id="skinNote">
+      <div class="skin-note-kicker">SKIN NOTE</div>
+      <div class="skin-note-title" id="skinNoteTitle">Your skin has a few things to say.</div>
+      <div class="skin-note-copy" id="skinNoteCopy">While we calculate your result, here's something worth knowing.</div>
+      <div class="skin-note-source" id="skinNoteSource">Evidence-informed skincare note</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: STRATEGIC LEAD GATE -->
+  <div class="screen" id="screen-lead">
+    <div class="q-kicker">Your Skin Quotient is Ready</div>
+    <h2 class="q-title">See what your skin needs next.</h2>
+    <p class="q-hint">Enter your details to unlock your personalized results and routine.</p>
+    
+    <p class="q-hint">Sign in to save your results securely. <a href="/account" target="_blank" rel="noopener">Open sign in</a>, then return here.</p><div class="lead-card">
+      <label class="input-label" for="leadName">Your Name</label>
+      <input class="lead-field" id="leadName" type="text" placeholder="Alex / Priya ...">
+      <div class="field-error" id="nameError">Please enter your name</div>
+
+      <label class="input-label" for="leadEmail">Email Address</label>
+      <input class="lead-field" id="leadEmail" type="email" placeholder="Use your signed-in email">
+      <div class="field-error" id="emailError">Please enter a valid email address</div>
+
+      <label class="input-label" for="leadPhone">WhatsApp / Mobile</label>
+      <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
+    </div>
+    <label style="display:block;margin:16px 0"><input type="checkbox" id="privacyConsent"> I agree to storing my answers to provide my assessment, as described in the <a href="/privacy-policy.html" target="_blank" rel="noopener">privacy notice</a>.</label><p id="saveNotice" role="status" aria-live="polite"></p><button class="btn btn-primary" id="submitLeadBtn" data-action="6">Show My Results <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <!-- SCREEN 6: RESULTS -->
+  <div class="screen" id="screen-result">
+    <div class="result-badge"><svg class="icon" style="width:12px;height:12px;"><use href="#i-check-circle"/></svg><span id="userBadgeGreeting">Your Skin Quotient</span></div>
+
+    <div class="donut-block">
+      <div id="donutWrap"></div>
+      <div class="legend" id="legendWrap"></div>
+    </div>
+
+    <p class="result-desc" id="resultDesc">Analyzing results...</p>
+
+    <div class="result-explainer">
+      <div class="result-explainer-title">In simple terms</div>
+      <div class="result-explainer-copy">Your score highlights the areas worth focusing on first. It is a starting point for a more personalized routine — not a medical diagnosis.</div>
+    </div>
+
+    
+
+    <div class="email-status-card">
+      <div class="email-status-txt">
+        <svg class="icon"><use href="#i-mail"/></svg>
+        <span id="reportDeliveryTarget">Your results are ready</span>
+      </div>
+      <a href="/account" target="_blank" rel="noopener">Saved assessments</a>
+    </div>
+
+    <div class="routine-card">
+      <div class="routine-head">
+        <span class="lbl">Your Recommended Routine</span>
+        <span class="derm-badge"><svg class="icon"><use href="#i-shield-check"/></svg>Starting routine</span>
+      </div>
+      <div id="routineList"></div>
+    </div>
+
+    <p style="font-size:10.5px; line-height:1.4; color:var(--ink-faint); margin:0 0 10px;">
+      Skin Quotient is a personalized skincare assessment and starting point, not a medical diagnosis. If you have a persistent or severe skin condition, speak with a qualified clinician.
+    </p>
+    <div class="one-last-thing">
+      <div class="olt-kicker">ONE LAST THING</div>
+      <div class="olt-title">Your skin isn't a fixed category.</div>
+      <div class="olt-copy">“Oily.” “Dry.” “Combination.” Those labels are only part of the picture. Your skin can change with your environment, routine, products and other factors — which is why your Skin Quotient looks beyond a single label.</div>
+    </div>
+    <p class="q-hint" style="margin-bottom:12px;">Your Skin Quotient gives you the starting point. Now choose how much help you want putting it into practice.</p>
+    <div class="path-choice">
+      <div class="path-card reco" data-action="7">
+        <div class="path-tag">RECOMMENDED</div>
+        <div class="path-title-row"><div class="path-title">Personalized Skin Plan</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
+        <div class="path-desc">Your Skin Quotient → personalized routine → product recommendations → WhatsApp check-ins → ongoing adjustments.</div>
+        <div class="path-price">₹1,499 / month · online enrolment coming soon</div>
+      </div>
+      <div class="path-card" data-action="8">
+        <div class="path-tag">ONE-TIME OPTION</div>
+        <div class="path-title-row"><div class="path-title">1:1 Skin Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
+        <div class="path-desc">30-minute consultation with Dr. Shahima's team. Talk through your concerns and get expert guidance.</div>
+        <div class="path-price">₹999 one-time · online booking coming soon</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: CONFIRM PLAN -->
+  <div class="screen" id="screen-confirm-plan">
+    <div class="confirm-icon"><svg class="icon"><use href="#i-check"/></svg></div>
+    <h2 class="q-title">Skin Plan enquiries</h2>
+    <p class="q-hint">Online plan enrolment is not open yet. No payment has been taken. Call +91 9995850411 to ask about the service.</p>
+    <button class="btn btn-secondary" data-action="9">Return to Start</button>
+  </div>
+
+  <!-- SCREEN 9: CONFIRM CALL -->
+  <div class="screen" id="screen-confirm-call"><h2 class="q-title">Consultation enquiries</h2><p class="q-hint">Online booking is not open yet. No appointment has been reserved. Call <a href="tel:+919995850411">+91 9995850411</a> to discuss availability.</p><button class="btn btn-secondary" data-return>Return to results</button></div>
+  <!-- SCREEN 10: DIRECT BOOKING -->
+  <div class="screen" id="screen-result-direct"><h2 class="q-title">Consultation enquiries</h2><p class="q-hint">Call <a href="tel:+919995850411">+91 9995850411</a> to discuss a consultation. Online booking and payment are not open yet.</p><a class="btn btn-secondary" href="/">Return to the assessment</a></div>
+</div>
+
+<script src="/assessment.js" defer></script></body></html>

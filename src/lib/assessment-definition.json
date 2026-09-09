@@ -1,0 +1,317 @@
+{
+  "questions": [
+    {
+      "id": "skinFeel",
+      "kicker": "Your Skin",
+      "title": "How does your skin usually feel by midday?",
+      "hint": "Select all that apply. Choose what sounds like your skin.",
+      "multi": true,
+      "max": 3,
+      "options": [
+        {
+          "t1": "Oily or shiny, especially around the T-zone",
+          "t2": "Often feels oily",
+          "ic": "i-sparkle",
+          "w": {
+            "oil": 3
+          }
+        },
+        {
+          "t1": "Tight, dry, or flaky",
+          "t2": "Feels short on hydration",
+          "ic": "i-droplet-off",
+          "w": {
+            "dehydration": 3
+          }
+        },
+        {
+          "t1": "Oily in some areas, dry in others",
+          "t2": "Mixed / combination",
+          "ic": "i-half-circle",
+          "w": {
+            "oil": 2,
+            "dehydration": 1
+          }
+        },
+        {
+          "t1": "Comfortable and balanced",
+          "t2": "Generally balanced",
+          "ic": "i-check-circle",
+          "w": {}
+        }
+      ]
+    },
+    {
+      "id": "topConcern",
+      "kicker": "Main Goal",
+      "title": "What are your main skin concerns right now?",
+      "hint": "Select all that apply. Choose up to 3 concerns.",
+      "multi": true,
+      "max": 3,
+      "options": [
+        {
+          "t1": "Active Acne, blackheads & clogged pores",
+          "t2": "",
+          "ic": "i-alert-triangle",
+          "w": {
+            "oil": 2,
+            "sensitivity": 1
+          }
+        },
+        {
+          "t1": "Dark spots, acne marks & uneven tone",
+          "t2": "",
+          "ic": "i-target",
+          "w": {
+            "sun": 2
+          }
+        },
+        {
+          "t1": "Fine lines, wrinkles & loss of elasticity",
+          "t2": "",
+          "ic": "i-hourglass",
+          "w": {
+            "dehydration": 1
+          }
+        },
+        {
+          "t1": "Dullness & uneven texture",
+          "t2": "",
+          "ic": "i-cloud",
+          "w": {
+            "dehydration": 2
+          }
+        },
+        {
+          "t1": "Redness, stinging or easily irritated skin",
+          "t2": "",
+          "ic": "i-pulse",
+          "w": {
+            "sensitivity": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "secondary",
+      "kicker": "Anything Else?",
+      "title": "Does anything else sound familiar? (Choose up to 3)",
+      "hint": "Select all that apply · Up to 3. Choose anything else that sounds like your skin.",
+      "multi": true,
+      "max": 3,
+      "options": [
+        {
+          "t1": "My pores clog easily",
+          "t2": "",
+          "ic": "i-grid",
+          "w": {
+            "oil": 1
+          }
+        },
+        {
+          "t1": "I tan quickly in the sun",
+          "t2": "",
+          "ic": "i-sun-high",
+          "w": {
+            "sun": 2
+          }
+        },
+        {
+          "t1": "My skin feels dry even when it looks oily",
+          "t2": "",
+          "ic": "i-droplet",
+          "w": {
+            "dehydration": 2
+          }
+        },
+        {
+          "t1": "New products often irritate my skin",
+          "t2": "",
+          "ic": "i-alert-triangle",
+          "w": {
+            "sensitivity": 2
+          }
+        },
+        {
+          "t1": "None of these",
+          "t2": "",
+          "ic": "i-minus-circle",
+          "w": {}
+        }
+      ]
+    },
+    {
+      "id": "routine",
+      "kicker": "Your Current Routine",
+      "title": "How much skincare are you currently using?",
+      "hint": "Select all that apply. Choose the routine levels that describe you.",
+      "multi": true,
+      "max": 3,
+      "options": [
+        {
+          "t1": "Minimal: Water or basic cleanser only",
+          "t2": "",
+          "ic": "i-minus-circle",
+          "w": {
+            "sensitivity": 1
+          }
+        },
+        {
+          "t1": "Basics: Cleanser, moisturiser and sunscreen",
+          "t2": "",
+          "ic": "i-droplet",
+          "w": {}
+        },
+        {
+          "t1": "Intermediate: Basics + mild serums or gentle exfoliants",
+          "t2": "",
+          "ic": "i-flask",
+          "w": {}
+        },
+        {
+          "t1": "Advanced: Multi step routine with strong actives",
+          "t2": "",
+          "ic": "i-sparkle",
+          "w": {
+            "sensitivity": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "sun",
+      "kicker": "Sun Exposure",
+      "title": "How much time do you spend outdoors most days?",
+      "hint": "Think about your usual commute, errands and outdoor time.",
+      "multi": false,
+      "options": [
+        {
+          "t1": "Mostly indoors",
+          "t2": "<30 minutes a day",
+          "ic": "i-home",
+          "w": {
+            "sun": 0
+          }
+        },
+        {
+          "t1": "Some outdoor time / daily commute",
+          "t2": "30–90 minutes a day",
+          "ic": "i-sun-low",
+          "w": {
+            "sun": 2
+          }
+        },
+        {
+          "t1": "A lot of outdoor time",
+          "t2": "2+ hours a day",
+          "ic": "i-sun-high",
+          "w": {
+            "sun": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "sensitivity",
+      "kicker": "Skin Sensitivity",
+      "title": "How does your skin react to new skincare?",
+      "hint": "Pick the closest match.",
+      "multi": false,
+      "options": [
+        {
+          "t1": "Usually fine — rarely stings or turns red",
+          "t2": "",
+          "ic": "i-shield-check",
+          "w": {
+            "sensitivity": 0
+          }
+        },
+        {
+          "t1": "Mildly Sensitive - Sometimes stings feels warm or gets red",
+          "t2": "",
+          "ic": "i-shield-check",
+          "w": {
+            "sensitivity": 2
+          }
+        },
+        {
+          "t1": "Highly Sensitive — Often burns, stings, or becomes red and irritated when trying new products.",
+          "t2": "",
+          "ic": "i-alert-triangle",
+          "w": {
+            "sensitivity": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "kicker": "Budget",
+      "title": "How much would you like to spend on skincare products?",
+      "hint": "Select all that apply. Choose up to 3 options.",
+      "multi": true,
+      "max": 3,
+      "options": [
+        {
+          "t1": "₹800 – ₹1,500",
+          "t2": "Simple, affordable options",
+          "ic": "₹",
+          "w": {}
+        },
+        {
+          "t1": "₹1,500 – ₹3,000",
+          "t2": "Targeted skincare",
+          "ic": "₹₹",
+          "w": {}
+        },
+        {
+          "t1": "₹3,000+",
+          "t2": "Premium / advanced skincare",
+          "ic": "₹₹₹",
+          "w": {}
+        },
+        {
+          "t1": "I'm not sure yet",
+          "t2": "",
+          "ic": "i-sparkle",
+          "w": {}
+        }
+      ]
+    }
+  ],
+  "templates": {
+    "oil": {
+      "title": "Oil-Balance Focus",
+      "desc": "Your answers suggest that <strong>oil control is one of your main priorities</strong>. The goal is to manage shine and clogged pores without making your skin feel stripped or uncomfortable.",
+      "amCleanser": "Salicylic Acid 1.5% + Zinc Amino Gel",
+      "activeTitle": "Niacinamide 5% + Zinc PCA 1%",
+      "activeDesc": "Contracts appearance of pores and reduces sebum lipid output.",
+      "sunscreen": "Ultra-Lightweight Matte Fluid SPF 50+ PA++++"
+    },
+    "dehydration": {
+      "title": "Hydration Focus",
+      "desc": "Your answers suggest that <strong>hydration is one of your main priorities</strong>. Your routine should focus on keeping skin comfortable and supported rather than piling on more strong actives.",
+      "amCleanser": "Colloidal Oat & Amino Acid Gentle Foam",
+      "activeTitle": "Multi-Molecular Hyaluronic Acid + Ectoin 2%",
+      "activeDesc": "Injects deep hydration and binds water inside epidermal layers.",
+      "sunscreen": "Hydra-Gel Essence Sunscreen SPF 50 PA++++"
+    },
+    "sensitivity": {
+      "title": "Sensitivity Focus",
+      "desc": "Your answers suggest that <strong>skin comfort and sensitivity are key priorities</strong>. A simpler, gentler routine may be a better starting point than adding lots of strong actives at once.",
+      "amCleanser": "Centella & Micro-Algae Non-Foaming Cleansing Milk",
+      "activeTitle": "Madecassoside 0.5% + Bifida Ferment Lysate",
+      "activeDesc": "Reinforces damaged tight junctions and calms histamine receptors.",
+      "sunscreen": "100% Non-Nano Mineral Physical Barrier SPF 50"
+    },
+    "sun": {
+      "title": "Tone & Sun-Protection Focus",
+      "desc": "Your answers suggest that <strong>uneven tone and sun exposure are important priorities</strong>. Consistent sun protection and a targeted routine can help you work toward a more even-looking complexion.",
+      "amCleanser": "Antioxidant Green Tea Gentle Clarifier",
+      "activeTitle": "3-O-Ethyl Ascorbic Acid 10% + Ferulic Acid",
+      "activeDesc": "Neutralizes reactive oxygen species and blocks tyrosinase darkening.",
+      "sunscreen": "Broad-Spectrum PA++++ Hybrid Shield SPF 50+"
+    }
+  },
+  "version": "2026-09-09-v1"
+}
