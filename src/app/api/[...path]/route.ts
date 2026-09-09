@@ -14,6 +14,14 @@ async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}
  if(req.method==='POST'&&!mutationAllowed(req,trustedOrigin()))return json({error:'Request not allowed.'},403);
  const client=await db();let input:any={};
  if(req.method==='POST'){if(Number(req.headers.get('content-length'))>16000)return json({error:'Request too large.'},413);const reader=req.body?.getReader();let raw='';let bytes=0;const decoder=new TextDecoder();if(reader){while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>16000){await reader.cancel();return json({error:'Request too large.'},413)}raw+=decoder.decode(value,{stream:true})}raw+=decoder.decode()}try{input=JSON.parse(raw)}catch{return json({error:'Invalid request.'},400)}}
+ if(req.method==='POST'&&route==='auth/password'){
+  const credentials=z.object({email,password:z.string().min(1).max(256)}).strict().parse(input);
+  const {data,error}=await client.auth.signInWithPassword(credentials);
+  if(error||!data.user?.email_confirmed_at){await client.auth.signOut({scope:'local'});return json({error:'Unable to sign in. Check your email, password and email verification.'},401)}
+  const {data:membership,error:membershipError}=await client.from('staff_memberships').select('active').eq('user_id',data.user.id).maybeSingle();
+  if(membershipError||!membership?.active){await client.auth.signOut({scope:'local'});return json({error:'Staff access has not been enabled for this account.'},403)}
+  return json({ok:true});
+ }
  if(req.method==='POST'&&route==='auth/email'){
   if(process.env.AUTH_EMAIL_ENABLED!=='true')return json({error:'Email sign-in is not open yet. Your details have not been submitted.'},503);
   const address=email.parse(input.email);const {error}=await client.auth.signInWithOtp({email:address,options:{emailRedirectTo:trustedOrigin()+'/auth/callback',shouldCreateUser:false}});
