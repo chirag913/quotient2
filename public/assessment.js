@@ -114,9 +114,9 @@ function goTo(id){
 }
 
 function startQuiz(){
-  qIndex = 0; 
-  answers = {}; 
-  scores = {oil:0, dehydration:0, sensitivity:0, sun:0}; 
+  qIndex = 0;
+  answers = {};
+  scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
   funShown = false;
   renderQuestion();
   goTo('screen-question');
@@ -139,7 +139,7 @@ function renderQuestion(){
   const wrap = document.getElementById('qOptions');
   wrap.innerHTML = '';
   const selected = answers[q.id] || [];
-  
+
   q.options.forEach((o, i)=>{
     const div = document.createElement('div');
     div.className = 'option' + (q.multi ? ' multi' : '') + (selected.includes(i) ? ' selected' : '');
@@ -166,8 +166,8 @@ function selectOption(q, i){
         sel.push(i);
       }
     }
-  } else { 
-    sel = [i]; 
+  } else {
+    sel = [i];
   }
   answers[q.id] = sel;
   renderQuestion();
@@ -205,27 +205,27 @@ function cap(s){ return {oil:'Sebum',dehydration:'Hydration',sensitivity:'Reacti
 
 function nextQuestion(){
   qIndex++;
-  if(qIndex === 4 && !funShown){ 
-    funShown = true; 
-    goTo('screen-fun'); 
-    return; 
+  if(qIndex === 4 && !funShown){
+    funShown = true;
+    goTo('screen-fun');
+    return;
   }
-  if(qIndex >= questions.length){ 
-    runAnalyzing(); 
-    return; 
+  if(qIndex >= questions.length){
+    runAnalyzing();
+    return;
   }
   renderQuestion();
 }
 
-function afterFun(){ 
-  renderQuestion(); 
-  goTo('screen-question'); 
+function afterFun(){
+  renderQuestion();
+  goTo('screen-question');
 }
 
 function prevQuestion(){
   if(qIndex === 0){ goTo('screen-hero'); return; }
-  qIndex--; 
-  renderQuestion(); 
+  qIndex--;
+  renderQuestion();
   goTo('screen-question');
 }
 
