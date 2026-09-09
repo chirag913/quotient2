@@ -268,7 +268,7 @@ function validateEmail(email){
 
 let intakeStatus=null,widgetId=null;
 async function prepareIntake(){
- try{const response=await fetch('/api/leads',{cache:'no-store'});intakeStatus=await response.json();if(intakeStatus.enabled&&window.turnstile&&widgetId===null)widgetId=turnstile.render('#verification',{sitekey:intakeStatus.siteKey,action:'assessment'});if(!intakeStatus.enabled)document.getElementById('saveNotice').textContent='Online saving is being connected. You can contact us on WhatsApp.';}catch{document.getElementById('saveNotice').textContent='Unable to connect. Please try again.';}
+ try{const response=await fetch('/api/leads',{cache:'no-store'});intakeStatus=await response.json();if(intakeStatus.enabled&&window.turnstile&&widgetId===null&&document.getElementById('screen-lead').classList.contains('active'))widgetId=turnstile.render('#verification',{sitekey:intakeStatus.siteKey,action:'assessment'});if(!intakeStatus.enabled)document.getElementById('saveNotice').textContent='Online saving is being connected. You can contact us on WhatsApp.';}catch{document.getElementById('saveNotice').textContent='Unable to connect. Please try again.';}
 }
 window.addEventListener('load',prepareIntake);
 async function submitLead(){
@@ -396,4 +396,4 @@ function resetProto(){
 const actionHandlers=[function(event){resetProto()},function(event){startQuiz()},function(event){goTo('screen-result-direct')},function(event){prevQuestion()},function(event){nextQuestion()},function(event){afterFun()},function(event){submitLead()},function(event){goTo('screen-confirm-plan')},function(event){goTo('screen-confirm-call')},function(event){resetProto()}];
 document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',actionHandlers[Number(el.dataset.action)]));
 document.querySelector('[data-return]')?.addEventListener('click',()=>goTo('screen-result'));
-const originalGoTo=goTo;goTo=function(id){document.body.classList.toggle('home-mode',id==='screen-hero');originalGoTo(id)};document.body.classList.add('home-mode');
+const originalGoTo=goTo;goTo=function(id){document.body.classList.toggle('home-mode',id==='screen-hero');originalGoTo(id);if(id==='screen-lead')prepareIntake()};document.body.classList.add('home-mode');

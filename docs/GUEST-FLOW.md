@@ -1,5 +1,7 @@
 # Current delivery flow — supersedes customer-account assumptions
 
+Deployment status: migrations 001, 002 and 003 have been applied through the Supabase SQL editor. The free Turnstile widget allows skinquotient.in and the stable Vercel preview hostname. Eight environment settings were saved as secrets scoped exclusively to codex/account-foundation. Email sign-in remains disabled. Hosted form submission, staff provisioning, and launch approval remain outstanding until recorded below. Production main has not changed.
+
 Owner decision, 2026-09-09: customers do not sign in. Collect their name, email, WhatsApp number and assessment answers. Email is an unverified contact field, not an identity credential. WhatsApp follow-up requires the separate recorded opt-in. Do not subscribe leads to marketing automatically. Customers can open the business WhatsApp chat themselves.
 
 Only staff sign in; staff data access still requires active membership and MFA. The guest intake uses a server-only Supabase secret to call a restricted RPC, after input validation, origin validation and server-verified Cloudflare Turnstile. Anonymous/authenticated database clients cannot invoke guest insertion or read leads. Do not expose the secret key in browser variables, source, logs or GitHub. Use preview-only environment settings until reviewed.

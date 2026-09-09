@@ -20,5 +20,5 @@ export async function POST(req:NextRequest){
   const {data,error}=await client.rpc('sq_submit_lead',{p_submission_id:value.submissionId,p_version:value.version,p_name:value.name,p_email:value.email,p_phone:value.phone,p_answers:value.answers,p_consent:value.consentVersion,p_whatsapp:value.whatsappConsent,p_contact_hash:contactHash});
   if(error)return json({error:error.code==='54000'?'Too many submissions. Please try later or contact us on WhatsApp.':'Your submission could not be confirmed. Please retry.'},error.code==='54000'?429:503);
   return json({saved:true,reference:data,whatsappUrl},201);
- }catch{console.error('lead_submission_failed');return json({error:'Unable to save right now. Please retry or contact us on WhatsApp.'},503)}
+ }catch(error){if(error instanceof SyntaxError)return json({error:'Invalid request.'},400);console.error('lead_submission_failed');return json({error:'Unable to save right now. Please retry or contact us on WhatsApp.'},503)}
 }
