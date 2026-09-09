@@ -853,7 +853,7 @@ body{
 
   <!-- PERSISTENT TOPBAR: Clean brand focus, 'Private' pill removed -->
   <div class="topbar">
-    <a href="/account" style="margin-right:16px">My account</a><div class="brand" data-action="0">
+    <a href="/account" style="margin-right:16px">Staff login</a><div class="brand" data-action="0">
       <svg class="brand-logo-svg" aria-label="Skin Quotient"><use href="#sq-logo"/></svg>
     </div>
     <div class="top-actions">
@@ -980,19 +980,19 @@ body{
     <h2 class="q-title">See what your skin needs next.</h2>
     <p class="q-hint">Enter your details to unlock your personalized results and routine.</p>
 
-    <p class="q-hint">Sign in to save your results securely. <a href="/account" target="_blank" rel="noopener">Open sign in</a>, then return here.</p><div class="lead-card">
+    <p class="q-hint">Enter your details to save your assessment. No account or sign-in needed.</p><div class="lead-card">
       <label class="input-label" for="leadName">Your Name</label>
       <input class="lead-field" id="leadName" type="text" placeholder="Alex / Priya ...">
       <div class="field-error" id="nameError">Please enter your name</div>
 
       <label class="input-label" for="leadEmail">Email Address</label>
-      <input class="lead-field" id="leadEmail" type="email" placeholder="Use your signed-in email">
+      <input class="lead-field" id="leadEmail" type="email" placeholder="you@example.com">
       <div class="field-error" id="emailError">Please enter a valid email address</div>
 
       <label class="input-label" for="leadPhone">WhatsApp / Mobile</label>
       <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" style="margin-bottom:4px;">
     </div>
-    <label style="display:block;margin:16px 0"><input type="checkbox" id="privacyConsent"> I agree to storing my answers to provide my assessment, as described in the <a href="/privacy-policy.html" target="_blank" rel="noopener">privacy notice</a>.</label><p id="saveNotice" role="status" aria-live="polite"></p><button class="btn btn-primary" id="submitLeadBtn" data-action="6">Show My Results <svg class="icon"><use href="#i-arrow-right"/></svg></button>
+    <label style="display:block;margin:16px 0"><input type="checkbox" id="privacyConsent"> I agree to storing my answers to provide my assessment, as described in the <a href="/privacy-policy.html" target="_blank" rel="noopener">privacy notice</a>.</label><label style="display:block;margin:16px 0"><input type="checkbox" id="whatsappConsent"> I would like Skin Quotient to contact me on WhatsApp about this assessment and my service enquiry.</label><div aria-hidden="true" style="position:absolute;left:-10000px"><label>Website<input id="leadWebsite" tabindex="-1" autocomplete="off"></label></div><div id="verification"></div><p id="saveNotice" role="status" aria-live="polite"></p><button class="btn btn-primary" id="submitLeadBtn" data-action="6">Show My Results <svg class="icon"><use href="#i-arrow-right"/></svg></button>
   </div>
 
   <!-- SCREEN 6: RESULTS -->
@@ -1018,7 +1018,7 @@ body{
         <svg class="icon"><use href="#i-mail"/></svg>
         <span id="reportDeliveryTarget">Your results are ready</span>
       </div>
-      <a href="/account" target="_blank" rel="noopener">Saved assessments</a>
+      <a href="https://wa.me/919995850411?text=Hi%20Skin%20Quotient%2C%20I%20would%20like%20to%20discuss%20my%20assessment." target="_blank" rel="noopener noreferrer">Chat with us on WhatsApp</a>
     </div>
 
     <div class="routine-card">
@@ -1068,4 +1068,4 @@ body{
   <div class="screen" id="screen-result-direct"><h2 class="q-title">Consultation enquiries</h2><p class="q-hint">Call <a href="tel:+919995850411">+91 9995850411</a> to discuss a consultation. Online booking and payment are not open yet.</p><a class="btn btn-secondary" href="/">Return to the assessment</a></div>
 </div>
 
-<script src="/assessment.js" defer></script></body></html>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script><script src="/assessment.js" defer></script></body></html>

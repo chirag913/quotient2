@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {PGlite} from '@electric-sql/pglite';
 import {scoreAnswers,definition,assessmentInput} from '../src/lib/assessment';
 import {trustedOrigin,mutationAllowed} from '../src/lib/security';
+import {leadInput,whatsappUrl} from '../src/lib/leads';
 const answers=Object.fromEntries(definition.questions.map(q=>[q.id,[0]]));
 test('score validation rejects missing, extra, conflicting and forged selections',()=>{
  assert.deepEqual(scoreAnswers(answers),{scores:{oil:6,dehydration:0,sensitivity:2,sun:0},primary:'oil'});
@@ -16,12 +17,23 @@ test('mutations require the configured origin and JSON',()=>{
  assert.equal(mutationAllowed(new Request('https://site.test/api',{headers:{origin:'https://evil.test','content-type':'application/json'}}),'https://site.test'),false);
  assert.equal(mutationAllowed(new Request('https://site.test/api',{headers:{origin:'https://site.test','content-type':'application/json'}}),'https://site.test'),true);
 });
+test('guest leads require contact details but no customer login',()=>{
+ const value={submissionId:crypto.randomUUID(),version:definition.version,name:'Synthetic',email:'TEST@example.com',phone:'+919000000001',answers,consentVersion:'2026-09-09',whatsappConsent:false,turnstileToken:'synthetic',website:''};
+ assert.equal(leadInput.parse(value).email,'test@example.com');
+ assert.equal(leadInput.safeParse({...value,website:'spam'}).success,false);
+ assert.equal(leadInput.safeParse({...value,email:'invalid'}).success,false);
+ assert.equal(leadInput.safeParse({...value,phone:''}).success,false);
+ assert.equal(new URL(whatsappUrl).pathname,'/919995850411');
+ assert.equal(new URL(whatsappUrl).searchParams.get('text')?.includes('paid'),false);
+});
 test('PostgreSQL enforces ownership, verification, idempotency and staff MFA',async()=>{
  const db=new PGlite();
  try{
  await db.exec(`create role anon; create role authenticated; create schema auth; create table auth.users(id uuid primary key,email_confirmed_at timestamptz); create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('test.uid',true),'')::uuid$$; create function auth.jwt() returns jsonb language sql stable as $$select jsonb_build_object('aal',current_setting('test.aal',true))$$; grant usage on schema public,auth to authenticated,anon;`);
  await db.exec(readFileSync('supabase/migrations/202609090001_foundation.sql','utf8'));
  await db.exec(readFileSync('supabase/migrations/202609090002_definition.sql','utf8'));
+ await db.exec('create role service_role; grant usage on schema public to service_role;');
+ await db.exec(readFileSync('supabase/migrations/202609090003_guest_leads.sql','utf8'));
  const alice=crypto.randomUUID(),bob=crypto.randomUUID(),owner=crypto.randomUUID(),practitioner=crypto.randomUUID(),unverified=crypto.randomUUID(),submission=crypto.randomUUID();
  for(const id of [alice,bob,owner,practitioner])await db.query('insert into auth.users values($1,now())',[id]);
  await db.query('insert into auth.users values($1,null)',[unverified]);
@@ -41,5 +53,13 @@ test('PostgreSQL enforces ownership, verification, idempotency and staff MFA',as
  await db.exec('reset role');await db.query('update public.staff_memberships set active=false where user_id=$1',[practitioner]);
  await act(practitioner,'aal2');assert.equal((await db.query('select * from public.assessments')).rows.length,0);
  await db.exec('reset role; set role anon');await assert.rejects(db.exec('select * from public.assessments'));await assert.rejects(submit());
+ const leadId=crypto.randomUUID();
+ const guest=()=>db.query<{id:string}>("select public.sq_submit_lead($1,$2,'Synthetic lead','test@example.com','+919000000001',$3,'2026-09-09',false,$4) as id",[leadId,definition.version,JSON.stringify(answers),'a'.repeat(64)]);
+ await assert.rejects(guest());await assert.rejects(db.exec('select * from public.leads'));
+ await act(alice);await assert.rejects(guest());assert.equal((await db.query('select * from public.leads')).rows.length,0);
+ await db.exec('reset role;set role service_role');const guestFirst=await guest();assert.equal((await guest()).rows[0].id,guestFirst.rows[0].id);
+ await act(owner);assert.equal((await db.query('select * from public.leads')).rows.length,0);
+ await act(owner,'aal2');assert.equal((await db.query('select * from public.leads')).rows.length,1);await db.query("select public.sq_review_lead($1,'reviewed')",[guestFirst.rows[0].id]);
+ await act(bob);assert.equal((await db.query('select * from public.leads')).rows.length,0);await assert.rejects(db.query("select public.sq_review_lead($1,'reviewed')",[guestFirst.rows[0].id]));
  }finally{await db.close()}
 });

@@ -266,25 +266,23 @@ function validateEmail(email){
   return String(email).toLowerCase().match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 }
 
+let intakeStatus=null,widgetId=null;
+async function prepareIntake(){
+ try{const response=await fetch('/api/leads',{cache:'no-store'});intakeStatus=await response.json();if(intakeStatus.enabled&&window.turnstile&&widgetId===null)widgetId=turnstile.render('#verification',{sitekey:intakeStatus.siteKey,action:'assessment'});if(!intakeStatus.enabled)document.getElementById('saveNotice').textContent='Online saving is being connected. You can contact us on WhatsApp.';}catch{document.getElementById('saveNotice').textContent='Unable to connect. Please try again.';}
+}
+window.addEventListener('load',prepareIntake);
 async function submitLead(){
- if(saving)return;
- const notice=document.getElementById('saveNotice');
- const name=document.getElementById('leadName').value.trim();
- const email=document.getElementById('leadEmail').value.trim().toLowerCase();
- const phone=document.getElementById('leadPhone').value.replace(/[\s()-]/g,'');
- notice.textContent='';
- if(!name||name.length>100||!validateEmail(email)||!/^$|^\+?[0-9]{10,15}$/.test(phone)){notice.textContent='Enter your name, signed-in email, and a valid phone number if provided.';return;}
+ if(saving)return;const notice=document.getElementById('saveNotice');
+ const name=document.getElementById('leadName').value.trim();const email=document.getElementById('leadEmail').value.trim().toLowerCase();
+ let phone=document.getElementById('leadPhone').value.replace(/[\s()-]/g,'');if(/^[6-9][0-9]{9}$/.test(phone))phone='+91'+phone;
+ if(!name||name.length>100||!validateEmail(email)||!/^\+[1-9][0-9]{9,14}$/.test(phone)){notice.textContent='Enter your name, a valid email, and your WhatsApp number with country code.';return;}
  if(!document.getElementById('privacyConsent').checked){notice.textContent='Please read the privacy notice and consent to saving your answers.';return;}
- saving=true;document.getElementById('submitLeadBtn').disabled=true;
- try{
-  const session=await fetch('/api/me',{cache:'no-store'});const user=await session.json();
-  if(!session.ok)throw new Error(user.error||'Sign in before saving your assessment.');
-  if(user.email.toLowerCase()!==email)throw new Error('Use the email address you signed in with.');
-  const response=await fetch('/api/assessments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId,version:'2026-09-09-v1',name,phone,answers,consentVersion:'2026-09-09'})});
-  const result=await response.json();if(!response.ok)throw new Error(result.error||'Your assessment could not be saved. Please retry.');
-  leadData={name,email,phone};showResult();
- }catch(error){notice.textContent=error.message||'Unable to connect. Your assessment has not been confirmed saved. Please retry.';}
- finally{saving=false;document.getElementById('submitLeadBtn').disabled=false;}
+ if(!intakeStatus?.enabled){notice.textContent='Online saving is being connected. Please contact us on WhatsApp.';return;}
+ const turnstileToken=widgetId!==null&&window.turnstile?turnstile.getResponse(widgetId):'';if(!turnstileToken){notice.textContent='Please complete the verification.';return;}
+ saving=true;document.getElementById('submitLeadBtn').disabled=true;notice.textContent='Saving your assessment…';
+ try{const response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId,version:'2026-09-09-v1',name,email,phone,answers,consentVersion:'2026-09-09',whatsappConsent:document.getElementById('whatsappConsent').checked,website:document.getElementById('leadWebsite').value,turnstileToken})});const result=await response.json();if(!response.ok||!result.saved)throw new Error(result.error||'Your submission could not be confirmed. Please retry.');leadData={name,email,phone};showResult();}
+ catch(error){notice.textContent=error.message||'Unable to connect. Please retry.';}
+ finally{saving=false;document.getElementById('submitLeadBtn').disabled=false;if(widgetId!==null)turnstile.reset(widgetId);}
 }
 
 function buildDonut(){
@@ -329,7 +327,7 @@ function showResult(){
     document.getElementById('userBadgeGreeting').textContent = `${leadData.name}'s Skin Quotient`;
   }
   if(leadData.email){
-    document.getElementById('reportDeliveryTarget').textContent = 'Saved to your account';
+    document.getElementById('reportDeliveryTarget').textContent = 'Assessment saved';
   }
 
   document.getElementById('resultDesc').innerHTML = template.desc;
@@ -385,7 +383,7 @@ function spawnConfetti(){
 function resetProto(){
   if(saving)return;
   submissionId=crypto.randomUUID();
-  document.getElementById('privacyConsent').checked=false;
+  document.getElementById('privacyConsent').checked=false;document.getElementById('whatsappConsent').checked=false;
   document.getElementById('saveNotice').textContent='';
   qIndex = 0; answers = {}; funShown = false;
   leadData = {name:'', email:'', phone:''};

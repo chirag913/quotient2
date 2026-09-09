@@ -16,7 +16,7 @@ async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}
  if(req.method==='POST'){if(Number(req.headers.get('content-length'))>16000)return json({error:'Request too large.'},413);const reader=req.body?.getReader();let raw='';let bytes=0;const decoder=new TextDecoder();if(reader){while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>16000){await reader.cancel();return json({error:'Request too large.'},413)}raw+=decoder.decode(value,{stream:true})}raw+=decoder.decode()}try{input=JSON.parse(raw)}catch{return json({error:'Invalid request.'},400)}}
  if(req.method==='POST'&&route==='auth/email'){
   if(process.env.AUTH_EMAIL_ENABLED!=='true')return json({error:'Email sign-in is not open yet. Your details have not been submitted.'},503);
-  const address=email.parse(input.email);const {error}=await client.auth.signInWithOtp({email:address,options:{emailRedirectTo:trustedOrigin()+'/auth/callback',shouldCreateUser:true}});
+  const address=email.parse(input.email);const {error}=await client.auth.signInWithOtp({email:address,options:{emailRedirectTo:trustedOrigin()+'/auth/callback',shouldCreateUser:false}});
   if(error)return json({error:'Unable to send a sign-in email. Wait a moment and try again.'},429);return json({message:'Check your email for a sign-in link or code.'});
  }
  if(req.method==='POST'&&route==='auth/verify'){
@@ -53,10 +53,10 @@ async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}
  if(!staffVerified)return json({error:'Verify your authenticator to open staff records.'},403);
  if(req.method==='GET'&&route==='staff/assessments'){
  const page=z.coerce.number().int().min(0).max(10000).parse(req.nextUrl.searchParams.get('page')||0);
- const {data,error,count}=await client.from('assessments').select('id,name,phone,created_at,scores,primary_profile,answers,assessment_reviews(status,assigned_to)',{count:'exact'}).order('created_at',{ascending:false}).range(page*25,page*25+24);
+ const {data,error,count}=await client.from('leads').select('id,name,email,phone,created_at,scores,primary_profile,answers,status,whatsapp_consent',{count:'exact'}).order('created_at',{ascending:false}).range(page*25,page*25+24);
  return error?json({error:'Could not load staff records.'},503):json({assessments:data,total:count,page});}
  if(req.method==='POST'&&route==='staff/review'){
- const {error}=await client.rpc('sq_review_assessment',{p_id:z.uuid().parse(input.id),p_status:z.enum(['new','reviewed']).parse(input.status)});
+ const {error}=await client.rpc('sq_review_lead',{p_id:z.uuid().parse(input.id),p_status:z.enum(['new','reviewed']).parse(input.status)});
  return error?json({error:'This review could not be updated.'},403):json({ok:true});}
  return json({error:'Not found.'},404);
  }catch(error){if(error instanceof z.ZodError||error instanceof SyntaxError)return json({error:'Check the information entered.'},400);console.error('request_failed',{route});return json({error:'Something went wrong. Please try again.'},503)}
