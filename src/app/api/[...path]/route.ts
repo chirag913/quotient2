@@ -3,6 +3,7 @@ import {z} from 'zod';
 import {db,configured} from '@/lib/supabase';
 import {assessmentInput,scoreAnswers} from '@/lib/assessment';
 import {mutationAllowed,trustedOrigin} from '@/lib/security';
+import {indiaDays} from '@/lib/crm';
 export const dynamic='force-dynamic';
 const json=(data:unknown,status=200)=>NextResponse.json(data,{status,headers:{'Cache-Control':'private, no-store','Pragma':'no-cache'}});
 const email=z.email().max(254);const otp=z.string().regex(/^\d{6,8}$/);
@@ -59,9 +60,22 @@ async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}
  const factorId=z.uuid().parse(input.factorId);const code=z.string().regex(/^\d{6}$/).parse(input.code);
  const {error}=await client.auth.mfa.challengeAndVerify({factorId,code});return error?json({error:'Authenticator code was not accepted.'},400):json({ok:true});}
  if(!staffVerified)return json({error:'Verify your authenticator to open staff records.'},403);
+ if(req.method==='GET'&&route==='staff/summary'){
+  const count=()=>client.from('leads').select('id',{count:'exact',head:true});
+  const days=indiaDays();const profiles=['oil','dehydration','sensitivity','sun'];
+  const results=await Promise.all([count(),count().eq('status','new'),count().eq('status','reviewed'),count().eq('whatsapp_consent',true),...days.map(d=>count().gte('created_at',d.start).lt('created_at',d.end)),...profiles.map(p=>count().eq('primary_profile',p))]);
+  if(results.some(r=>r.error))return json({error:'Could not load dashboard totals.'},503);
+  const counts=results.map(r=>r.count??0);
+  return json({total:counts[0],new:counts[1],reviewed:counts[2],whatsapp:counts[3],days:days.map((d,i)=>({label:d.label,count:counts[4+i]})),profiles:profiles.map((name,i)=>({name,count:counts[11+i]}))});
+ }
  if(req.method==='GET'&&route==='staff/assessments'){
  const page=z.coerce.number().int().min(0).max(10000).parse(req.nextUrl.searchParams.get('page')||0);
- const {data,error,count}=await client.from('leads').select('id,name,email,phone,created_at,scores,primary_profile,answers,status,whatsapp_consent',{count:'exact'}).order('created_at',{ascending:false}).range(page*25,page*25+24);
+ const query=z.string().max(100).regex(/^[\p{L}\p{N}@ .+\-]*$/u).parse(req.nextUrl.searchParams.get('q')||'').trim();
+ const status=z.enum(['all','new','reviewed']).parse(req.nextUrl.searchParams.get('status')||'all');
+ let list=client.from('leads').select('id,name,email,phone,created_at,scores,primary_profile,answers,status,whatsapp_consent',{count:'exact'});
+ if(query)list=list.or(`name.ilike.%${query}%,email.ilike.%${query}%`);
+ if(status!=='all')list=list.eq('status',status);
+ const {data,error,count}=await list.order('created_at',{ascending:false}).order('id').range(page*25,page*25+24);
  return error?json({error:'Could not load staff records.'},503):json({assessments:data,total:count,page});}
  if(req.method==='POST'&&route==='staff/review'){
  const {error}=await client.rpc('sq_review_lead',{p_id:z.uuid().parse(input.id),p_status:z.enum(['new','reviewed']).parse(input.status)});
