@@ -795,7 +795,11 @@ body{
 }
 
 </style>
-<style>@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}} .option:focus-visible{outline:3px solid #0A7A4C;outline-offset:3px}.field-error{font-size:14px}#saveNotice{color:#942d42;line-height:1.5}</style></head>
+<style>@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}} .option:focus-visible{outline:3px solid #0A7A4C;outline-offset:3px}.field-error{font-size:14px}#saveNotice{color:#942d42;line-height:1.5}</style><style>
+  body.home-mode .home-benefits{display:grid;} body.home-mode .home-foot{display:block;}
+  body:not(.home-mode) .home-benefits, body:not(.home-mode) .home-foot{display:none;}
+  body.home-mode #screen-hero{display:flex;}
+</style></head>
 <body>
 
 <svg style="display:none" aria-hidden="true">
@@ -853,7 +857,7 @@ body{
 
   <!-- PERSISTENT TOPBAR: Clean brand focus, 'Private' pill removed -->
   <div class="topbar">
-    <a href="/account" style="margin-right:16px">Staff login</a><div class="brand" data-action="0">
+    <div class="brand" data-action="0">
       <svg class="brand-logo-svg" aria-label="Skin Quotient"><use href="#sq-logo"/></svg>
     </div>
     <div class="top-actions">
@@ -980,7 +984,7 @@ body{
     <h2 class="q-title">See what your skin needs next.</h2>
     <p class="q-hint">Enter your details to unlock your personalized results and routine.</p>
 
-    <p class="q-hint">Enter your details to save your assessment. No account or sign-in needed.</p><div class="lead-card">
+    <div class="lead-card">
       <label class="input-label" for="leadName">Your Name</label>
       <input class="lead-field" id="leadName" type="text" placeholder="Alex / Priya ...">
       <div class="field-error" id="nameError">Please enter your name</div>
