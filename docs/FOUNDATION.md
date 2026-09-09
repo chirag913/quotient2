@@ -1,3 +1,5 @@
+> Historical implementation notes. For the current live guest flow, staff CRM, deployment and remaining work, read [PROJECT-HANDOVER.md](PROJECT-HANDOVER.md). Customer-account assumptions below are superseded; customers do not sign in.
+
 # Account foundation — preview only
 
 This branch preserves the existing assessment design and adds Next.js routes, Supabase email authentication, customer assessment storage, staff MFA, and a review queue. Payments and bookings remain disabled. No email provider has been configured. Do not merge into production until the launch checks below pass.
@@ -29,3 +31,4 @@ The old root HTML files are historical source and are not served by Next.js. `/a
 ## Rollback
 
 Do not merge this branch until approved checks are complete. Vercel production remains on main. A preview can be removed independently. For a production rollback, redeploy the last verified app release; never expose the old local-PIN dashboard. Database migrations are additive and must not be reversed by dropping customer tables. Disable email sign-in and roll forward when schema issues occur.
+
