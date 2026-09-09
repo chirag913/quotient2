@@ -13,6 +13,7 @@ test('score validation rejects missing, extra, conflicting and forged selections
 });
 test('mutations require the configured origin and JSON',()=>{
  assert.equal(trustedOrigin({APP_ORIGIN:'https://www.skinquotient.in'}),'https://www.skinquotient.in');
+ assert.equal(trustedOrigin({APP_ORIGIN:'https://stable-preview.example.com',VERCEL_ENV:'preview',VERCEL_URL:'unique-preview.example.com'}),'https://stable-preview.example.com');
  for(const url of ['https://evil.test/path','ftp://localhost','http://evil.test','https://user:pass@example.com'])assert.throws(()=>trustedOrigin({APP_ORIGIN:url}));
  assert.equal(mutationAllowed(new Request('https://site.test/api',{headers:{origin:'https://evil.test','content-type':'application/json'}}),'https://site.test'),false);
  assert.equal(mutationAllowed(new Request('https://site.test/api',{headers:{origin:'https://site.test','content-type':'application/json'}}),'https://site.test'),true);
