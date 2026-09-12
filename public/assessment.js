@@ -323,12 +323,12 @@ async function startPayment(planType){
   const targetScreen = planType === 'consultation' ? 'screen-confirm-call' : 'screen-confirm-plan';
   const titleEl = planType === 'consultation' ? document.getElementById('callResultTitle') : document.getElementById('planResultTitle');
   const messageEl = planType === 'consultation' ? document.getElementById('callResultMessage') : document.getElementById('planResultMessage');
-  if(!paymentState?.paymentsEnabled){
+  if(paymentState?.paymentsEnabled === false){
     if(titleEl) titleEl.textContent='Payment not available';
     if(messageEl) messageEl.textContent='Online checkout is still being connected. Ask us on WhatsApp and we’ll continue from there.';
     updateResultWhatsappLinks(planType);goTo(targetScreen);return;
   }
-  if(!window.Razorpay){
+  if(typeof window.Razorpay !== 'function'){
     if(titleEl) titleEl.textContent='Checkout unavailable';
     if(messageEl) messageEl.textContent='Checkout script could not be loaded. Ask us on WhatsApp and we’ll continue from there.';
     updateResultWhatsappLinks(planType);goTo(targetScreen);return;
@@ -367,7 +367,13 @@ async function startPayment(planType){
       theme:{color:'#6A57C3'}
     };
     new window.Razorpay(options).open();
-  }catch(error){if(messageEl) messageEl.textContent=error.message || 'Could not launch payment.';updateResultWhatsappLinks(planType,'Please continue via WhatsApp while we check this.');goTo(targetScreen);}
+  }catch(error){
+    const details = error instanceof Error ? error.message : 'Could not launch payment.';
+    if(titleEl && !titleEl.textContent) titleEl.textContent='Checkout not started';
+    if(messageEl) messageEl.textContent=details;
+    updateResultWhatsappLinks(planType,'Please continue via WhatsApp while we check this.');
+    goTo(targetScreen);
+  }
 }
 async function submitLead(){
  if(saving)return;const notice=document.getElementById('saveNotice');
@@ -493,6 +499,16 @@ function resetProto(){
 }
 
 const actionHandlers=[function(event){resetProto()},function(event){startQuiz()},function(event){goTo('screen-result-direct')},function(event){prevQuestion()},function(event){nextQuestion()},function(event){afterFun()},function(event){submitLead()},function(event){startPayment('plan')},function(event){startPayment('consultation')},function(event){resetProto()}];
-document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',actionHandlers[Number(el.dataset.action)]));
+const safeActivate=(el)=>{const handler=actionHandlers[Number(el.dataset.action)];if(typeof handler==='function') handler({target:el});};
+document.querySelectorAll('[data-action]').forEach(el=>{
+  el.addEventListener('click', (event)=>{event.preventDefault(); safeActivate(el);});
+  el.addEventListener('keydown', (event)=>{
+    if(event.key === 'Enter' || event.key === ' '){
+      event.preventDefault();
+      safeActivate(el);
+    }
+  });
+});
+document.querySelectorAll('[data-action]').forEach(el=>{if(!el.hasAttribute('role'))el.setAttribute('role','button');if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','0');});
 document.querySelector('[data-return]')?.addEventListener('click',()=>goTo('screen-result'));
 const originalGoTo=goTo;goTo=function(id){document.body.classList.toggle('home-mode',id==='screen-hero');originalGoTo(id);if(id==='screen-lead')prepareIntake()};document.body.classList.add('home-mode');

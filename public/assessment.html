@@ -396,17 +396,44 @@
 
   .path-choice{display:flex; flex-direction:column; gap:10px; margin-top:2px;}
   .path-card{
+    position:relative;
     background:var(--card); border:2.5px solid var(--line-strong); border-radius:var(--radius);
-    padding:16px; cursor:pointer; transition:transform 0.1s ease, box-shadow 0.1s ease;
+    padding:16px; cursor:pointer; transition:transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
   }
-  .path-card:hover{box-shadow:var(--shadow-md);}
+  .path-card:hover{
+    transform:translateY(-1px);
+    box-shadow:var(--shadow-md);
+  }
   .path-card:active{transform:scale(0.985);}
-  .path-card.reco{background:var(--teal-mist-2);}
+  .path-card.reco,
+  .path-card.path-card-plan{
+    background:linear-gradient(180deg,var(--teal-mist-2) 0%, var(--card) 55%);
+    border-left:6px solid var(--teal);
+  }
+  .path-card.path-card-call{
+    border-left:6px solid var(--rose-deep);
+    background:linear-gradient(180deg,rgba(240, 224, 255, 0.25) 0%, var(--card) 50%);
+  }
   .path-tag{font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--teal-text); margin-bottom:6px;}
-  .path-title-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;}
-  .path-title{font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800;}
-  .path-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-bottom:8px;}
-  .path-price{font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:800;}
+  .path-card.path-card-call .path-tag{color:var(--rose-deep);}
+  .path-title-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; gap:12px;}
+  .path-title{font-family:'Space Grotesk',sans-serif; font-size:18px; line-height:1.18; font-weight:800;}
+  .path-desc{font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-bottom:10px;}
+  .path-meta{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;}
+  .path-chip{font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.03em; border:1px solid var(--line-strong); border-radius:999px; padding:4px 8px; color:var(--ink-soft); background:var(--paper-deep);}
+  .path-card.path-card-plan .path-chip{background:#fff;}
+  .path-card.path-card-call .path-chip{border-color:rgba(240,52,125,0.3); color:var(--rose-deep);}
+  .path-price{font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:800; margin-bottom:10px; color:var(--ink);}
+  .path-cta{
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    font-family:'Inter',sans-serif; font-weight:800; font-size:14px;
+    width:100%; min-height:44px; border-radius:12px; border:2px solid var(--line-strong);
+    text-decoration:none;
+  }
+  .path-cta.primary{background:var(--teal-text); color:#fff; border-color:var(--teal-text);}
+  .path-card.path-card-call .path-cta.primary{background:var(--rose-deep); border-color:var(--rose-deep);}
+  .path-cta.secondary{background:transparent; color:var(--ink); border-color:var(--line);}
+
 
   /* Confetti */
   #confettiLayer{position:fixed; inset:0; pointer-events:none; z-index:99; overflow:hidden;}
@@ -549,7 +576,9 @@
   .option.selected .opt-ic-wrap{background:#B2A2FF;color:#fff;}
   .option.selected .ck{background:#6A57C3;border-color:#6A57C3;}
   .lead-card,.donut-block,.routine-card,.path-card,.email-status-card,.result-explainer,.one-last-thing,.metric-box,.lead-entry{border:1px solid #E4DEF7;box-shadow:none;border-radius:18px;}
-  .path-card.reco{background:#F7F4FF;}
+  .path-card.reco{background:#F7F4FF;border-left:5px solid #7a67d2;}
+  .path-card.path-card-plan{background:#F7F4FF;border-left:5px solid #7a67d2;}
+  .path-card.path-card-call{border-left:5px solid #B24C8F; background:#F6F2FC;}
   .result-badge{color:#6A57C3;background:#F7F4FF;border:1px solid #E4DEF7;}
   .derm-badge{color:#6A57C3;background:#F7F4FF;border:1px solid #E4DEF7;}
   .routine-num,.confirm-icon{background:#6A57C3;border-color:#6A57C3;box-shadow:none;}
@@ -1072,17 +1101,27 @@ body{
     </div>
     <p class="q-hint" style="margin-bottom:12px;">Your Skin Quotient gives you the starting point. Now choose how much help you want putting it into practice.</p>
     <div class="path-choice">
-      <div class="path-card reco" data-action="7">
-        <div class="path-tag">RECOMMENDED</div>
+      <div class="path-card reco path-card-plan" role="button" tabindex="0" data-action="7">
+        <div class="path-tag">Recommended</div>
         <div class="path-title-row"><div class="path-title">Personalized Skin Plan</div><svg class="icon" style="color:var(--teal-text);"><use href="#i-sparkle"/></svg></div>
         <div class="path-desc">Your Skin Quotient → personalized routine → product recommendations → WhatsApp check-ins → ongoing adjustments.</div>
-        <div class="path-price">₹1,499 / month · pay securely online to start</div>
+        <div class="path-meta">
+          <span class="path-chip">Monthly care plan</span>
+          <span class="path-chip">Best for long-term results</span>
+        </div>
+        <div class="path-price">₹1,499 / month</div>
+        <span class="path-cta primary">Continue to secure checkout</span>
       </div>
-      <div class="path-card" data-action="8">
-        <div class="path-tag">ONE-TIME OPTION</div>
+      <div class="path-card path-card-call" role="button" tabindex="0" data-action="8">
+        <div class="path-tag">One-time option</div>
         <div class="path-title-row"><div class="path-title">1:1 Skin Consultation</div><svg class="icon" style="color:var(--ink-soft);"><use href="#i-phone"/></svg></div>
         <div class="path-desc">30-minute consultation with Dr. Shahima's team. Talk through your concerns and get expert guidance.</div>
+        <div class="path-meta">
+          <span class="path-chip">One-time booking</span>
+          <span class="path-chip">Talk directly with expert team</span>
+        </div>
         <div class="path-price">₹999 one-time · pay securely online to book consultation</div>
+        <span class="path-cta primary">Continue to secure checkout</span>
       </div>
     </div>
   </div>
