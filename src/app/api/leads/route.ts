@@ -4,9 +4,13 @@ import {createHmac} from 'node:crypto';
 import {leadInput,intakeConfigured,verifyChallenge,whatsappUrl} from '@/lib/leads';
 import {scoreAnswers} from '@/lib/assessment';
 import {trustedOrigin,mutationAllowed} from '@/lib/security';
+
+function paymentsConfigured(){
+  return Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
+}
 export const dynamic='force-dynamic';
 const json=(data:unknown,status=200)=>NextResponse.json(data,{status,headers:{'Cache-Control':'private, no-store'}});
-export async function GET(){return json({enabled:intakeConfigured(),siteKey:process.env.TURNSTILE_SITE_KEY||'',whatsappUrl,paymentsEnabled:false})}
+export async function GET(){return json({enabled:intakeConfigured(),siteKey:process.env.TURNSTILE_SITE_KEY||'',whatsappUrl,paymentsEnabled:paymentsConfigured(),razorpayKeyId:process.env.RAZORPAY_KEY_ID||''})}
 export async function POST(req:NextRequest){
  try{
   if(!intakeConfigured())return json({error:'Online assessment saving is being connected. Please contact us on WhatsApp.'},503);

@@ -4,12 +4,17 @@ import {db,configured} from '@/lib/supabase';
 import {assessmentInput,scoreAnswers} from '@/lib/assessment';
 import {mutationAllowed,trustedOrigin} from '@/lib/security';
 import {indiaDays} from '@/lib/crm';
+import {createHmac} from 'node:crypto';
 export const dynamic='force-dynamic';
 const json=(data:unknown,status=200)=>NextResponse.json(data,{status,headers:{'Cache-Control':'private, no-store','Pragma':'no-cache'}});
 const email=z.email().max(254);const otp=z.string().regex(/^\d{6,8}$/);
+const paymentKeyId=process.env.RAZORPAY_KEY_ID||'';
+const paymentKeySecret=process.env.RAZORPAY_KEY_SECRET||'';
+const paymentEnabled=()=>Boolean(paymentKeyId&&paymentKeySecret);
+const pricing={plan:{name:'Skin Quotient Personalized Plan',amount:149900,currency:'INR',description:'₹1,499 monthly skincare plan'},consultation:{name:'1:1 Skin Consultation',amount:99900,currency:'INR',description:'₹999 consultation booking'}};
 async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}){
  const route=(await params).path.join('/');
- if(req.method==='GET'&&route==='status')return json({configured:configured(),emailEnabled:process.env.AUTH_EMAIL_ENABLED==='true',paymentsEnabled:false});
+ if(req.method==='GET'&&route==='status')return json({configured:configured(),emailEnabled:process.env.AUTH_EMAIL_ENABLED==='true',paymentsEnabled:paymentEnabled()});
  try{
  if(!configured())return json({error:'Account setup is still in progress. Please try again later.'},503);
  if(req.method==='POST'&&!mutationAllowed(req,trustedOrigin()))return json({error:'Request not allowed.'},403);
@@ -80,6 +85,28 @@ async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}
  if(req.method==='POST'&&route==='staff/review'){
  const {error}=await client.rpc('sq_review_lead',{p_id:z.uuid().parse(input.id),p_status:z.enum(['new','reviewed']).parse(input.status)});
  return error?json({error:'This review could not be updated.'},403):json({ok:true});}
+ if(req.method==='POST'&&route==='payments/order'){
+ if(!paymentEnabled())return json({error:'Payment is not configured.'},503);
+ const payload=z.object({plan:z.enum(['plan','consultation']),email:email.optional(),phone:z.string().max(20).optional(),name:z.string().max(100).optional(),submissionId:z.uuid().optional()}).strict().parse(input);
+ const selected=payload.plan==='plan'?'plan':'consultation';
+ const product=pricing[selected];
+ const auth=Buffer.from(`${paymentKeyId}:${paymentKeySecret}`).toString('base64');
+ const orderRes=await fetch('https://api.razorpay.com/v1/orders',{
+  method:'POST',
+  headers:{'Content-Type':'application/json','Authorization':`Basic ${auth}`},
+  body:JSON.stringify({amount:product.amount,currency:product.currency,receipt:`sq-${payload.submissionId||Date.now()}`,notes:{plan:selected,name:payload.name||'',email:payload.email||'',phone:payload.phone||''}})
+ });
+ if(!orderRes.ok){return json({error:'Unable to start payment. Contact support if this continues.'},503);}
+ const order=await orderRes.json();
+ return json({enabled:true,keyId:paymentKeyId,plan:selected,amount:product.amount,currency:product.currency,description:product.description,orderId:order.id,name:product.name});
+ }
+ if(req.method==='POST'&&route==='payments/verify'){
+ if(!paymentEnabled())return json({error:'Payment is not configured.'},503);
+ const payload=z.object({razorpay_order_id:z.string(),razorpay_payment_id:z.string(),razorpay_signature:z.string(),plan:z.enum(['plan','consultation'])}).strict().parse(input);
+ const generated=createHmac('sha256',paymentKeySecret).update(`${payload.razorpay_order_id}|${payload.razorpay_payment_id}`).digest('hex');
+ if(generated!==payload.razorpay_signature)return json({error:'Payment verification failed.'},400);
+ return json({ok:true,plan:payload.plan,paymentId:payload.razorpay_payment_id});
+ }
  return json({error:'Not found.'},404);
  }catch(error){if(error instanceof z.ZodError||error instanceof SyntaxError)return json({error:'Check the information entered.'},400);console.error('request_failed',{route});return json({error:'Something went wrong. Please try again.'},503)}
 }

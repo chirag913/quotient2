@@ -102,6 +102,7 @@ let answers = {};
 let scores = {oil:0, dehydration:0, sensitivity:0, sun:0};
 let funShown = false;
 let leadData = {name:'', email:'', phone:''};
+let paymentState = null;
 
 function goTo(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -267,20 +268,118 @@ function validateEmail(email){
 }
 
 let intakeStatus=null,widgetId=null;
-async function prepareIntake(){
- try{const response=await fetch('/api/leads',{cache:'no-store'});intakeStatus=await response.json();if(intakeStatus.enabled&&window.turnstile&&widgetId===null&&document.getElementById('screen-lead').classList.contains('active'))widgetId=turnstile.render('#verification',{sitekey:intakeStatus.siteKey,action:'assessment'});if(!intakeStatus.enabled)document.getElementById('saveNotice').textContent='Online saving is being connected. You can contact us on WhatsApp.';}catch{document.getElementById('saveNotice').textContent='Unable to connect. Please try again.';}
+const whatsappNumber='919995850411';
+
+function ensureIndiaCountryCode(){
+  const input = document.getElementById('leadPhone');
+  if(!input) return;
+  const raw = String(input.value || '').replace(/\D/g,'');
+  const digits = raw.startsWith('91') ? raw.slice(2) : raw;
+  const cleaned = digits.slice(0,10);
+  const joined = cleaned.length ? `+91 ${cleaned}` : '+91 ';
+  if(input.value !== joined) input.value = joined;
 }
-window.addEventListener('load',prepareIntake);
+
+function getWhatsappUrl(message=''){
+  const baseMessage=`Hi Skin Quotient, ${message}`.trim();
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(baseMessage)}`;
+}
+
+function updateResultWhatsappLinks(planType,customSuffix=''){
+  const label = leadData.name ? `I’m ${leadData.name}.` : 'I’m interested in';
+  const extra = customSuffix ? ` ${customSuffix}` : '';
+  const planText = planType === 'plan'
+    ? `${label} I would like to continue with the Personalized Skin Plan.${extra}`
+    : `${label} I would like to continue with the 1:1 Skin Consultation.${extra}`;
+  const href = getWhatsappUrl(planText);
+  const planLink = document.getElementById('planWhatsappLink');
+  const callLink = document.getElementById('callWhatsappLink');
+  if(planLink) planLink.href = href;
+  if(callLink) callLink.href = href;
+}
+
+async function prepareIntake(){
+ try{const response=await fetch('/api/leads',{cache:'no-store'});intakeStatus=await response.json();paymentState=intakeStatus; if(intakeStatus.enabled&&window.turnstile&&widgetId===null&&document.getElementById('screen-lead').classList.contains('active'))widgetId=turnstile.render('#verification',{sitekey:intakeStatus.siteKey,action:'assessment'});if(!intakeStatus.enabled)document.getElementById('saveNotice').textContent='Online saving is being connected. You can contact us on WhatsApp.';}catch{document.getElementById('saveNotice').textContent='Unable to connect. Please try again.';}
+}
+window.addEventListener('load',()=>{
+  const leadPhone = document.getElementById('leadPhone');
+  if(leadPhone && !leadPhone.value) leadPhone.value = '+91 ';
+  ensureIndiaCountryCode();
+  leadPhone?.addEventListener('input', ensureIndiaCountryCode);
+  leadPhone?.addEventListener('blur', ensureIndiaCountryCode);
+  updateResultWhatsappLinks('plan');
+  prepareIntake();
+});
+
+function normalizePhone(value){
+  const clean = String(value || '').replace(/[\s()-]/g,'');
+  if(/^[6-9][0-9]{9}$/.test(clean)) return '+91'+clean;
+  if(/^\+[1-9][0-9]{9,14}$/.test(clean)) return clean;
+  if(clean.startsWith('+91')&&clean.length===13) return clean;
+  return clean.startsWith('+') ? clean : '+91'+clean.replace(/^\+/, '');
+}
+
+async function startPayment(planType){
+  const targetScreen = planType === 'consultation' ? 'screen-confirm-call' : 'screen-confirm-plan';
+  const titleEl = planType === 'consultation' ? document.getElementById('callResultTitle') : document.getElementById('planResultTitle');
+  const messageEl = planType === 'consultation' ? document.getElementById('callResultMessage') : document.getElementById('planResultMessage');
+  if(!paymentState?.paymentsEnabled){
+    if(titleEl) titleEl.textContent='Payment not available';
+    if(messageEl) messageEl.textContent='Online checkout is still being connected. Ask us on WhatsApp and we’ll continue from there.';
+    updateResultWhatsappLinks(planType);goTo(targetScreen);return;
+  }
+  if(!window.Razorpay){
+    if(titleEl) titleEl.textContent='Checkout unavailable';
+    if(messageEl) messageEl.textContent='Checkout script could not be loaded. Ask us on WhatsApp and we’ll continue from there.';
+    updateResultWhatsappLinks(planType);goTo(targetScreen);return;
+  }
+  try{
+    updateResultWhatsappLinks(planType,'Preparing your secure payment link...');
+    const response = await fetch('/api/payments/order',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({plan:planType,name:leadData.name,email:leadData.email,phone:leadData.phone,submissionId})
+    });
+    const data = await response.json();
+    if(!response.ok || !data.orderId) throw new Error(data.error || 'Unable to start payment.');
+
+    const options = {
+      key: data.keyId,
+      amount: data.amount,
+      currency: data.currency,
+      name: data.name,
+      description: data.description,
+      order_id: data.orderId,
+      handler: async function(payment){
+        const verifyRes = await fetch('/api/payments/verify',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({plan:planType,razorpay_order_id:payment.razorpay_order_id,razorpay_payment_id:payment.razorpay_payment_id,razorpay_signature:payment.razorpay_signature})
+        });
+        const verifyData = await verifyRes.json();
+        if(!verifyRes.ok || !verifyData.ok) throw new Error(verifyData.error || 'Payment could not be confirmed.');
+        if(titleEl) titleEl.textContent = planType==='plan' ? 'Skin Plan paid' : 'Consultation paid';
+        if(messageEl) messageEl.textContent = planType==='plan' ? 'Payment confirmed. Please continue with WhatsApp so our team can start your onboarding now.' : 'Payment confirmed. Please continue with WhatsApp so our team can schedule your consultation now.';
+        updateResultWhatsappLinks(planType,'My payment is done.');
+        goTo(targetScreen);
+      },
+      prefill:{name:leadData.name, email:leadData.email, contact:(leadData.phone||'').replace('+','')},
+      theme:{color:'#6A57C3'}
+    };
+    new window.Razorpay(options).open();
+  }catch(error){if(messageEl) messageEl.textContent=error.message || 'Could not launch payment.';updateResultWhatsappLinks(planType,'Please continue via WhatsApp while we check this.');goTo(targetScreen);}
+}
 async function submitLead(){
  if(saving)return;const notice=document.getElementById('saveNotice');
  const name=document.getElementById('leadName').value.trim();const email=document.getElementById('leadEmail').value.trim().toLowerCase();
- let phone=document.getElementById('leadPhone').value.replace(/[\s()-]/g,'');if(/^[6-9][0-9]{9}$/.test(phone))phone='+91'+phone;
+ let phone=normalizePhone(document.getElementById('leadPhone').value);
+ if(!phone||phone==='+91'){notice.textContent='Enter your WhatsApp number with +91.';return;}
  if(!name||name.length>100||!validateEmail(email)||!/^\+[1-9][0-9]{9,14}$/.test(phone)){notice.textContent='Enter your name, a valid email, and your WhatsApp number with country code.';return;}
  if(!document.getElementById('privacyConsent').checked){notice.textContent='Please read the privacy notice and consent to saving your answers.';return;}
  if(!intakeStatus?.enabled){notice.textContent='Online saving is being connected. Please contact us on WhatsApp.';return;}
  const turnstileToken=widgetId!==null&&window.turnstile?turnstile.getResponse(widgetId):'';if(!turnstileToken){notice.textContent='Please complete the verification.';return;}
  saving=true;document.getElementById('submitLeadBtn').disabled=true;notice.textContent='Saving your assessment…';
- try{const response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId,version:'2026-09-09-v1',name,email,phone,answers,consentVersion:'2026-09-09',whatsappConsent:document.getElementById('whatsappConsent').checked,website:document.getElementById('leadWebsite').value,turnstileToken})});const result=await response.json();if(!response.ok||!result.saved)throw new Error(result.error||'Your submission could not be confirmed. Please retry.');leadData={name,email,phone};showResult();}
+  try{const response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submissionId,version:'2026-09-09-v1',name,email,phone,answers,consentVersion:'2026-09-09',whatsappConsent:document.getElementById('whatsappConsent').checked,website:document.getElementById('leadWebsite').value,turnstileToken})});const result=await response.json();if(!response.ok||!result.saved)throw new Error(result.error||'Your submission could not be confirmed. Please retry.');leadData={name,email,phone};updateResultWhatsappLinks('plan',`Thanks for completing your assessment.`);showResult();}
  catch(error){notice.textContent=error.message||'Unable to connect. Please retry.';}
  finally{saving=false;document.getElementById('submitLeadBtn').disabled=false;if(widgetId!==null)turnstile.reset(widgetId);}
 }
@@ -348,7 +447,7 @@ function showResult(){
       </div>
       <span class="blur-tag">Full plan</span>
     </div>
-    <div class="routine-step">
+    <div class="routine-step final-step">
       <div class="routine-num">3</div>
       <div>
         <div class="t1">${template.sunscreen}</div>
@@ -389,11 +488,11 @@ function resetProto(){
   leadData = {name:'', email:'', phone:''};
   document.getElementById('leadName').value = '';
   document.getElementById('leadEmail').value = '';
-  document.getElementById('leadPhone').value = '';
+  document.getElementById('leadPhone').value = '+91 ';
   goTo('screen-hero');
 }
 
-const actionHandlers=[function(event){resetProto()},function(event){startQuiz()},function(event){goTo('screen-result-direct')},function(event){prevQuestion()},function(event){nextQuestion()},function(event){afterFun()},function(event){submitLead()},function(event){goTo('screen-confirm-plan')},function(event){goTo('screen-confirm-call')},function(event){resetProto()}];
+const actionHandlers=[function(event){resetProto()},function(event){startQuiz()},function(event){goTo('screen-result-direct')},function(event){prevQuestion()},function(event){nextQuestion()},function(event){afterFun()},function(event){submitLead()},function(event){startPayment('plan')},function(event){startPayment('consultation')},function(event){resetProto()}];
 document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',actionHandlers[Number(el.dataset.action)]));
 document.querySelector('[data-return]')?.addEventListener('click',()=>goTo('screen-result'));
 const originalGoTo=goTo;goTo=function(id){document.body.classList.toggle('home-mode',id==='screen-hero');originalGoTo(id);if(id==='screen-lead')prepareIntake()};document.body.classList.add('home-mode');
