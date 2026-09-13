@@ -12,6 +12,18 @@ The live Supabase SQL editor confirmed that both
 `to_regclass('public.payment_events')` returned NULL. Migrations 004 and 005 were
 committed but had not been applied. This was the production checkout blocker.
 
+After database recovery, browser testing revealed another configuration defect:
+the Razorpay loader embeds `https://api.razorpay.com/v1/checkout/public`, while
+the site's frame-src allowed checkout.razorpay.com but not api.razorpay.com.
+The exact API origin was added to frame-src, retaining frame-ancestors 'none'
+and avoiding wildcard frame access.
+
+Temporary preview diagnostics confirmed that the browser received the corrected
+policy. The automation-controlled tab still blocked API-page navigation with
+ERR_BLOCKED_BY_CLIENT; the owner then opened a fresh normal Chrome tab and
+confirmed that the genuine Razorpay Test Mode subscription checkout appeared.
+The temporary diagnostic code was removed after this check.
+
 After owner approval, the missing tables were created from migrations 004 and
 005, together with the access rules in migration 006. SQL checks confirmed both
 tables now exist and the backend role has SELECT/INSERT/UPDATE access. Existing
@@ -37,7 +49,26 @@ The existing flows remain: plan -> subscription_id; consultation -> order_id;
 checkout callback -> server `/api/payments/verify`; webhooks -> payment events
 and records. A dismissed checkout must not be reported as paid.
 
-Validation so far: locked-dependency type checks, nine tests, and production
-build passed. Real Test Mode checkout and cancellation verification must be
-recorded after preview credentials are configured; unit/database tests alone
-do not establish that Razorpay opens.
+Locked-dependency type checks, ten tests, and production build passed. The
+backend created a genuine Test subscription for 149900 paise and a genuine Test
+order for 99900 paise, saving +919999999999 in both pending payment records.
+No real payment was made.
+
+Final browser verification: the owner opened the preview in a normal Chrome tab.
+After taking control of that loaded tab, we visually inspected the genuine
+Razorpay consultation checkout showing Test Mode and Rs 999, exited it, and
+verified the application's `Checkout cancelled` state. We returned to results,
+clicked the plan CTA ourselves, visually inspected the genuine Test Mode
+Rs 1,499 checkout, exited it, and verified `Checkout cancelled` again. Both
+checkout screens showed the normalized India phone prefill. Neither dismissal
+showed a paid confirmation.
+
+The owner also reported a failed test-card attempt on the subscription, and
+provided a 14-digit number beginning 4111. That is not a valid test card number.
+The Test Mode dashboard showed no payments for today when inspected; the exact
+gateway error was not captured. Successful payment capture is not claimed.
+
+Changed files: public/assessment.html, public/assessment.js, src/lib/leads.ts,
+src/app/api/[...path]/route.ts, next.config.ts,
+supabase/migrations/202609130006_payment_service_access.sql,
+tests/payment-readiness.test.ts, and this recovery record.

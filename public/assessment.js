@@ -270,10 +270,6 @@ function validateEmail(email){
 let intakeStatus=null,widgetId=null;
 const whatsappNumber='919995850411';
 let checkoutInFlight=false;
-document.addEventListener('securitypolicyviolation', event=>{
-  console.error('checkout_policy_violation', event.effectiveDirective, event.blockedURI);
-});
-fetch(location.href,{method:'HEAD',cache:'no-store'}).then(response=>console.info('checkout_document_policy',response.headers.get('content-security-policy'))).catch(()=>{});
 
 function ensureIndiaCountryCode(){
   const input = document.getElementById('leadPhone');
