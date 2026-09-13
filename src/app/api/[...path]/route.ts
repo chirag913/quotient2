@@ -202,26 +202,33 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
       return json({ok: true});
     }
 
-    const {data: {user}, error: authError} = await client.auth.getUser();
-    if (authError || !user || !user.email_confirmed_at) return json({error: 'Sign in with your verified email to continue.'}, 401);
-    const {data: member, error: memberError} = await client
-      .from('staff_memberships')
-      .select('role,active')
-      .eq('user_id', user.id)
-      .maybeSingle();
-    if (memberError) return json({error: 'Account database setup is incomplete.'}, 503);
+    const isPublicPaymentMutation = req.method === 'POST' && (route === 'payments/order' || route === 'payments/verify');
+    let user: Awaited<ReturnType<typeof client.auth.getUser>>['data']['user'] = null;
+    let staff = false;
+    let staffVerified = false;
+    if (!isPublicPaymentMutation) {
+      const auth = await client.auth.getUser();
+      user = auth.data.user;
+      if (auth.error || !user || !user.email_confirmed_at) return json({error: 'Sign in with your verified email to continue.'}, 401);
+      const {data: member, error: memberError} = await client
+        .from('staff_memberships')
+        .select('role,active')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (memberError) return json({error: 'Account database setup is incomplete.'}, 503);
+      const {data: assurance} = await client.auth.mfa.getAuthenticatorAssuranceLevel();
+      staff = Boolean(member?.active);
+      staffVerified = staff && assurance?.currentLevel === 'aal2';
+    }
+    if (!isPublicPaymentMutation && !user) return json({error: 'Sign in with your verified email to continue.'}, 401);
 
-    const {data: assurance} = await client.auth.mfa.getAuthenticatorAssuranceLevel();
-    const staff = Boolean(member?.active);
-    const staffVerified = staff && assurance?.currentLevel === 'aal2';
-
-    if (req.method === 'GET' && route === 'me') return json({email: user.email, staff, staffVerified});
+    if (req.method === 'GET' && route === 'me') return json({email: user!.email, staff, staffVerified});
 
     if (req.method === 'GET' && route === 'assessments') {
       const {data, error} = await client
         .from('assessments')
         .select('id,name,created_at,scores,primary_profile,definition_version')
-        .eq('user_id', user.id)
+        .eq('user_id', user!.id)
         .order('created_at', {ascending: false})
         .limit(50);
       return error ? json({error: 'Could not load assessments.'}, 503) : json({assessments: data});
@@ -252,7 +259,7 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
         : json({assessment: data}, 201);
     }
 
-    if (!staff) return json({error: 'Staff access is required.'}, 403);
+    if (!isPublicPaymentMutation && !staff) return json({error: 'Staff access is required.'}, 403);
 
     if (req.method === 'GET' && route === 'staff/mfa') {
       const {data, error} = await client.auth.mfa.listFactors();
@@ -280,7 +287,7 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
       return error ? json({error: 'Authenticator code was not accepted.'}, 400) : json({ok: true});
     }
 
-    if (!staffVerified) return json({error: 'Verify your authenticator to open staff records.'}, 403);
+    if (!isPublicPaymentMutation && !staffVerified) return json({error: 'Verify your authenticator to open staff records.'}, 403);
 
     if (req.method === 'GET' && route === 'staff/summary') {
       const count = () => client.from('leads').select('id', {count: 'exact', head: true});
