@@ -5,6 +5,17 @@ import {runInNewContext} from 'node:vm';
 import {PGlite} from '@electric-sql/pglite';
 import {leadInput} from '../src/lib/leads';
 import {definition} from '../src/lib/assessment';
+import config from '../next.config';
+
+test('CSP permits the real Razorpay checkout frame without wildcard frame access',async()=>{
+  const headers=await config.headers!();
+  const csp=headers.find(h=>h.source==='/:path*')!.headers.find(h=>h.key==='Content-Security-Policy')!.value;
+  const frames=csp.split(';').map(s=>s.trim()).find(s=>s.startsWith('frame-src '))!.split(/\s+/).slice(1);
+  assert.ok(frames.includes('https://api.razorpay.com'));
+  assert.ok(frames.includes('https://checkout.razorpay.com'));
+  assert.ok(!frames.includes('*'));
+  assert.ok(csp.includes("frame-ancestors 'none'"));
+});
 
 test('India phone normalization rejects wrong country codes and wrong lengths',()=>{
   const source=readFileSync('public/assessment.js','utf8');
