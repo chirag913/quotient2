@@ -269,6 +269,7 @@ function validateEmail(email){
 
 let intakeStatus=null,widgetId=null;
 const whatsappNumber='919995850411';
+let checkoutInFlight=false;
 
 function ensureIndiaCountryCode(){
   const input = document.getElementById('leadPhone');
@@ -283,6 +284,33 @@ function ensureIndiaCountryCode(){
 function getWhatsappUrl(message=''){
   const baseMessage=`Hi Skin Quotient, ${message}`.trim();
   return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(baseMessage)}`;
+}
+
+function getCheckoutCard(planType){
+  return planType === 'plan'
+    ? document.querySelector('[data-action="7"]')
+    : document.querySelector('[data-action="8"]');
+}
+
+function setCheckoutBusy(planType, busy){
+  const card=getCheckoutCard(planType);
+  const cta=card?.querySelector('.path-cta');
+  if(!card || !cta) return;
+
+  if(busy){
+    if(!cta.dataset.lockedLabel && cta.textContent) cta.dataset.lockedLabel=cta.textContent;
+    cta.textContent='Preparing secure checkout…';
+    card.dataset.checkoutBusy='1';
+    card.style.pointerEvents='none';
+    card.style.opacity='0.8';
+    return;
+  }
+
+  if(cta.dataset.lockedLabel) cta.textContent=cta.dataset.lockedLabel;
+  delete cta.dataset.lockedLabel;
+  delete card.dataset.checkoutBusy;
+  card.style.pointerEvents='';
+  card.style.opacity='';
 }
 
 function updateResultWhatsappLinks(planType,customSuffix=''){
@@ -319,10 +347,14 @@ function normalizePhone(value){
   return clean.startsWith('+') ? clean : '+91'+clean.replace(/^\+/, '');
 }
 
-async function startPayment(planType){
+async function startPayment(planType,event){
   const targetScreen = planType === 'consultation' ? 'screen-confirm-call' : 'screen-confirm-plan';
   const titleEl = planType === 'consultation' ? document.getElementById('callResultTitle') : document.getElementById('planResultTitle');
   const messageEl = planType === 'consultation' ? document.getElementById('callResultMessage') : document.getElementById('planResultMessage');
+
+  if(checkoutInFlight){return;}
+  if(planType !== 'plan' && planType !== 'consultation'){return;}
+
   if(paymentState?.paymentsEnabled === false){
     if(titleEl) titleEl.textContent='Payment not available';
     if(messageEl) messageEl.textContent='Online checkout is still being connected. Ask us on WhatsApp and we’ll continue from there.';
@@ -333,6 +365,10 @@ async function startPayment(planType){
     if(messageEl) messageEl.textContent='Checkout script could not be loaded. Ask us on WhatsApp and we’ll continue from there.';
     updateResultWhatsappLinks(planType);goTo(targetScreen);return;
   }
+
+  checkoutInFlight=true;
+  setCheckoutBusy(planType, true);
+
   try{
     updateResultWhatsappLinks(planType,'Preparing your secure payment link...');
     const response = await fetch('/api/payments/order',{
@@ -341,7 +377,9 @@ async function startPayment(planType){
       body:JSON.stringify({plan:planType,name:leadData.name,email:leadData.email,phone:leadData.phone,submissionId})
     });
     const data = await response.json();
-    if(!response.ok || !data.orderId) throw new Error(data.error || 'Unable to start payment.');
+    if(!response.ok) throw new Error(data.error || 'Unable to start payment.');
+    if(planType === 'plan' && !data.subscriptionId) throw new Error('Unable to create subscription.');
+    if(planType === 'consultation' && !data.orderId) throw new Error('Unable to create payment order.');
 
     const options = {
       key: data.keyId,
@@ -349,23 +387,57 @@ async function startPayment(planType){
       currency: data.currency,
       name: data.name,
       description: data.description,
-      order_id: data.orderId,
-      handler: async function(payment){
-        const verifyRes = await fetch('/api/payments/verify',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({plan:planType,razorpay_order_id:payment.razorpay_order_id,razorpay_payment_id:payment.razorpay_payment_id,razorpay_signature:payment.razorpay_signature})
-        });
-        const verifyData = await verifyRes.json();
-        if(!verifyRes.ok || !verifyData.ok) throw new Error(verifyData.error || 'Payment could not be confirmed.');
-        if(titleEl) titleEl.textContent = planType==='plan' ? 'Skin Plan paid' : 'Consultation paid';
-        if(messageEl) messageEl.textContent = planType==='plan' ? 'Payment confirmed. Please continue with WhatsApp so our team can start your onboarding now.' : 'Payment confirmed. Please continue with WhatsApp so our team can schedule your consultation now.';
-        updateResultWhatsappLinks(planType,'My payment is done.');
-        goTo(targetScreen);
-      },
       prefill:{name:leadData.name, email:leadData.email, contact:(leadData.phone||'').replace('+','')},
       theme:{color:'#6A57C3'}
     };
+    if(planType === 'plan'){
+      options.subscription_id = data.subscriptionId;
+      options.recurring = '1';
+      options.notes = {plan:'plan'};
+    } else {
+      options.order_id = data.orderId;
+    }
+
+    const confirmPayment = async (payload)=>{
+      const verifyRes = await fetch('/api/payments/verify',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const verifyData = await verifyRes.json();
+      if(!verifyRes.ok || !verifyData.ok){
+        throw new Error(verifyData.error || 'Payment could not be confirmed.');
+      }
+      if(titleEl) titleEl.textContent = planType==='plan' ? 'Skin Plan paid' : 'Consultation paid';
+      if(messageEl) messageEl.textContent = planType==='plan' ? 'Payment confirmed. Please continue with WhatsApp so our team can start your onboarding now.' : 'Payment confirmed. Please continue with WhatsApp so our team can schedule your consultation now.';
+      updateResultWhatsappLinks(planType,'My payment is done.');
+      goTo(targetScreen);
+    };
+
+    options.handler = async function(payment){
+      try{
+        const payload = planType === 'plan'
+          ? {plan:planType,razorpay_subscription_id:payment.razorpay_subscription_id,razorpay_payment_id:payment.razorpay_payment_id,razorpay_signature:payment.razorpay_signature,razorpay_order_id:payment.razorpay_order_id}
+          : {plan:planType,razorpay_order_id:payment.razorpay_order_id,razorpay_payment_id:payment.razorpay_payment_id,razorpay_signature:payment.razorpay_signature};
+        await confirmPayment(payload);
+      }catch(error){
+        const details = error instanceof Error ? error.message : 'Unable to confirm payment.';
+        if(titleEl) titleEl.textContent='Could not verify payment';
+        if(messageEl) messageEl.textContent=details;
+        updateResultWhatsappLinks(planType,'Please continue via WhatsApp while we check this.');
+        goTo(targetScreen);
+      }
+    };
+
+    options.modal = {
+      ondismiss: ()=>{
+        if(titleEl && !titleEl.textContent.includes('confirmed')) titleEl.textContent='Checkout cancelled';
+        if(messageEl) messageEl.textContent='Checkout was not completed. You can continue through WhatsApp from here.';
+        updateResultWhatsappLinks(planType,'I didn’t complete checkout yet. Please continue via WhatsApp.');
+        goTo(targetScreen);
+      }
+    };
+
     new window.Razorpay(options).open();
   }catch(error){
     const details = error instanceof Error ? error.message : 'Could not launch payment.';
@@ -373,6 +445,9 @@ async function startPayment(planType){
     if(messageEl) messageEl.textContent=details;
     updateResultWhatsappLinks(planType,'Please continue via WhatsApp while we check this.');
     goTo(targetScreen);
+  }finally{
+    checkoutInFlight=false;
+    setCheckoutBusy(planType, false);
   }
 }
 async function submitLead(){
@@ -453,12 +528,13 @@ function showResult(){
       </div>
       <span class="blur-tag">Full plan</span>
     </div>
-    <div class="routine-step final-step">
+    <div class="routine-step blurred final-step">
       <div class="routine-num">3</div>
       <div>
         <div class="t1">${template.sunscreen}</div>
         <div class="t2">Daily sun protection chosen to fit your skin profile.</div>
       </div>
+      <span class="blur-tag">Full plan</span>
     </div>
   `;
 
@@ -498,7 +574,7 @@ function resetProto(){
   goTo('screen-hero');
 }
 
-const actionHandlers=[function(event){resetProto()},function(event){startQuiz()},function(event){goTo('screen-result-direct')},function(event){prevQuestion()},function(event){nextQuestion()},function(event){afterFun()},function(event){submitLead()},function(event){startPayment('plan')},function(event){startPayment('consultation')},function(event){resetProto()}];
+const actionHandlers=[function(event){resetProto()},function(event){startQuiz()},function(event){goTo('screen-result-direct')},function(event){prevQuestion()},function(event){nextQuestion()},function(event){afterFun()},function(event){submitLead()},function(event){startPayment('plan',event)},function(event){startPayment('consultation',event)},function(event){resetProto()}];
 const safeActivate=(el)=>{const handler=actionHandlers[Number(el.dataset.action)];if(typeof handler==='function') handler({target:el});};
 document.querySelectorAll('[data-action]').forEach(el=>{
   el.addEventListener('click', (event)=>{event.preventDefault(); safeActivate(el);});

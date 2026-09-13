@@ -12,6 +12,18 @@ const paymentKeyId=process.env.RAZORPAY_KEY_ID||'';
 const paymentKeySecret=process.env.RAZORPAY_KEY_SECRET||'';
 const paymentEnabled=()=>Boolean(paymentKeyId&&paymentKeySecret);
 const pricing={plan:{name:'Skin Quotient Personalized Plan',amount:149900,currency:'INR',description:'₹1,499 monthly skincare plan'},consultation:{name:'1:1 Skin Consultation',amount:99900,currency:'INR',description:'₹999 consultation booking'}};
+const razorpayBase='https://api.razorpay.com/v1';
+const razorpayAuth=()=>Buffer.from(`${paymentKeyId}:${paymentKeySecret}`).toString('base64');
+const razorpayHeaders={Authorization:`Basic ${razorpayAuth()}`};
+const razorpayApiRequest=async(path:string,method:string,body?:unknown)=>{
+ const res=await fetch(`${razorpayBase}${path}`,{method,headers:{'Content-Type':'application/json',Authorization:razorpayHeaders.Authorization},body:body?JSON.stringify(body):undefined});
+ const payload=await res.json().catch(()=>({}));
+ return {ok:res.ok,status:res.status,payload};
+};
+const assertPaid = (planType:'plan'|'consultation',payment:any,planAmount:number)=>{
+ if(!payment || payment.amount!==planAmount || payment.currency!==pricing[planType].currency) return false;
+ return payment.status==='captured' || payment.status==='authorized';
+};
 async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}){
  const route=(await params).path.join('/');
  if(req.method==='GET'&&route==='status')return json({configured:configured(),emailEnabled:process.env.AUTH_EMAIL_ENABLED==='true',paymentsEnabled:paymentEnabled()});
@@ -90,22 +102,58 @@ async function handle(req:NextRequest,{params}:{params:Promise<{path:string[]}>}
  const payload=z.object({plan:z.enum(['plan','consultation']),email:email.optional(),phone:z.string().max(20).optional(),name:z.string().max(100).optional(),submissionId:z.uuid().optional()}).strict().parse(input);
  const selected=payload.plan==='plan'?'plan':'consultation';
  const product=pricing[selected];
- const auth=Buffer.from(`${paymentKeyId}:${paymentKeySecret}`).toString('base64');
- const orderRes=await fetch('https://api.razorpay.com/v1/orders',{
-  method:'POST',
-  headers:{'Content-Type':'application/json','Authorization':`Basic ${auth}`},
-  body:JSON.stringify({amount:product.amount,currency:product.currency,receipt:`sq-${payload.submissionId||Date.now()}`,notes:{plan:selected,name:payload.name||'',email:payload.email||'',phone:payload.phone||''}})
- });
- if(!orderRes.ok){return json({error:'Unable to start payment. Contact support if this continues.'},503);}
- const order=await orderRes.json();
- return json({enabled:true,keyId:paymentKeyId,plan:selected,amount:product.amount,currency:product.currency,description:product.description,orderId:order.id,name:product.name});
+ if(selected==='plan'){
+   const planRes=await razorpayApiRequest('/plans','POST',{
+    period:'monthly',interval:1,item:{name:'Skin Quotient Monthly plan', amount:product.amount, currency:product.currency, description:product.description}
+   });
+   if(!planRes.ok||!planRes.payload?.id){
+    return json({error:'Unable to start payment. Contact support if this continues.'},503);
+   }
+   const subscriptionRes=await razorpayApiRequest('/subscriptions','POST',{
+    plan_id:planRes.payload.id,
+    total_count:12,
+    quantity:1,
+    customer_notify:1,
+    notes:{plan:selected,name:payload.name||'',email:payload.email||'',phone:payload.phone||'',submissionId:payload.submissionId||''}
+   });
+   if(!subscriptionRes.ok||!subscriptionRes.payload?.id){
+    return json({error:'Unable to start payment. Contact support if this continues.'},503);
+   }
+   return json({enabled:true,keyId:paymentKeyId,mode:'subscription',plan:selected,amount:product.amount,currency:product.currency,description:product.description,name:product.name,subscriptionId:subscriptionRes.payload.id,currencySymbol:'₹',billingInterval:'monthly',billingType:'recurring'});
+ }
+ const orderRes=await razorpayApiRequest('/orders','POST',{amount:product.amount,currency:product.currency,receipt:`sq-${payload.submissionId||Date.now()}`,notes:{plan:selected,name:payload.name||'',email:payload.email||'',phone:payload.phone||''}});
+ if(!orderRes.ok||!orderRes.payload?.id){return json({error:'Unable to start payment. Contact support if this continues.'},503);}
+ return json({enabled:true,keyId:paymentKeyId,mode:'order',plan:selected,amount:product.amount,currency:product.currency,description:product.description,orderId:orderRes.payload.id,name:product.name});
  }
  if(req.method==='POST'&&route==='payments/verify'){
  if(!paymentEnabled())return json({error:'Payment is not configured.'},503);
- const payload=z.object({razorpay_order_id:z.string(),razorpay_payment_id:z.string(),razorpay_signature:z.string(),plan:z.enum(['plan','consultation'])}).strict().parse(input);
+ const payload=z.object({
+   plan:z.enum(['plan','consultation']),
+   razorpay_order_id:z.string().optional(),
+   razorpay_subscription_id:z.string().optional(),
+   razorpay_payment_id:z.string(),
+   razorpay_signature:z.string()
+ }).strict().parse(input);
+ const selected=payload.plan;
+ const selectedProduct=pricing[selected];
+ if(selected==='plan'){
+  if(!payload.razorpay_subscription_id) return json({error:'Payment data is incomplete.'},400);
+  const generated=createHmac('sha256',paymentKeySecret).update(`${payload.razorpay_payment_id}|${payload.razorpay_subscription_id}`).digest('hex');
+  if(generated!==payload.razorpay_signature)return json({error:'Payment verification failed.'},400);
+  const payment=await razorpayApiRequest('/payments/'+encodeURIComponent(payload.razorpay_payment_id),'GET');
+  const subscription=await razorpayApiRequest('/subscriptions/'+encodeURIComponent(payload.razorpay_subscription_id),'GET');
+  if(!payment.ok||!subscription.ok) return json({error:'Could not confirm your payment. Please retry.'},503);
+  if(subscription.payload?.status === 'cancelled' || subscription.payload?.status === 'halted') return json({error:'Subscription is not active.'},400);
+  if(!assertPaid('plan',payment.payload,selectedProduct.amount)) return json({error:'Payment is not complete yet. Please retry.'},400);
+  if(subscription.payload?.id !== payload.razorpay_subscription_id) return json({error:'Subscription reference is invalid.'},400);
+  return json({ok:true,plan:selected,paymentId:payload.razorpay_payment_id,subscriptionId:payload.razorpay_subscription_id,status:subscription.payload?.status||'pending'});
+ }
  const generated=createHmac('sha256',paymentKeySecret).update(`${payload.razorpay_order_id}|${payload.razorpay_payment_id}`).digest('hex');
- if(generated!==payload.razorpay_signature)return json({error:'Payment verification failed.'},400);
- return json({ok:true,plan:payload.plan,paymentId:payload.razorpay_payment_id});
+ if(!payload.razorpay_order_id || generated!==payload.razorpay_signature)return json({error:'Payment verification failed.'},400);
+ const payment=await razorpayApiRequest('/payments/'+encodeURIComponent(payload.razorpay_payment_id),'GET');
+ if(!payment.ok) return json({error:'Could not confirm your payment. Please retry.'},503);
+ if(!assertPaid('consultation',payment.payload,selectedProduct.amount)) return json({error:'Payment is not complete yet. Please retry.'},400);
+ return json({ok:true,plan:selected,paymentId:payload.razorpay_payment_id});
  }
  return json({error:'Not found.'},404);
  }catch(error){if(error instanceof z.ZodError||error instanceof SyntaxError)return json({error:'Check the information entered.'},400);console.error('request_failed',{route});return json({error:'Something went wrong. Please try again.'},503)}
