@@ -65,8 +65,36 @@ showed a paid confirmation.
 
 The owner also reported a failed test-card attempt on the subscription, and
 provided a 14-digit number beginning 4111. That is not a valid test card number.
-The Test Mode dashboard showed no payments for today when inspected; the exact
-gateway error was not captured. Successful payment capture is not claimed.
+The Test Mode dashboard showed no payments for today at that earlier inspection;
+the exact gateway error was not captured. Follow-up success tests are recorded below.
+
+## Successful Test Mode payments
+
+The owner completed Razorpay's bank simulation prompts in the normal Chrome
+tab. Both flows completed through the existing checkout callback and server
+verification, without a verification bypass or manual database status change:
+
+| Flow | Browser confirmation | Database result |
+| --- | --- | --- |
+| Consultation, Rs 999 | Consultation paid | paid, 99900 paise |
+| Subscription, Rs 1,499 | Skin Plan paid | paid, 149900 paise |
+
+Razorpay's Test Mode dashboard independently confirmed both payments Captured.
+The subscription briefly displayed Authorized before Razorpay automatically
+captured it; no manual capture was performed. Both database records preserved
+the synthetic lead's normalized India phone. Razorpay's remembered
+customer session displayed the previously used contact number in its checkout.
+
+The consultation used the Test Mode netbanking Success simulator after a card
+attempt waited for bank authentication. The subscription used Razorpay's
+documented domestic subscription test card and the owner submitted the test
+bank OTP. No real money was charged. This checks the initial successful payment,
+not future renewal cycles or webhook delivery.
+
+The same tab had been loaded before the WhatsApp button deployment and still
+showed the old link styling. Current production markup includes the green
+WhatsApp button and logo on both shared paid/cancelled result screens. A visual
+render of the updated Consultation paid state confirmed the button layout.
 
 Changed files: public/assessment.html, public/assessment.js, src/lib/leads.ts,
 src/app/api/[...path]/route.ts, next.config.ts,
