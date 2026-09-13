@@ -275,9 +275,11 @@ function ensureIndiaCountryCode(){
   const input = document.getElementById('leadPhone');
   if(!input) return;
   const raw = String(input.value || '').replace(/\D/g,'');
-  const digits = raw.startsWith('91') ? raw.slice(2) : raw;
-  const cleaned = digits.slice(0,10);
-  const joined = cleaned.length ? `+91 ${cleaned}` : '+91 ';
+  if(!raw){
+    if(input.value !== '') input.value = '';
+    return;
+  }
+  const joined = `+${raw.slice(0, 15)}`;
   if(input.value !== joined) input.value = joined;
 }
 
@@ -331,7 +333,7 @@ async function prepareIntake(){
 }
 window.addEventListener('load',()=>{
   const leadPhone = document.getElementById('leadPhone');
-  if(leadPhone && !leadPhone.value) leadPhone.value = '+91 ';
+  if(leadPhone && !leadPhone.value) leadPhone.value = '';
   ensureIndiaCountryCode();
   leadPhone?.addEventListener('input', ensureIndiaCountryCode);
   leadPhone?.addEventListener('blur', ensureIndiaCountryCode);
@@ -341,10 +343,9 @@ window.addEventListener('load',()=>{
 
 function normalizePhone(value){
   const clean = String(value || '').replace(/[\s()-]/g,'');
-  if(/^[6-9][0-9]{9}$/.test(clean)) return '+91'+clean;
-  if(/^\+[1-9][0-9]{9,14}$/.test(clean)) return clean;
-  if(clean.startsWith('+91')&&clean.length===13) return clean;
-  return clean.startsWith('+') ? clean : '+91'+clean.replace(/^\+/, '');
+  const digits = clean.replace(/\D/g,'').slice(0, 15);
+  if (!digits) return '';
+  return clean.startsWith('+') ? `+${digits}` : `+${digits}`;
 }
 
 async function startPayment(planType,event){
@@ -454,8 +455,8 @@ async function submitLead(){
  if(saving)return;const notice=document.getElementById('saveNotice');
  const name=document.getElementById('leadName').value.trim();const email=document.getElementById('leadEmail').value.trim().toLowerCase();
  let phone=normalizePhone(document.getElementById('leadPhone').value);
- if(!phone||phone==='+91'){notice.textContent='Enter your WhatsApp number with +91.';return;}
- if(!name||name.length>100||!validateEmail(email)||!/^\+[1-9][0-9]{9,14}$/.test(phone)){notice.textContent='Enter your name, a valid email, and your WhatsApp number with country code.';return;}
+  if(!phone){notice.textContent='Enter your WhatsApp number with a country code (for example, +919955551234).';return;}
+  if(!name||name.length>100||!validateEmail(email)||!/^\+[1-9][0-9]{9,14}$/.test(phone)){notice.textContent='Enter your name, a valid email, and your WhatsApp number with country code.';return;}
  if(!document.getElementById('privacyConsent').checked){notice.textContent='Please read the privacy notice and consent to saving your answers.';return;}
  if(!intakeStatus?.enabled){notice.textContent='Online saving is being connected. Please contact us on WhatsApp.';return;}
  const turnstileToken=widgetId!==null&&window.turnstile?turnstile.getResponse(widgetId):'';if(!turnstileToken){notice.textContent='Please complete the verification.';return;}
@@ -570,7 +571,7 @@ function resetProto(){
   leadData = {name:'', email:'', phone:''};
   document.getElementById('leadName').value = '';
   document.getElementById('leadEmail').value = '';
-  document.getElementById('leadPhone').value = '+91 ';
+  document.getElementById('leadPhone').value = '';
   goTo('screen-hero');
 }
 
