@@ -321,6 +321,8 @@ function updateResultWhatsappLinks(planType,customSuffix=''){
   const callLink = document.getElementById('callWhatsappLink');
   if(planLink) planLink.href = href;
   if(callLink) callLink.href = href;
+  const assessmentLink = document.querySelector('#screen-result .whatsapp-link');
+  if(assessmentLink) assessmentLink.href = getWhatsappUrl(`${label} I would like to discuss my assessment.`);
 }
 
 async function prepareIntake(){
