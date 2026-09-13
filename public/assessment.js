@@ -274,13 +274,8 @@ let checkoutInFlight=false;
 function ensureIndiaCountryCode(){
   const input = document.getElementById('leadPhone');
   if(!input) return;
-  const raw = String(input.value || '').replace(/\D/g,'');
-  if(!raw){
-    if(input.value !== '') input.value = '';
-    return;
-  }
-  const joined = `+${raw.slice(0, 15)}`;
-  if(input.value !== joined) input.value = joined;
+  const digits = String(input.value || '').replace(/\D/g,'').slice(0,10);
+  if(input.value !== digits) input.value = digits;
 }
 
 function getWhatsappUrl(message=''){
@@ -316,7 +311,7 @@ function setCheckoutBusy(planType, busy){
 }
 
 function updateResultWhatsappLinks(planType,customSuffix=''){
-  const label = leadData.name ? `I’m ${leadData.name}.` : 'I’m interested in';
+  const label = leadData.name ? `I’m ${leadData.name}.${leadData.phone ? ` My mobile number is ${normalizePhone(leadData.phone)}.` : ''}` : 'I’m interested in';
   const extra = customSuffix ? ` ${customSuffix}` : '';
   const planText = planType === 'plan'
     ? `${label} I would like to continue with the Personalized Skin Plan.${extra}`
@@ -333,19 +328,26 @@ async function prepareIntake(){
 }
 window.addEventListener('load',()=>{
   const leadPhone = document.getElementById('leadPhone');
-  if(leadPhone && !leadPhone.value) leadPhone.value = '';
   ensureIndiaCountryCode();
   leadPhone?.addEventListener('input', ensureIndiaCountryCode);
   leadPhone?.addEventListener('blur', ensureIndiaCountryCode);
+  leadPhone?.addEventListener('paste', event=>{
+    const pasted = event.clipboardData?.getData('text') || '';
+    const digits = pasted.replace(/[\s()-]/g,'');
+    if(/^\d{10}$/.test(digits) || /^\+91\d{10}$/.test(digits) || /^91\d{10}$/.test(digits)){
+      event.preventDefault();
+      leadPhone.value = digits.slice(-10);
+    }
+  });
   updateResultWhatsappLinks('plan');
   prepareIntake();
 });
 
 function normalizePhone(value){
   const clean = String(value || '').replace(/[\s()-]/g,'');
-  const digits = clean.replace(/\D/g,'').slice(0, 15);
-  if (!digits) return '';
-  return clean.startsWith('+') ? `+${digits}` : `+${digits}`;
+  if(/^\d{10}$/.test(clean)) return `+91${clean}`;
+  if(/^\+91\d{10}$/.test(clean)) return clean;
+  return '';
 }
 
 async function startPayment(planType,event){
@@ -388,7 +390,7 @@ async function startPayment(planType,event){
       currency: data.currency,
       name: data.name,
       description: data.description,
-      prefill:{name:leadData.name, email:leadData.email, contact:(leadData.phone||'').replace('+','')},
+      prefill:{name:leadData.name, email:leadData.email, contact:normalizePhone(leadData.phone)},
       theme:{color:'#6A57C3'}
     };
     if(planType === 'plan'){
@@ -455,8 +457,8 @@ async function submitLead(){
  if(saving)return;const notice=document.getElementById('saveNotice');
  const name=document.getElementById('leadName').value.trim();const email=document.getElementById('leadEmail').value.trim().toLowerCase();
  let phone=normalizePhone(document.getElementById('leadPhone').value);
-  if(!phone){notice.textContent='Enter your WhatsApp number with a country code (for example, +919955551234).';return;}
-  if(!name||name.length>100||!validateEmail(email)||!/^\+[1-9][0-9]{9,14}$/.test(phone)){notice.textContent='Enter your name, a valid email, and your WhatsApp number with country code.';return;}
+  if(!phone){notice.textContent='Enter exactly 10 digits for your Indian mobile number after +91.';return;}
+  if(!name||name.length>100||!validateEmail(email)){notice.textContent='Enter your name and a valid email address.';return;}
  if(!document.getElementById('privacyConsent').checked){notice.textContent='Please read the privacy notice and consent to saving your answers.';return;}
  if(!intakeStatus?.enabled){notice.textContent='Online saving is being connected. Please contact us on WhatsApp.';return;}
  const turnstileToken=widgetId!==null&&window.turnstile?turnstile.getResponse(widgetId):'';if(!turnstileToken){notice.textContent='Please complete the verification.';return;}

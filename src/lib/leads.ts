@@ -2,7 +2,7 @@ import {z} from 'zod';
 import {assessmentInput} from './assessment';
 export const leadInput=assessmentInput.extend({
  email:z.email().max(254).transform(value=>value.toLowerCase()),
- phone:z.string().regex(/^\+[1-9][0-9]{9,14}$/),
+ phone:z.string().regex(/^\+91[0-9]{10}$/),
  whatsappConsent:z.boolean(),
  turnstileToken:z.string().min(1).max(2048),
  website:z.string().max(0)

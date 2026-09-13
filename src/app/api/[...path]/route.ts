@@ -403,7 +403,7 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
       const product = pricing[selected];
       const name = payload.name.trim();
       const phone = sanitizePhone(payload.phone || '');
-      if (!/^[+][1-9][0-9]{9,14}$/.test(phone)) return json({error: 'Please provide a valid phone number with country code.'}, 400);
+      if (!/^\+91[0-9]{10}$/.test(phone)) return json({error: 'Please provide +91 followed by exactly 10 mobile digits.'}, 400);
       const normalizedEmail = String(payload.email).toLowerCase();
 
       const admin = paymentRecordClient();
@@ -415,7 +415,10 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
         .eq('status', 'pending')
         .order('created_at', {ascending: false})
         .limit(1);
-      if (pending.error) return json({error: 'Could not read existing checkout status.'}, 503);
+      if (pending.error) {
+        console.error('payment_records_lookup_failed', {code: pending.error.code});
+        return json({error: 'Could not read existing checkout status.'}, 503);
+      }
 
       if (pending.data?.length) {
         const row = pending.data[0];

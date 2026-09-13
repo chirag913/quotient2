@@ -304,6 +304,10 @@
     margin-bottom:12px; transition:border-color 0.15s ease, background 0.15s ease;
   }
   .lead-field:focus{outline:none; border-color:var(--teal-text); background:#fff;}
+  .phone-field{display:flex; align-items:center; padding:0; margin-bottom:4px;}
+  .phone-field:focus-within{border-color:var(--teal-text); background:#fff;}
+  .phone-prefix{flex:none; padding:13px 0 13px 14px; font-size:16px; font-weight:600;}
+  .phone-field input{min-width:0; width:100%; padding:13px 14px 13px 10px; border:0; outline:none; background:transparent; color:inherit; font:inherit; font-size:16px;}
   .lead-field.is-invalid{border-color:var(--error); background:rgba(224,40,40,0.06);}
   .field-error{font-size:11px; color:var(--error); font-weight:600; margin-top:-8px; margin-bottom:10px; display:none;}
   .lead-field.is-invalid + .field-error{display:block;}
@@ -1045,7 +1049,10 @@ body{
       <div class="field-error" id="emailError">Please enter a valid email address</div>
 
       <label class="input-label" for="leadPhone">WhatsApp / Mobile</label>
-      <input class="lead-field" id="leadPhone" type="tel" placeholder="+91 98765 43210" value="" maxlength="16" style="margin-bottom:4px;">
+      <div class="lead-field phone-field">
+        <span class="phone-prefix" id="phonePrefix">+91</span>
+        <input id="leadPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" value="" maxlength="10" pattern="[0-9]{10}" aria-describedby="phonePrefix" aria-label="WhatsApp / Mobile — 10-digit Indian number" required>
+      </div>
     </div>
     <div class="consent-wrap">
       <label><input type="checkbox" id="privacyConsent"> I agree to storing my answers to provide my assessment, as described in the <a href="/privacy-policy.html" target="_blank" rel="noopener">privacy notice</a>.</label>
