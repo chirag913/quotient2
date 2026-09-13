@@ -1,9 +1,11 @@
 'use client';
 import {useEffect, useState} from 'react';
-import {csvCell} from '@/lib/crm';
+import {csvCell, customerWhatsappUrl} from '@/lib/crm';
 
 type LeadRow = {
   id: string;
+  submission_id: string;
+  deleted_at: string | null;
   name: string;
   email: string;
   phone: string;
@@ -16,6 +18,7 @@ type LeadRow = {
 
 type PaymentRow = {
   id: string;
+  submission_id: string;
   customer_name: string;
   email: string;
   phone: string;
@@ -51,19 +54,17 @@ type Summary = {
 
 type View = 'overview' | 'leads' | 'customers' | 'recovery' | 'acquisition';
 
-type LeadFilter = 'all' | 'new' | 'reviewed';
-type PaymentFilter = 'all' | 'paid' | 'pending' | 'failed';
+type LeadFilter = 'all' | 'new' | 'reviewed' | 'deleted';
 type PaymentPlanFilter = 'all' | 'plan' | 'consultation';
 
 const views: {id: View; icon: string; label: string; sub: string}[] = [
   {id: 'overview', icon: '▦', label: 'Overview', sub: 'Business performance at a glance'},
-  {id: 'leads', icon: '◉', label: 'Leads', sub: 'Your shared lead database'},
-  {id: 'customers', icon: '✓', label: 'Customers', sub: 'Paid customer records'},
+  {id: 'leads', icon: '◉', label: 'All users', sub: 'Everyone who submitted an assessment — paid and unpaid'},
+  {id: 'customers', icon: '✓', label: 'Paid clients', sub: 'Successful purchases and client follow-up'},
   {id: 'recovery', icon: '↗', label: 'Recovery', sub: 'Follow-up and payment recovery'},
   {id: 'acquisition', icon: '⌁', label: 'Acquisition', sub: 'Sources and campaigns'}
 ];
 
-const WHATSAPP = '919995850411';
 const money = (value: number | null | undefined) => {
   const amount = Number(value || 0);
   return `₹${Math.round(amount / 100).toLocaleString('en-IN')}`;
@@ -83,11 +84,7 @@ const paymentMessage = (planType: 'plan' | 'consultation', name: string) =>
     : `Hi ${name}, this is Skin Quotient team. We received your payment for your Skin Consultation. Let's schedule your consultation.`;
 
 const whatsappUrlFor = (record: Pick<PaymentRow, 'phone' | 'customer_name' | 'plan_type'>) => {
-  const phone = formatPhone(record.phone) || WHATSAPP;
-  const contact = phone.startsWith('+') ? phone : `+${phone}`;
-  const number = contact.replace(/\+/g, '');
-  const message = paymentMessage(record.plan_type, record.customer_name || 'there');
-  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+  return customerWhatsappUrl(record.phone, paymentMessage(record.plan_type, record.customer_name || 'there'));
 };
 
 async function request(path: string, input?: unknown) {
@@ -103,7 +100,7 @@ async function request(path: string, input?: unknown) {
   return data;
 }
 
-export default function Crm({email, onSignOut}: {email: string; onSignOut: () => Promise<void>}) {
+export default function Crm({email, onSignOut, canManageCustomers = false}: {email: string; onSignOut: () => Promise<void>; canManageCustomers?: boolean}) {
   const [view, setView] = useState<View>('overview');
   const [summary, setSummary] = useState<Summary | null>(null);
   const [leads, setLeads] = useState<LeadRow[]>([]);
@@ -112,13 +109,25 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
   const [leadFilter, setLeadFilter] = useState<LeadFilter>('all');
-  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>('all');
   const [planFilter, setPlanFilter] = useState<PaymentPlanFilter>('all');
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
+
+  const [mutating, setMutating] = useState(false);
+  const [notice, setNotice] = useState('');
+  async function changeTrash(submissionId: string, name: string, deleted: boolean) {
+    if (deleted && !window.confirm(`Move ${name} to Trash? This removes this assessment and its purchases from active client lists. Payment history is retained, and you can restore the client from All users → Trash.`)) return;
+    setMutating(true); setError(''); setNotice('');
+    try {
+      await request('staff/customer-trash', {submissionId, deleted});
+      setNotice(deleted ? `${name} moved to Trash.` : `${name} restored.`);
+      setPage(0); setRevision(v => v + 1);
+    } catch (e) { setError(e instanceof Error ? e.message : 'Unable to update client.'); }
+    finally { setMutating(false); }
+  }
 
   const selected = views.find(v => v.id === view)!;
 
@@ -155,7 +164,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
           const paymentParams = new URLSearchParams({
             page: String(page),
             q: search,
-            status: paymentFilter,
+            status: 'paid',
             plan: planFilter
           });
 
@@ -191,7 +200,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
     return () => {
       active = false;
     };
-  }, [view, page, search, leadFilter, paymentFilter, planFilter, revision]);
+  }, [view, page, search, leadFilter, planFilter, revision]);
 
   const table = (rows: LeadRow[]) => (
     <div className="table-wrap">
@@ -204,7 +213,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
             <th>Status</th>
             <th>WhatsApp consent</th>
             <th>Captured</th>
-            <th>Review</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -229,9 +238,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                 <td>{row.whatsapp_consent ? 'Opted in' : 'Not opted in'}</td>
                 <td>{formatDate(row.created_at)}</td>
                 <td>
-                  <button className="btn" disabled>
-                    View
-                  </button>
+                  {canManageCustomers ? <button className={row.deleted_at ? 'btn' : 'btn danger'} disabled={busy || mutating} onClick={() => void changeTrash(row.submission_id, row.name, !row.deleted_at)}>{row.deleted_at ? 'Restore' : 'Delete'}</button> : 'Owner access required'}
                 </td>
               </tr>
             ))
@@ -239,7 +246,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
             <tr>
               <td colSpan={7}>
                 <div className="empty">
-                  <strong>{busy ? 'Loading records…' : 'No leads to display'}</strong>
+                  <strong>{busy ? 'Loading records…' : leadFilter === 'deleted' ? 'Trash is empty' : 'No users to display'}</strong>
                   <span>{error ? 'Records could not be loaded.' : search || leadFilter !== 'all' ? 'Try another search or filter.' : 'New quiz submissions will appear here.'}</span>
                 </div>
               </td>
@@ -261,7 +268,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
             <th>Amount</th>
             <th>Payment date</th>
             <th>Phone</th>
-            <th>WhatsApp</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -282,14 +289,13 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                   <div>{formatPhone(row.phone)}</div>
                 </td>
                 <td>
-                  <a
-                    className="btn whatsapp"
-                    href={whatsappUrlFor(row)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open WhatsApp
-                  </a>
+                  <div className="client-actions">
+                    {whatsappUrlFor(row) ? <a className="btn whatsapp" href={whatsappUrlFor(row)!} target="_blank" rel="noopener noreferrer" aria-label={`Open WhatsApp chat with ${row.customer_name}`}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.9 11.9 0 0 0 12.05 0C5.46 0 .1 5.36 .1 11.95c0 2.1 .55 4.16 1.6 5.97L0 24l6.25-1.64a11.94 11.94 0 0 0 5.79 1.48h.01c6.59 0 11.95-5.36 11.95-11.95a11.87 11.87 0 0 0-3.48-8.41ZM12.05 21.82a9.92 9.92 0 0 1-5.07-1.39l-.36-.21-3.71.97.99-3.62-.24-.38a9.91 9.91 0 0 1-1.52-5.24c0-5.48 4.45-9.93 9.93-9.93A9.87 9.87 0 0 1 22 11.9c0 5.48-4.46 9.92-9.95 9.92Zm5.45-7.43c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.58c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.08 4.5.71.31 1.27.49 1.71.62.72.23 1.38.2 1.9.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.34Z"/></svg>
+                      WhatsApp
+                    </a> : <span className="card-meta">No valid mobile number</span>}
+                    {canManageCustomers && <button className="btn danger" disabled={busy || mutating} onClick={() => void changeTrash(row.submission_id, row.customer_name, true)}>Delete</button>}
+                  </div>
                 </td>
               </tr>
             ))
@@ -299,7 +305,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                 <div className="empty">
                   <strong>{busy ? 'Loading payment records…' : 'No payment records to display'}</strong>
                   <span>
-                    {error ? 'Records could not be loaded.' : search || paymentFilter !== 'all' || planFilter !== 'all' ? 'Try a different search or filter.' : 'Paid and pending records will show here after checkout activity.'}
+                    {error ? 'Records could not be loaded.' : search || planFilter !== 'all' ? 'Try a different search or filter.' : 'Clients appear here after server-verified payment.'}
                   </span>
                 </div>
               </td>
@@ -372,6 +378,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
               aria-current={view === v.id ? 'page' : undefined}
               onClick={() => {
                 setView(v.id);
+                setQuery(''); setSearch(''); setNotice(''); setLeadFilter('all'); setPlanFilter('all');
                 setPage(0);
               }}
             >
@@ -414,6 +421,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
 
         <div className="content">
           <div role="status" aria-live="polite">
+            {notice && <div className="crm-notice">{notice}</div>}
             {error && <div className="crm-error">{error} <button className="btn" onClick={() => setRevision(v => v + 1)}>Retry</button></div>}
           </div>
 
@@ -421,7 +429,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
             <section className="view active">
               <div className="grid-kpi">
                 {[
-                  ['Total leads', summary?.total ?? '—', 'Captured profiles', '◉', 'green'],
+                  ['All users', summary?.total ?? '—', 'Captured profiles', '◉', 'green'],
                   ['Paid customers', summary?.paidCustomers ?? '—', 'Completed paid plans', '✓', 'green'],
                   ['Pending payments', summary?.pendingPayments ?? '—', 'Created but not paid', '◌', 'amber'],
                   ['Revenue', summary?.paidRevenue ? money(summary.paidRevenue) : '—', 'From paid status', '₹', 'purple'],
@@ -554,7 +562,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
             <section className="view active">
               <div className="toolbar">
                 <div>
-                  <div className="card-title">Lead database</div>
+                  <div className="card-title">{leadFilter === 'deleted' ? 'Trash' : 'All users'}</div>
                   <div className="card-meta">{busy ? 'Loading…' : total + ' matching profiles'} · 25 per page</div>
                 </div>
                 <form
@@ -567,8 +575,8 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                 >
                   <input
                     className="input"
-                    aria-label="Search name or email"
-                    placeholder="Search name or email"
+                    aria-label="Search name, email or phone"
+                    placeholder="Search name, email or phone"
                     value={query}
                     maxLength={100}
                     onChange={e => setQuery(e.target.value)}
@@ -586,6 +594,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                     <option value="all">All statuses</option>
                     <option value="new">New</option>
                     <option value="reviewed">Reviewed</option>
+                    <option value="deleted">Trash</option>
                   </select>
                 </form>
               </div>
@@ -606,8 +615,8 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
             <section className="view active">
               <div className="toolbar">
                 <div>
-                  <div className="card-title">Customers</div>
-                  <div className="card-meta">{busy ? 'Loading…' : total + ' matching customers'} · 25 per page</div>
+                  <div className="card-title">Paid clients</div>
+                  <div className="card-meta">{busy ? 'Loading…' : total + ' paid purchases'} · 25 per page</div>
                 </div>
                 <form
                   className="filters"
@@ -627,20 +636,6 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                   />
                   <select
                     className="select"
-                    aria-label="Payment status"
-                    value={paymentFilter}
-                    onChange={e => {
-                      setPaymentFilter(e.target.value as PaymentFilter);
-                      setPage(0);
-                    }}
-                  >
-                    <option value="all">All payments</option>
-                    <option value="paid">Paid</option>
-                    <option value="pending">Pending</option>
-                    <option value="failed">Failed</option>
-                  </select>
-                  <select
-                    className="select"
                     aria-label="Plan filter"
                     value={planFilter}
                     onChange={e => {
@@ -652,6 +647,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
                     <option value="plan">Personalized Skin Plan</option>
                     <option value="consultation">Skin Consultation</option>
                   </select>
+                  <button className="btn" disabled={busy}>Search</button>
                 </form>
               </div>
               <div className="card table-card">{paymentTable(payments)}</div>
@@ -675,7 +671,7 @@ export default function Crm({email, onSignOut}: {email: string; onSignOut: () =>
               </div>
               <div className="card">
                 <div className="empty">
-                  <strong>Payment recovery is not active</strong>Use the Customers view to open WhatsApp actions for payment follow-up.
+                  <strong>Payment recovery is not active</strong>Use Paid clients to open WhatsApp chats for onboarding and consultation follow-up.
                 </div>
               </div>
             </section>

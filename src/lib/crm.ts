@@ -1,3 +1,8 @@
+export function customerWhatsappUrl(phone: string, message: string) {
+ const digits=phone.replace(/[\s()+-]/g,'');
+ const normalized=/^[0-9]{10}$/.test(digits)?'91'+digits:digits;
+ return /^91[0-9]{10}$/.test(normalized)?`https://wa.me/${normalized}?text=${encodeURIComponent(message)}`:null;
+}
 export function csvCell(value:unknown){
  let text=String(value??'');
  if(/^[\s]*[=+@-]/.test(text))text="'"+text;

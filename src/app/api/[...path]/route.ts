@@ -206,6 +206,7 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
     let user: Awaited<ReturnType<typeof client.auth.getUser>>['data']['user'] = null;
     let staff = false;
     let staffVerified = false;
+    let canManageCustomers = false;
     if (!isPublicPaymentMutation) {
       const auth = await client.auth.getUser();
       user = auth.data.user;
@@ -219,10 +220,11 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
       const {data: assurance} = await client.auth.mfa.getAuthenticatorAssuranceLevel();
       staff = Boolean(member?.active);
       staffVerified = staff && assurance?.currentLevel === 'aal2';
+      canManageCustomers = staffVerified && member?.role === 'owner';
     }
     if (!isPublicPaymentMutation && !user) return json({error: 'Sign in with your verified email to continue.'}, 401);
 
-    if (req.method === 'GET' && route === 'me') return json({email: user!.email, staff, staffVerified});
+    if (req.method === 'GET' && route === 'me') return json({email: user!.email, staff, staffVerified, canManageCustomers});
 
     if (req.method === 'GET' && route === 'assessments') {
       const {data, error} = await client
@@ -290,7 +292,7 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
     if (!isPublicPaymentMutation && !staffVerified) return json({error: 'Verify your authenticator to open staff records.'}, 403);
 
     if (req.method === 'GET' && route === 'staff/summary') {
-      const count = () => client.from('leads').select('id', {count: 'exact', head: true});
+      const count = () => client.from('leads').select('id', {count: 'exact', head: true}).is('deleted_at', null);
       const countPayments = (status: PaymentStatus) =>
         client.from('payment_records').select('id', {count: 'exact', head: true}).eq('status', status);
       const paidRowsQuery = () => client.from('payment_records').select('amount,plan_type', {count: 'exact'}).eq('status', 'paid');
@@ -349,12 +351,13 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
     if (req.method === 'GET' && route === 'staff/assessments') {
       const page = z.coerce.number().int().min(0).max(10000).parse(req.nextUrl.searchParams.get('page') || 0);
       const query = z.string().max(100).regex(/^[\p{L}\p{N}@ .+\-]*$/u).parse(req.nextUrl.searchParams.get('q') || '').trim();
-      const status = z.enum(['all', 'new', 'reviewed']).parse(req.nextUrl.searchParams.get('status') || 'all');
+      const status = z.enum(['all', 'new', 'reviewed', 'deleted']).parse(req.nextUrl.searchParams.get('status') || 'all');
       let list = client
         .from('leads')
-        .select('id,name,email,phone,created_at,scores,primary_profile,answers,status,whatsapp_consent', {count: 'exact'});
-      if (query) list = list.or(`name.ilike.%${query}%,email.ilike.%${query}%`);
-      if (status !== 'all') list = list.eq('status', status);
+        .select('id,submission_id,name,email,phone,created_at,scores,primary_profile,answers,status,whatsapp_consent,deleted_at', {count: 'exact'});
+      list = status === 'deleted' ? list.not('deleted_at', 'is', null) : list.is('deleted_at', null);
+      if (query) list = list.or(`name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%`);
+      if (status !== 'all' && status !== 'deleted') list = list.eq('status', status);
       const {data, error, count} = await list.order('created_at', {ascending: false}).order('id').range(page * 25, page * 25 + 24);
       return error ? json({error: 'Could not load staff records.'}, 503) : json({assessments: data, total: count, page});
     }
@@ -370,11 +373,19 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
           'id,customer_name,email,phone,plan_type,plan,amount,currency,status,created_at,paid_at,submission_id,razorpay_payment_id,razorpay_order_id,razorpay_subscription_id,meta',
           {count: 'exact'}
         );
+      list = list.is('crm_deleted_at', null);
       if (status !== 'all') list = list.eq('status', status);
       if (plan !== 'all') list = list.eq('plan_type', plan);
-      if (query) list = list.or(`customer_name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%,submission_id.ilike.%${query}%`);
+      if (query) list = list.or(`customer_name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%`);
       const {data, error, count} = await list.order('created_at', {ascending: false}).range(page * 25, page * 25 + 24);
       return error ? json({error: 'Could not load payment records.'}, 503) : json({payments: data, total: count, page});
+    }
+
+    if (req.method === 'POST' && route === 'staff/customer-trash') {
+      if (!canManageCustomers) return json({error: 'Only the owner can delete or restore clients.'}, 403);
+      const payload = z.object({submissionId: z.uuid(), deleted: z.boolean()}).strict().parse(input);
+      const {error} = await client.rpc('sq_customer_trash', {p_submission_id: payload.submissionId, p_deleted: payload.deleted});
+      return error ? json({error: 'Could not update this client. Refresh and try again.'}, 409) : json({ok: true});
     }
 
     if (req.method === 'POST' && route === 'staff/review') {
