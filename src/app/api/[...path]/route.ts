@@ -294,8 +294,8 @@ async function handle(req: NextRequest, {params}: {params: Promise<{path: string
     if (req.method === 'GET' && route === 'staff/summary') {
       const count = () => client.from('leads').select('id', {count: 'exact', head: true}).is('deleted_at', null);
       const countPayments = (status: PaymentStatus) =>
-        client.from('payment_records').select('id', {count: 'exact', head: true}).eq('status', status);
-      const paidRowsQuery = () => client.from('payment_records').select('amount,plan_type', {count: 'exact'}).eq('status', 'paid');
+        client.from('payment_records').select('id', {count: 'exact', head: true}).is('crm_deleted_at', null).eq('status', status);
+      const paidRowsQuery = () => client.from('payment_records').select('amount,plan_type', {count: 'exact'}).is('crm_deleted_at', null).eq('status', 'paid');
       const days = indiaDays();
       const profiles = ['oil', 'dehydration', 'sensitivity', 'sun'];
 
