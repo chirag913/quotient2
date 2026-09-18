@@ -77,7 +77,7 @@ The visual website and original CRM design have been preserved/restored while re
 | Supabase URL | `https://ebcinozorcmwqdgmzelh.supabase.co` | Do not substitute a new project casually |
 | Supabase region | Seoul, `ap-northeast-2`, as inspected | Review data-location requirements before wider rollout |
 | Cloudflare | Free managed Turnstile widget named “Skin Quotient assessment” | Used for bot checks; not site hosting or outbound email |
-| Business phone | `+91 9995850411` | Intended support/WhatsApp number; no automated send integration |
+| Business phone | `+91 9516081686` | Intended support/WhatsApp number; no automated send integration |
 | Intended support inbox | `team@skinquotient.com` | Not yet a working hosted mailbox at handover |
 | Staff owner email | `chiragsharmadm@gmail.com` | Verified Supabase auth user with active owner membership |
 
@@ -363,7 +363,7 @@ The public information/policy pages were preserved byte-for-byte from the origin
 
 ### WhatsApp
 
-Current customer contact URL: `https://wa.me/919995850411` with a generic assessment enquiry prefill. The canonical helper is in `src/lib/leads.ts`; the result HTML also contains a link, so update both if the number changes. Public enquiry phone text occurs in `public/assessment.html`; inspect contact/policy pages too.
+Current customer contact URL: `https://wa.me/919516081686` with a generic assessment enquiry prefill. The canonical helper is in `src/lib/leads.ts`; the result HTML also contains a link, so update both if the number changes. Public enquiry phone text occurs in `public/assessment.html`; inspect contact/policy pages too.
 
 No WhatsApp Business API, templates, queue, message delivery status, automated follow-up or CRM send action exists. Staff must respect consent. Do not put health answers, email addresses, secrets or treatment text into a chat URL. Future post-payment links may contain an opaque order reference, with staff verifying it against server payment state.
 

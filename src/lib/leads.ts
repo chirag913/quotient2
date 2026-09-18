@@ -7,7 +7,7 @@ export const leadInput=assessmentInput.extend({
  turnstileToken:z.string().min(1).max(2048),
  website:z.string().max(0)
 }).strict();
-export const whatsappUrl='https://wa.me/919995850411?text='+encodeURIComponent('Hi Skin Quotient, I would like to discuss my assessment.');
+export const whatsappUrl='https://wa.me/919516081686?text='+encodeURIComponent('Hi Skin Quotient, I would like to discuss my assessment.');
 export function intakeConfigured(){return Boolean(process.env.SUPABASE_URL&&process.env.SUPABASE_SECRET_KEY&&process.env.TURNSTILE_SITE_KEY&&process.env.TURNSTILE_SECRET_KEY&&process.env.RATE_LIMIT_SALT)}
 export async function verifyChallenge(token:string,origin:string){
  const response=await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:process.env.TURNSTILE_SECRET_KEY,response:token}),signal:AbortSignal.timeout(8000)});
